@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "903995508679",
+    "project_id": "rangkul-app",
+    "storage_bucket": "rangkul-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903995508679:android:99f3d765fbc043436b3be2",
+        "android_client_info": {
+          "package_name": "com.example.rangkul"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "903995508679-3l63aecceoau3119f6v9nc85jui35daf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpC0W_w65YHGqFTFX5JYZ4xvOxdZYnFUE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903995508679-3l63aecceoau3119f6v9nc85jui35daf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
