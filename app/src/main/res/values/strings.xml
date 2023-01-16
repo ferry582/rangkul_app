@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Rangkul</string>
+    <string name="message_desc">Just Speak Up! We help you to speak\nsafely and conviniently to get support\nfrom the others</string>
+    <string name="message_title">You are not alone!</string>
+    <string name="login_message">Welcome back to</string>
+    <string name="app_title">Rangkul</string>
+    <string name="signup_message">Hi, welcome to</string>
+    <string name="signup_email">Sign up with Email</string>
+    <string name="login_email">Log In with Email</string>
+</resources>
