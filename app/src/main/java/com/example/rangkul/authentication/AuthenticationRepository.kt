@@ -7,14 +7,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 
-
-
-
-
 class AuthenticationRepository(private val application: Application) {
     private val firebaseUserMutableLiveData: MutableLiveData<FirebaseUser> = MutableLiveData()
     private val userLoggedMutableLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val progressBarStatusMutableLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val forgotPasswordStatusMutableLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
     fun getFirebaseUserMutableLiveData(): MutableLiveData<FirebaseUser> {
         return firebaseUserMutableLiveData
@@ -22,6 +20,14 @@ class AuthenticationRepository(private val application: Application) {
 
     fun getUserLoggedMutableLiveData(): MutableLiveData<Boolean> {
         return userLoggedMutableLiveData
+    }
+
+    fun getProgressBarStatusMutableLiveData(): MutableLiveData<Boolean>{
+        return progressBarStatusMutableLiveData
+    }
+
+    fun getForgotPasswordStatusMutableLiveData(): MutableLiveData<Boolean> {
+        return forgotPasswordStatusMutableLiveData
     }
 
     init {
@@ -43,6 +49,7 @@ class AuthenticationRepository(private val application: Application) {
             } else {
                 Toast.makeText(application, task.exception!!.message, Toast.LENGTH_SHORT)
                     .show()
+                progressBarStatusMutableLiveData.postValue(false)
             }
         }
     }
@@ -54,6 +61,7 @@ class AuthenticationRepository(private val application: Application) {
             } else {
                 Toast.makeText(application, task.exception!!.message, Toast.LENGTH_SHORT)
                     .show()
+                progressBarStatusMutableLiveData.postValue(false)
             }
         }
     }
@@ -62,4 +70,18 @@ class AuthenticationRepository(private val application: Application) {
         auth.signOut()
         userLoggedMutableLiveData.postValue(true)
     }
+
+    fun forgotPassword(email: String?) {
+        auth.sendPasswordResetEmail(email!!).addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                progressBarStatusMutableLiveData.postValue(false)
+                forgotPasswordStatusMutableLiveData.postValue(true)
+            }else{
+                Toast.makeText(application, task.exception!!.message, Toast.LENGTH_LONG).show()
+                progressBarStatusMutableLiveData.postValue(false)
+                forgotPasswordStatusMutableLiveData.postValue(false)
+            }
+        }
+    }
+
 }

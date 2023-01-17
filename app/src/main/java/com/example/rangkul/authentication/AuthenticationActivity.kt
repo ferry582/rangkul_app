@@ -53,8 +53,8 @@ class AuthenticationActivity : AppCompatActivity() {
         ) { firebaseUser ->
             if (firebaseUser != null) {
                 val intent = Intent(this@AuthenticationActivity, MainActivity::class.java)
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
-                finish()
             }
         }
     }

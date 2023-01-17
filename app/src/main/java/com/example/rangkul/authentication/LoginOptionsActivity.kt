@@ -8,7 +8,6 @@ import androidx.core.app.NavUtils
 import com.example.rangkul.R
 import com.example.rangkul.databinding.ActivityLoginOptionsBinding
 
-
 class LoginOptionsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginOptionsBinding

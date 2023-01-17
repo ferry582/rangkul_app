@@ -9,6 +9,8 @@ class AuthenticationViewModel(application: Application) : AndroidViewModel(appli
     private val repository: AuthenticationRepository
     private val userData: MutableLiveData<FirebaseUser>
     private val loggedStatus: MutableLiveData<Boolean>
+    private val progressBarStatus: MutableLiveData<Boolean>
+    private val forgotPasswordStatus: MutableLiveData<Boolean>
 
     fun getUserData(): MutableLiveData<FirebaseUser> {
         return userData
@@ -18,10 +20,20 @@ class AuthenticationViewModel(application: Application) : AndroidViewModel(appli
         return loggedStatus
     }
 
+    fun getProgressBarStatus(): MutableLiveData<Boolean>{
+        return progressBarStatus
+    }
+
+    fun getForgotPasswordStatus(): MutableLiveData<Boolean>{
+        return forgotPasswordStatus
+    }
+
     init {
         repository = AuthenticationRepository(application)
         userData = repository.getFirebaseUserMutableLiveData()
         loggedStatus = repository.getUserLoggedMutableLiveData()
+        progressBarStatus = repository.getProgressBarStatusMutableLiveData()
+        forgotPasswordStatus = repository.getForgotPasswordStatusMutableLiveData()
     }
 
     fun signUp(email: String?, pass: String?, name: String?) {
@@ -35,4 +47,9 @@ class AuthenticationViewModel(application: Application) : AndroidViewModel(appli
     fun logOut() {
         repository.signOut()
     }
+
+    fun forgotPassword(email: String?) {
+        repository.forgotPassword(email)
+    }
+
 }
