@@ -3,50 +3,35 @@ package com.example.rangkul
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.example.rangkul.authentication.AuthenticationActivity
-import com.example.rangkul.authentication.AuthenticationViewModel
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.rangkul.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: AuthenticationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(
-            this, ViewModelProvider.AndroidViewModelFactory
-                .getInstance(application)
-        )[AuthenticationViewModel::class.java]
-
-        viewModel.getLoggedStatus().observe(this) { t ->
-            if (t) {
-                val intent =  Intent(this@MainActivity, AuthenticationActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-        }
-
-        viewModel.getUserData().observe(this
-        ) { firebaseUser ->
-            binding.tvName.text = firebaseUser.displayName.toString()
-        }
-
-        binding.btLogout.setOnClickListener {
-                viewModel.logOut()
-        }
+        // Bottom Nav
+        val navController = findNavController(R.id.fragment)
+        binding.bottomView.setupWithNavController(navController)
 
     }
 
-    // Close app (open home window) when onBackPress, and prevent user navigate back to auth when onBackPress
     override fun onBackPressed() {
-        val a = Intent(Intent.ACTION_MAIN)
-        a.addCategory(Intent.CATEGORY_HOME)
-        a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(a)
+        if (binding.bottomView.selectedItemId == R.id.homeFragment){
+            // Close app (open home window) when onBackPressed, and prevent user navigate back to auth when onBackPress
+            val a = Intent(Intent.ACTION_MAIN)
+            a.addCategory(Intent.CATEGORY_HOME)
+            a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(a)
+        } else {
+            // always back to homeFragment when back is clicked at search/notification/profile fragment
+            binding.bottomView.selectedItemId = R.id.homeFragment
+        }
     }
 }

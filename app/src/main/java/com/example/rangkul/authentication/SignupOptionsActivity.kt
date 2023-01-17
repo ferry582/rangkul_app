@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.app.NavUtils
 import com.example.rangkul.R
 import com.example.rangkul.databinding.ActivitySignupOptionsBinding
@@ -27,6 +28,10 @@ class SignupOptionsActivity : AppCompatActivity() {
         binding.tvLogIn.setOnClickListener {
             val intent = Intent(this, LoginOptionsActivity::class.java)
             startActivity(intent)
+        }
+        binding.btSignupGoogle.setOnClickListener {
+            Toast.makeText(application, "Coming Soon!", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
