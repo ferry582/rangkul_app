@@ -1,15 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".home.HomeFragment"
+    android:layout_marginHorizontal="@dimen/safe_margin"
     android:background="@color/mainBackground">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clTopBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="home" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/mainBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civProfilePicture"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_profile_picture_default"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btYouLiked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btMessage"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_like_toolbar" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_message_toolbar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="Good Afternoon"
+        android:textAlignment="center"
+        android:textColor="@color/textBlack"
+        android:textSize="26sp"
+        android:includeFontPadding="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clTopBar" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="Della!"
+        android:textAlignment="center"
+        android:textColor="@color/textBlack"
+        android:textSize="26sp"
+        android:includeFontPadding="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvMessage" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupPostType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUserName">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipForYou"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:text="For You"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="14sp"
+            app:chipCornerRadius="12dp"
+            android:checked="true"
+            style="@style/CustomChipStyle"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:text="Following"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="14sp"
+            app:chipCornerRadius="12dp"
+            style="@style/CustomChipStyle"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSpeakUp"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:text="Speak Up!"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="14sp"
+            app:chipCornerRadius="12dp"
+            style="@style/CustomChipStyle"/>
+    </com.google.android.material.chip.ChipGroup>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_post"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chipGroupPostType"
+        tools:listitem="@layout/item_post" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
