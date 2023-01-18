@@ -31,6 +31,7 @@ class LoginWithEmailActivity : AppCompatActivity() {
             if (firebaseUser != null) {
                 val intent = Intent(this@LoginWithEmailActivity, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("LOGIN_SUCCESSFUL", "true")
                 startActivity(intent)
             }
         }

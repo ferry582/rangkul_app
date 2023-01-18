@@ -31,6 +31,7 @@ class SignupWithEmailActivity : AppCompatActivity() {
             if (firebaseUser != null) {
                 val intent = Intent(this@SignupWithEmailActivity, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("SIGNUP_SUCCESSFUL", "true")
                 startActivity(intent)
             }
         }

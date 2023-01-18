@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rangkul.R
 
-
 class HomeFragment : Fragment() {
 
     override fun onCreateView(
@@ -21,8 +20,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.rv_post)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+//        val recyclerView = view.findViewById<RecyclerView>(R.id.rv_post)
+//        recyclerView.layoutManager = LinearLayoutManager(context)
     }
 
 

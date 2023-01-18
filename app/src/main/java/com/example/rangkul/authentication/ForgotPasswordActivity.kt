@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.Window
 import androidx.core.app.NavUtils
@@ -68,6 +70,10 @@ class ForgotPasswordActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_forgot_pass_successful)
 
         dialog.show()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            dialog.dismiss()
+        }, 2500)
     }
 
     private fun forgotPassValidation(email: String): Boolean {
