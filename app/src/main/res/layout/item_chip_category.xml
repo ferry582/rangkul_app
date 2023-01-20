@@ -9,6 +9,7 @@
     android:textColor="@color/white"
     app:chipCornerRadius="12dp"
     android:checked="false"
-    style="@style/CustomChipStyleCategory">
+    style="@style/Widget.MaterialComponents.Chip.Choice"
+    app:chipBackgroundColor="@color/chip_category_background_color">
 
 </com.google.android.material.chip.Chip>

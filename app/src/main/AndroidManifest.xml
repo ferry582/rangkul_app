@@ -12,6 +12,10 @@
         android:theme="@style/Theme.Rangkul"
         tools:targetApi="31">
         <activity
+            android:name=".createpost.CreatePostActivity"
+            android:parentActivityName=".createpost.SelectCategoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".createpost.SelectCategoryActivity"
             android:exported="false" />
         <activity

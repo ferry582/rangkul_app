@@ -11,20 +11,26 @@ import com.example.rangkul.R
 import com.example.rangkul.home.PostData
 
 class PostAdapter (private val context: Context, private val postData: List<PostData>, private val listener: (PostData) -> Unit)
-    : RecyclerView.Adapter<PostAdapter.RestaurantViewHolder>(){
+    : RecyclerView.Adapter<PostAdapter.PostViewHolder>(){
 
-    class RestaurantViewHolder (view: View): RecyclerView.ViewHolder(view) {
+//    private lateinit var postDataList: List<PostData>
+//
+//    fun setPostDataList(postData: List<PostData>) {
+//        this.postDataList = postData
+//    }
 
-        val name = view.findViewById<TextView>(R.id.tvUserNamePost)
-        val category = view.findViewById<TextView>(R.id.tvCategoryPost)
-        val time = view.findViewById<TextView>(R.id.tvTimePost)
-        val writing = view.findViewById<TextView>(R.id.tvWritingPost)
+    class PostViewHolder (view: View): RecyclerView.ViewHolder(view) {
+
+        private val userName = view.findViewById<TextView>(R.id.tvUserNamePost)
+        private val postCategory = view.findViewById<TextView>(R.id.tvCategoryPost)
+        private val postCreatedAt = view.findViewById<TextView>(R.id.tvTimePost)
+        private val postCaption = view.findViewById<TextView>(R.id.tvCaptionPost)
 
         fun bindView(postData: PostData, listener: (PostData) -> Unit) {
-            name.text = postData.userName
-            category.text = postData.category
-            time.text = postData.time
-            writing.text = postData.writing
+            userName.text = postData.postId
+            postCategory.text = postData.category
+            postCreatedAt.text = postData.createdAt
+            postCaption.text = postData.caption
 
             itemView.setOnClickListener {
                 listener(postData)
@@ -32,17 +38,19 @@ class PostAdapter (private val context: Context, private val postData: List<Post
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RestaurantViewHolder {
-        return RestaurantViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+        return PostViewHolder(
             LayoutInflater.from(context)
                 .inflate(R.layout.item_post, parent, false)
         )
     }
 
-    override fun onBindViewHolder(holder: RestaurantViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         holder.bindView(postData[position], listener)
     }
 
-    override fun getItemCount(): Int = postData.size
+    override fun getItemCount(): Int {
+        return postData.size ?: 0
+    }
 
 }

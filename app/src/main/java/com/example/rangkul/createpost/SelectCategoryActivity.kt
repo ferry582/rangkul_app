@@ -1,9 +1,11 @@
 package com.example.rangkul.createpost
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.rangkul.MainActivity
 import com.example.rangkul.R
 import com.example.rangkul.databinding.ActivitySelectCategoryBinding
 import com.example.rangkul.databinding.ItemChipCategoryBinding
@@ -12,6 +14,7 @@ import com.google.android.material.chip.Chip
 class SelectCategoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySelectCategoryBinding
+    private lateinit var selectedCategory: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +29,16 @@ class SelectCategoryActivity : AppCompatActivity() {
             val ids = group.checkedChipIds
             for (id in ids) {
                 val chip: Chip = group.findViewById(id!!)
-                Toast.makeText(this@SelectCategoryActivity, chip.text, Toast.LENGTH_SHORT).show()
+                selectedCategory = chip.text.toString()
             }
+
+            binding.btNext.isEnabled = true // Enable the next button after select the category
+        }
+
+        binding.btNext.setOnClickListener {
+            val intent = Intent(this@SelectCategoryActivity, CreatePostActivity::class.java)
+            intent.putExtra("SELECTED_CATEGORY", selectedCategory)
+            startActivity(intent)
         }
 
     }

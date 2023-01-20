@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/greenBackground</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/yellowSecondary</item>
+        <item name="colorSecondary">@color/greenPrimary</item>
         <item name="colorSecondaryVariant">@color/yellowSecondary</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
@@ -18,9 +18,7 @@
     <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/chip_background_color</item>
         <item name="android:textColor">@color/chip_text_color</item>
+        <item name="chipIconTint">@color/chip_text_color</item>
     </style>
 
-    <style name="CustomChipStyleCategory" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="chipBackgroundColor">@color/chip_category_background_color</item>
-    </style>
 </resources>

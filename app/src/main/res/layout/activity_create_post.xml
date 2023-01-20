@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainBackground"
+    tools:context=".createpost.CreatePostActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitleToolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Write a Post"
+            android:textAlignment="center"
+            android:textColor="@color/textBlack"
+            android:textSize="16sp"
+            android:includeFontPadding="false"
+            android:layout_gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/safe_margin"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/linearHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clPublicAnonymous"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/civProfilePicture"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:src="@drawable/ic_profile_picture_default"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:includeFontPadding="false"
+                        android:text="Della Delila"
+                        android:textAlignment="center"
+                        android:textColor="@color/textBlack"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toEndOf="@+id/civProfilePicture"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvSelectedCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="3dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:includeFontPadding="false"
+                        android:text="Education"
+                        android:textAlignment="center"
+                        android:textColor="@color/textGrey"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/civProfilePicture"
+                        app:layout_constraintTop_toBottomOf="@+id/tvUserName" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clDiary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/civEmoticon"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:src="@drawable/ic_select_emoticon"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvUserMood"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:includeFontPadding="false"
+                        android:text="Choose your mood here!"
+                        android:textAlignment="center"
+                        android:textColor="@color/textGrey"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/civEmoticon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupPostType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearHeader"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipPublic"
+                    style="@style/CustomChipStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="51dp"
+                    android:checked="true"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="Public"
+                    android:textSize="14sp"
+                    app:chipCornerRadius="12dp"
+                    app:chipIcon="@drawable/ic_globe_grey"
+                    app:chipIconEnabled="true"
+                    app:chipIconSize="24dp"
+                    app:iconStartPadding="3dp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAnonymous"
+                    style="@style/CustomChipStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="51dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="Anonymous"
+                    android:textSize="14sp"
+                    app:chipBackgroundColor="@color/chip_pink_color"
+                    app:chipCornerRadius="12dp"
+                    app:chipIcon="@drawable/ic_anonymous_grey"
+                    app:chipIconEnabled="true"
+                    app:chipIconSize="20dp"
+                    app:iconStartPadding="5dp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDiary"
+                    style="@style/CustomChipStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="51dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="Diary"
+                    android:textSize="14sp"
+                    app:chipBackgroundColor="@color/chip_purple_color"
+                    app:chipCornerRadius="12dp"
+                    app:chipIcon="@drawable/ic_diary_grey"
+                    app:chipIconEnabled="true"
+                    app:chipIconSize="20dp"
+                    app:iconStartPadding="4dp" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_text_input"
+                android:fontFamily="@font/poppins_medium"
+                android:gravity="top|left"
+                android:hint="What’s on your Mind?"
+                android:inputType="textMultiLine"
+                android:lines="20"
+                android:minLines="5"
+                android:padding="15dp"
+                android:scrollbars="vertical"
+                android:scrollHorizontally="false"
+                android:textColor="@color/textBlack"
+                android:textColorHint="@color/textGrey"
+                android:textSize="16sp"
+                android:maxLength="250"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chipGroupPostType" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupAddImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etCaption"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAddImage"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="51dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="Add Photo"
+                    android:textColor="@color/greenPrimary"
+                    android:textSize="14sp"
+                    android:visibility="visible"
+                    app:chipBackgroundColor="@color/mainBackground"
+                    app:chipCornerRadius="12dp"
+                    app:chipIcon="@drawable/ic_image_frame"
+                    app:chipIconEnabled="true"
+                    app:chipIconSize="24dp"
+                    app:chipStrokeColor="@color/greenPrimary"
+                    app:chipStrokeWidth="1dp"
+                    app:iconStartPadding="3dp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipChangePhoto"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="51dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="Change Photo"
+                    android:textColor="@color/greenPrimary"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    app:chipBackgroundColor="@color/mainBackground"
+                    app:chipCornerRadius="12dp"
+                    app:chipStrokeColor="@color/greenPrimary"
+                    app:chipStrokeWidth="1dp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDeletePhoto"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="51dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="Delete Photo"
+                    android:textColor="@color/red"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    app:chipBackgroundColor="@color/mainBackground"
+                    app:chipCornerRadius="12dp"
+                    app:chipStrokeColor="@color/red"
+                    app:chipStrokeWidth="1dp" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvImagePost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chipGroupAddImage">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivImagePost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:clipToOutline="true"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/il_photo_dummy_post" />
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/btPublish"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_marginHorizontal="@dimen/safe_margin"
+        android:layout_marginBottom="@dimen/safe_margin"
+        android:background="@drawable/selector_button_main"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivLockIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tvPublish"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_lock" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvPublish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:includeFontPadding="false"
+                android:text="Publish"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:visibility="visible"
+                />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

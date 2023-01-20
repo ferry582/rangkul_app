@@ -13,4 +13,5 @@
     <color name="textBlack">#292B4C</color>
     <color name="textGrey">#8A868D</color>
     <color name="mainBackground">#F9F9F9</color>
+    <color name="red">#FF3333</color>
 </resources>

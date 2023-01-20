@@ -42,7 +42,6 @@
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusTopStart="12dp"
         app:boxStrokeColor="@color/greenPrimary"
-        app:hintTextColor="@color/greenPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle">
@@ -74,7 +73,6 @@
         app:boxCornerRadiusTopStart="12dp"
         android:layout_marginTop="17dp"
         app:boxStrokeColor="@color/greenPrimary"
-        app:hintTextColor="@color/greenPrimary"
         app:passwordToggleEnabled="true"
         app:passwordToggleDrawable="@drawable/selector_show_password"
         app:passwordToggleTint="@color/greenPrimary"
