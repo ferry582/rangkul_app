@@ -3,18 +3,19 @@ package com.example.rangkul.data.model
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
+import java.util.Date
 
 @kotlinx.parcelize.Parcelize
 data class PostData (
         @DocumentId
-        val postId: String,
+        var postId: String = "",
+        val createdBy: String = "",
         @ServerTimestamp
-        val createdBy: String,
-        val createdAt: String,
-        val caption: String,
-        val category: String,
-        val image: String,
-        val type: String,
+        val createdAt: Date = Date(),
+        val caption: String = "",
+        val category: String = "",
+        val image: String = "",
+        val type: String = "",
         @ServerTimestamp
-        val modifiedAt: String
+        val modifiedAt: Date = Date()
 ): Parcelable

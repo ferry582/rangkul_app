@@ -2,12 +2,13 @@ package com.example.rangkul.ui.authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
 import androidx.lifecycle.ViewModelProvider
 import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.databinding.ActivityLoginWithEmailBinding
+import com.example.rangkul.utils.hide
+import com.example.rangkul.utils.show
 
 class LoginWithEmailActivity : AppCompatActivity() {
 
@@ -60,11 +61,11 @@ class LoginWithEmailActivity : AppCompatActivity() {
 
     private fun loadingVisibility(isLoading: Boolean) {
         if (isLoading) {
-            binding.tvLogin.visibility = View.GONE
-            binding.progressBar.visibility = View.VISIBLE
+            binding.tvLogin.hide()
+            binding.progressBar.show()
         } else {
-            binding.tvLogin.visibility = View.VISIBLE
-            binding.progressBar.visibility = View.GONE
+            binding.tvLogin.show()
+            binding.progressBar.hide()
         }
     }
 
