@@ -1,4 +1,4 @@
-package com.example.rangkul.profile
+package com.example.rangkul.ui.profile
 
 import android.content.Intent
 import android.os.Bundle

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/greenBackground"
-    tools:context=".authentication.SignupOptionsActivity">
+    tools:context=".ui.authentication.SignupOptionsActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivAccentGraphic1"

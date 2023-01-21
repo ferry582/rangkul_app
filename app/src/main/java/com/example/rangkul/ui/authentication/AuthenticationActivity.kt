@@ -1,11 +1,11 @@
-package com.example.rangkul.authentication
+package com.example.rangkul.ui.authentication
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.lifecycle.ViewModelProvider
-import com.example.rangkul.MainActivity
+import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.R
 import com.example.rangkul.databinding.ActivityAuthenticationBinding
 

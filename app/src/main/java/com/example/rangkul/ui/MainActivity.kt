@@ -1,4 +1,4 @@
-package com.example.rangkul
+package com.example.rangkul.ui
 
 import android.app.Dialog
 import android.content.Intent
@@ -11,10 +11,12 @@ import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.rangkul.authentication.LoginOptionsActivity
-import com.example.rangkul.createpost.SelectCategoryActivity
+import com.example.rangkul.R
+import com.example.rangkul.ui.createpost.SelectCategoryActivity
 import com.example.rangkul.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

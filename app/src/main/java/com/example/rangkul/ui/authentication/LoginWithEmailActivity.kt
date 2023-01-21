@@ -1,4 +1,4 @@
-package com.example.rangkul.authentication
+package com.example.rangkul.ui.authentication
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,7 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
 import androidx.lifecycle.ViewModelProvider
-import com.example.rangkul.MainActivity
+import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.databinding.ActivityLoginWithEmailBinding
 
 class LoginWithEmailActivity : AppCompatActivity() {

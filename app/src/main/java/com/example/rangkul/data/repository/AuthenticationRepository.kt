@@ -1,4 +1,4 @@
-package com.example.rangkul.authentication
+package com.example.rangkul.data.repository
 
 import android.app.Application
 import android.widget.Toast

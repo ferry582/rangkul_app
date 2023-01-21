@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainBackground"
-    tools:context=".createpost.CreatePostActivity">
+    tools:context=".ui.createpost.CreatePostActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -200,7 +200,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/shape_text_input"
                 android:fontFamily="@font/poppins_medium"
-                android:gravity="top|left"
+                android:gravity="top|start"
                 android:hint="What’s on your Mind?"
                 android:inputType="textMultiLine"
                 android:lines="20"
@@ -295,7 +295,8 @@
                     android:adjustViewBounds="true"
                     android:clipToOutline="true"
                     android:scaleType="fitXY"
-                    app:srcCompat="@drawable/il_photo_dummy_post" />
+                    app:srcCompat="@drawable/il_photo_dummy_post"
+                    tools:targetApi="s" />
 
             </androidx.cardview.widget.CardView>
 

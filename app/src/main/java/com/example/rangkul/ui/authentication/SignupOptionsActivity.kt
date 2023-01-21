@@ -1,4 +1,4 @@
-package com.example.rangkul.authentication
+package com.example.rangkul.ui.authentication
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

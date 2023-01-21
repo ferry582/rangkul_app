@@ -1,14 +1,13 @@
-package com.example.rangkul.home
+package com.example.rangkul.ui.home
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rangkul.R
-import com.example.rangkul.home.PostData
+import com.example.rangkul.data.model.PostData
 
 class PostAdapter (private val context: Context, private val postData: List<PostData>, private val listener: (PostData) -> Unit)
     : RecyclerView.Adapter<PostAdapter.PostViewHolder>(){

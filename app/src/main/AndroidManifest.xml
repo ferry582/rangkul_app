@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,37 +13,37 @@
         android:theme="@style/Theme.Rangkul"
         tools:targetApi="31">
         <activity
-            android:name=".createpost.CreatePostActivity"
-            android:parentActivityName=".createpost.SelectCategoryActivity"
+            android:name=".ui.createpost.CreatePostActivity"
+            android:parentActivityName=".ui.createpost.SelectCategoryActivity"
             android:exported="false" />
         <activity
-            android:name=".createpost.SelectCategoryActivity"
+            android:name=".ui.createpost.SelectCategoryActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.SettingsActivity"
+            android:name=".ui.profile.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".authentication.ForgotPasswordActivity"
+            android:name=".ui.authentication.ForgotPasswordActivity"
             android:exported="false"
-            android:parentActivityName=".authentication.LoginWithEmailActivity" />
+            android:parentActivityName=".ui.authentication.LoginWithEmailActivity" />
         <activity
-            android:name=".authentication.LoginWithEmailActivity"
+            android:name=".ui.authentication.LoginWithEmailActivity"
             android:exported="false"
-            android:parentActivityName=".authentication.LoginOptionsActivity" />
+            android:parentActivityName=".ui.authentication.LoginOptionsActivity" />
         <activity
-            android:name=".authentication.SignupWithEmailActivity"
+            android:name=".ui.authentication.SignupWithEmailActivity"
             android:exported="false"
-            android:parentActivityName=".authentication.SignupOptionsActivity" />
+            android:parentActivityName=".ui.authentication.SignupOptionsActivity" />
         <activity
-            android:name=".authentication.SignupOptionsActivity"
+            android:name=".ui.authentication.SignupOptionsActivity"
             android:exported="false"
-            android:parentActivityName=".authentication.AuthenticationActivity" />
+            android:parentActivityName=".ui.authentication.AuthenticationActivity" />
         <activity
-            android:name=".authentication.LoginOptionsActivity"
+            android:name=".ui.authentication.LoginOptionsActivity"
             android:exported="false"
-            android:parentActivityName=".authentication.AuthenticationActivity" />
+            android:parentActivityName=".ui.authentication.AuthenticationActivity" />
         <activity
-            android:name=".authentication.AuthenticationActivity"
+            android:name=".ui.authentication.AuthenticationActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true" />
     </application>
 

@@ -1,11 +1,11 @@
-package com.example.rangkul.profile
+package com.example.rangkul.ui.profile
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import com.example.rangkul.authentication.AuthenticationActivity
-import com.example.rangkul.authentication.AuthenticationViewModel
+import com.example.rangkul.ui.authentication.AuthenticationActivity
+import com.example.rangkul.ui.authentication.AuthenticationViewModel
 import com.example.rangkul.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {

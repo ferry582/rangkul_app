@@ -1,4 +1,4 @@
-package com.example.rangkul.createpost
+package com.example.rangkul.ui.createpost
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

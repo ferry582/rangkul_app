@@ -1,11 +1,9 @@
-package com.example.rangkul.createpost
+package com.example.rangkul.ui.createpost
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.rangkul.MainActivity
 import com.example.rangkul.R
 import com.example.rangkul.databinding.ActivitySelectCategoryBinding
 import com.example.rangkul.databinding.ItemChipCategoryBinding

@@ -1,8 +1,9 @@
-package com.example.rangkul.authentication
+package com.example.rangkul.ui.authentication
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.rangkul.data.repository.AuthenticationRepository
 import com.google.firebase.auth.FirebaseUser
 
 class AuthenticationViewModel(application: Application) : AndroidViewModel(application) {

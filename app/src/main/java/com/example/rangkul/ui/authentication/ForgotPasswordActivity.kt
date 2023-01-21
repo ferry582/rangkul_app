@@ -1,4 +1,4 @@
-package com.example.rangkul.authentication
+package com.example.rangkul.ui.authentication
 
 import android.app.Dialog
 import android.graphics.Color
