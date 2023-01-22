@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        app:cardUseCompatPadding="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="19dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivIllustration"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_profile_picture_default" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Delete Account"
+                android:textColor="@color/textBlack"
+                android:textSize="20sp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivIllustration" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvContent1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="If you delete your account, your account and content will be"
+                android:textAlignment="center"
+                android:textColor="@color/textGrey"
+                android:textSize="12sp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvContent2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="PERMANENTLY DELETED"
+                android:textAlignment="center"
+                android:textColor="@color/red"
+                android:textSize="12sp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvContent1" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/btCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="49dp"
+                android:layout_marginHorizontal="@dimen/safe_margin"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_button_white"
+                android:clickable="true"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvContent2">
+
+                <ProgressBar
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/greenPrimary"
+                    android:indeterminateTintMode="src_atop"
+                    android:visibility="gone"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:includeFontPadding="false"
+                    android:text="Cancel"
+                    android:textColor="@color/greenPrimary"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/btDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="49dp"
+                android:layout_marginHorizontal="@dimen/safe_margin"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="50dp"
+                android:background="@drawable/selector_button_white"
+                android:clickable="true"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvContent2">
+
+                <ProgressBar
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/white"
+                    android:indeterminateTintMode="src_atop"
+                    android:visibility="gone"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:includeFontPadding="false"
+                    android:text="Delete"
+                    android:textColor="@color/red"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

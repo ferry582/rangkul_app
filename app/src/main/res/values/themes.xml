@@ -21,4 +21,17 @@
         <item name="chipIconTint">@color/chip_text_color</item>
     </style>
 
+    // Style tambahan buat chip
+    <style name="CustomChipStylePink" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chip_pink_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="chipIconTint">@color/chip_text_color</item>
+    </style>
+
+    <style name="CustomChipStylePurple" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chip_purple_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="chipIconTint">@color/chip_text_color</item>
+    </style>
+
 </resources>
