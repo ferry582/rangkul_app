@@ -16,10 +16,11 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
     val post: LiveData<UiState<List<PostData>>>
         get() = _posts
 
-
-    fun getNotes(){
+    fun getPosts(){
         _posts.value = UiState.Loading
-        _posts.value = repository.getPosts()
+        repository.getPosts {
+            _posts.value = it
+        }
     }
 
 }

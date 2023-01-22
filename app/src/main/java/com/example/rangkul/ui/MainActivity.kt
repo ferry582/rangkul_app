@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var justSignUp = false
     private var justLogIn = false
+    private var justPublishedPost = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,10 +33,11 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.fragment)
         binding.bottomView.setupWithNavController(navController)
 
-        // Show successful message dialog if user just login or signup
+        // Show message dialog
         justLogIn = intent.getStringExtra("LOGIN_SUCCESSFUL").toBoolean()
         justSignUp = intent.getStringExtra("SIGNUP_SUCCESSFUL").toBoolean()
-        showLoginSignupMessage()
+        justPublishedPost = intent.getStringExtra("PUBLISH_SUCCESSFUL").toBoolean()
+        showMessageDialog()
 
         // Navigate to Create Post
         binding.fabCreatePost.setOnClickListener {
@@ -45,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun showLoginSignupMessage() {
+    private fun showMessageDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -60,9 +62,14 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
         }
 
+        if (justPublishedPost) {
+            dialog.setContentView(R.layout.dialog_published_post_successful)
+            dialog.show()
+        }
+
         Handler(Looper.getMainLooper()).postDelayed({
             dialog.dismiss()
-        }, 1800)
+        }, 2000)
     }
 
     override fun onBackPressed() {
