@@ -13,9 +13,12 @@
         android:theme="@style/Theme.Rangkul"
         tools:targetApi="31">
         <activity
-            android:name=".ui.createpost.CreatePostActivity"
-            android:parentActivityName=".ui.createpost.SelectCategoryActivity"
+            android:name=".ui.comment.CommentActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.createpost.CreatePostActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.createpost.SelectCategoryActivity" />
         <activity
             android:name=".ui.createpost.SelectCategoryActivity"
             android:exported="false" />

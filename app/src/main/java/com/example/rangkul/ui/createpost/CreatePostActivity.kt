@@ -72,7 +72,12 @@ class CreatePostActivity : AppCompatActivity() {
                         category = selectedCategory,
                         image = "null",
                         type = postType,
-                        modifiedAt = Date()
+                        modifiedAt = Date(),
+                        userName = "",
+                        profilePicture = "",
+                        userBadge = "",
+                        commentsCount = 0,
+                        likesCount = 0
                     )
                 )
             }

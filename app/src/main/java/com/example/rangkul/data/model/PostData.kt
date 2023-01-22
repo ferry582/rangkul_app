@@ -17,5 +17,10 @@ data class PostData (
         val image: String = "",
         val type: String = "",
         @ServerTimestamp
-        val modifiedAt: Date = Date()
+        val modifiedAt: Date = Date(),
+        val userName: String = "",
+        val profilePicture: String = "",
+        val userBadge: String = "",
+        val commentsCount: Int? = 0,
+        val likesCount: Int = 0
 ): Parcelable

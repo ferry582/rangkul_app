@@ -1,11 +1,13 @@
 package com.example.rangkul.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rangkul.databinding.FragmentHomeBinding
+import com.example.rangkul.ui.comment.CommentActivity
 import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
@@ -20,17 +22,21 @@ class HomeFragment : Fragment() {
     private val adapter by lazy {
         HomePostAdapter(
             onCommentClicked = { pos, item ->
-
+                val intent = Intent(requireContext(), CommentActivity::class.java)
+                intent.putExtra("OBJECT_POST", item)
+                startActivity(intent)
             },
             onLikeClicked = { pos, item ->
 
             },
             onOptionClicked = { pos, item ->
 
+            },
+            onBadgeClicked = { pos, item ->
+
             }
         )
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +56,7 @@ class HomeFragment : Fragment() {
         binding.rvPost.setHasFixedSize(true)
         binding.rvPost.isNestedScrollingEnabled = true
 
-
+        //Get post list
         viewModel.getPosts()
         viewModel.post.observe(viewLifecycleOwner) {state ->
             when(state) {

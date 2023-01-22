@@ -6,28 +6,40 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ItemPostBinding
 import com.example.rangkul.utils.hide
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomePostAdapter (
     val onOptionClicked: (Int, PostData) -> Unit,
     val onLikeClicked: (Int, PostData) -> Unit,
-    val onCommentClicked: (Int, PostData) -> Unit
+    val onCommentClicked: (Int, PostData) -> Unit,
+    val onBadgeClicked: (Int, PostData) -> Unit
 ): RecyclerView.Adapter<HomePostAdapter.PostViewHolder>(){
 
     private var list: MutableList<PostData> = arrayListOf()
+    val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
 
-    class PostViewHolder (val binding: ItemPostBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class PostViewHolder (val binding: ItemPostBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: PostData) {
-            binding.tvUserNamePost.text = limitNameLength(item.createdBy)
+            binding.tvUserNamePost.apply {
+                text = if (item.userName.length > 20) {
+                    "${item.userName.substring(0,20)}..."
+                } else {
+                    item.userName
+                }
+            }
             binding.tvCategoryPost.text = item.category
-            binding.tvTimePost.text = item.createdAt.toLocaleString()
+            binding.tvTimePost.text = sdf.format(item.createdAt)
             binding.tvCaptionPost.text = item.caption
+            binding.tvLikeCountPost.text = item.likesCount.toString()
+            binding.tvCommentCountPost.text = item.commentsCount.toString()
 
             binding.ivLikeButtonPost.setOnClickListener {
 
             }
             binding.ivCommentButtonPost.setOnClickListener {
-
+                onCommentClicked.invoke(adapterPosition, item)
             }
             binding.ivPostOptions.setOnClickListener {
 
@@ -37,14 +49,6 @@ class HomePostAdapter (
             if (item.image == "null") {
                 binding.cvImagePost.hide()
             }
-        }
-
-        private fun limitNameLength(name: String): String {
-            var userName = name
-            if (name.length > 23) {
-                userName = "${name.substring(0,20)}..."
-            }
-            return userName
         }
     }
 
