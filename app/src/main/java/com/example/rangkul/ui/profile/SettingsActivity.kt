@@ -43,8 +43,18 @@ class SettingsActivity : AppCompatActivity() {
             viewModel.logOut()
         }
 
+        binding.accBtn.setOnClickListener {
+            intent = Intent(this, SettingsAccActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.privyBtn.setOnClickListener {
+            intent = Intent(this, SettingsPrivacyActivity::class.java)
+            startActivity(intent)
+        }
+
         // Ganti version disini
-        val currentVersion = "0.0.2"
+        val currentVersion = "0.0.1"
 
         binding.verNum.text = currentVersion
     }

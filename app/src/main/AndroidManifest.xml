@@ -13,9 +13,41 @@
         android:theme="@style/Theme.Rangkul"
         tools:targetApi="31">
         <activity
+            android:name=".ui.profile.ToserviceActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.profile.SettingsPrivacyActivity" />
+        <activity
+            android:name=".ui.profile.PolicyActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.profile.SettingsPrivacyActivity" />
+        <activity
+            android:name=".ui.profile.SettingsPrivacyActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.profile.SettingsActivity" />
+        <activity
+            android:name=".ui.profile.ChangePassActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.profile.SettingsAccActivity" />
+        <activity
+            android:name=".ui.profile.ChangeGenderActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.profile.SettingsAccInfoActivity" />
+        <activity
+            android:name=".ui.profile.ChangeEmailActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.profile.SettingsAccInfoActivity" />
+        <activity
+            android:name=".ui.profile.SettingsAccInfoActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.profile.SettingsAccActivity" />
+        <activity
+            android:name=".ui.profile.SettingsAccActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.profile.SettingsActivity" />
+        <activity
             android:name=".ui.createpost.CreatePostActivity"
-            android:parentActivityName=".ui.createpost.SelectCategoryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".ui.createpost.SelectCategoryActivity" />
         <activity
             android:name=".ui.createpost.SelectCategoryActivity"
             android:exported="false" />
