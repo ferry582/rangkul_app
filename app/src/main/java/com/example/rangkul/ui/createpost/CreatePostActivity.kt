@@ -7,10 +7,7 @@ import androidx.activity.viewModels
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ActivityCreatePostBinding
 import com.example.rangkul.ui.MainActivity
-import com.example.rangkul.utils.UiState
-import com.example.rangkul.utils.hide
-import com.example.rangkul.utils.show
-import com.example.rangkul.utils.toast
+import com.example.rangkul.utils.*
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
@@ -34,11 +31,16 @@ class CreatePostActivity : AppCompatActivity() {
         selectedCategory = intent.getStringExtra("SELECTED_CATEGORY").toString()
         binding.tvSelectedCategory.text = selectedCategory
 
+        // Set User name
+        viewModel.getSessionData {
+            binding.tvUserName.text = it?.userName?.capitalizeWords()
+        }
+
         binding.chipGroupPostType.setOnCheckedChangeListener { group, _ ->
             val ids = group.checkedChipIds
             for (id in ids) {
                 val chip: Chip = group.findViewById(id!!)
-                selectedCategory = chip.text.toString()
+                postType = chip.text.toString()
 
                 when (chip.text) {
                     "Public" -> {
@@ -63,23 +65,25 @@ class CreatePostActivity : AppCompatActivity() {
         // publish post
         binding.btPublish.setOnClickListener {
             if (inputValidation()) {
-                viewModel.addPost(
-                    PostData(
-                        postId = "",
-                        createdBy = "testUserId",
-                        createdAt = Date(),
-                        caption = binding.etCaption.text.toString(),
-                        category = selectedCategory,
-                        image = "null",
-                        type = postType,
-                        modifiedAt = Date(),
-                        userName = "",
-                        profilePicture = "",
-                        userBadge = "",
-                        commentsCount = 0,
-                        likesCount = 0
+                viewModel.getSessionData { user ->
+                    viewModel.addPost(
+                        PostData(
+                            postId = "",
+                            createdBy = user?.userId ?: "",
+                            createdAt = Date(),
+                            caption = binding.etCaption.text.toString(),
+                            category = selectedCategory,
+                            image = "null",
+                            type = postType,
+                            modifiedAt = Date(),
+                            userName = user?.userName ?: "",
+                            profilePicture = user?.profilePicture ?: "",
+                            userBadge = user?.badge ?: "",
+                            commentsCount = 0,
+                            likesCount = 0
+                        )
                     )
-                )
+                }
             }
         }
 

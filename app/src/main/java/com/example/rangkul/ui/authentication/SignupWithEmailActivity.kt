@@ -2,18 +2,24 @@ package com.example.rangkul.ui.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
-import androidx.lifecycle.ViewModelProvider
+import com.example.rangkul.data.model.UserData
 import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.databinding.ActivitySignupWithEmailBinding
+import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
+import com.example.rangkul.utils.toast
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
+@AndroidEntryPoint
 class SignupWithEmailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupWithEmailBinding
-    private lateinit var viewModel: AuthenticationViewModel
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,26 +28,7 @@ class SignupWithEmailActivity : AppCompatActivity() {
 
         setToolbar()
 
-        viewModel = ViewModelProvider(
-            this, ViewModelProvider.AndroidViewModelFactory
-                .getInstance(application)
-        )[AuthenticationViewModel::class.java]
-
-        viewModel.getUserData().observe(this
-        ) { firebaseUser ->
-            if (firebaseUser != null) {
-                val intent = Intent(this@SignupWithEmailActivity, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.putExtra("SIGNUP_SUCCESSFUL", "true")
-                startActivity(intent)
-            }
-        }
-
-        viewModel.getProgressBarStatus().observe(this) {
-            if (!it){
-                loadingVisibility(false)
-            }
-        }
+        observer()
 
         binding.btSignUp.setOnClickListener{
             val email: String = binding.etEmail.text.toString()
@@ -49,10 +36,48 @@ class SignupWithEmailActivity : AppCompatActivity() {
             val name: String = binding.etName.text.toString()
 
             if (signupValidation(email, pass, name)) {
-                loadingVisibility(true)
-                viewModel.signUp(email, pass, name)
+                viewModel.register(
+                    email = email,
+                    password = pass,
+                    user = getUserObj()
+                )
             }
         }
+    }
+
+    private fun observer() {
+        viewModel.register.observe(this) {state ->
+            when (state) {
+                is UiState.Failure -> {
+                    loadingVisibility(false)
+                    toast(state.error)
+                }
+                UiState.Loading -> {
+                    loadingVisibility(true)
+                }
+                is UiState.Success -> {
+                    loadingVisibility(false)
+                    val intent = Intent(this@SignupWithEmailActivity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra("SIGNUP_SUCCESSFUL", "true")
+                    startActivity(intent)
+                }
+            }
+        }
+    }
+
+    private fun getUserObj(): UserData {
+        return UserData(
+            userId = "",
+            userName = binding.etName.text.toString(),
+            createdAt = Date(),
+            bio = "",
+            profilePicture = "",
+            email = binding.etEmail.text.toString(),
+            gender = "",
+            birthDate = Date(),
+            badge = "Basic" // Default value for new user
+        )
     }
 
     private fun signupValidation(email: String, pass: String, name: String): Boolean {

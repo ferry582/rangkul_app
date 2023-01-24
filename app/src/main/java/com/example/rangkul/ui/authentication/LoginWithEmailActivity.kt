@@ -2,18 +2,22 @@ package com.example.rangkul.ui.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
-import androidx.lifecycle.ViewModelProvider
 import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.databinding.ActivityLoginWithEmailBinding
+import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
+import com.example.rangkul.utils.toast
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginWithEmailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginWithEmailBinding
-    private lateinit var viewModel: AuthenticationViewModel
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,40 +26,41 @@ class LoginWithEmailActivity : AppCompatActivity() {
 
         setToolbar()
 
-        viewModel = ViewModelProvider(
-            this, ViewModelProvider.AndroidViewModelFactory
-                .getInstance(application)
-        )[AuthenticationViewModel::class.java]
-
-        viewModel.getUserData().observe(this
-        ) { firebaseUser ->
-            if (firebaseUser != null) {
-                val intent = Intent(this@LoginWithEmailActivity, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.putExtra("LOGIN_SUCCESSFUL", "true")
-                startActivity(intent)
-            }
-        }
-
-        viewModel.getProgressBarStatus().observe(this) {
-            if (!it){
-                loadingVisibility(false)
-            }
-        }
+        observer()
 
         binding.btLogIn.setOnClickListener{
             val email: String = binding.etEmail.text.toString()
             val pass: String = binding.etPassword.text.toString()
 
             if (loginValidation(email, pass)) {
-                loadingVisibility(true)
-                viewModel.logIn(email, pass)
+                viewModel.login(email, pass)
             }
         }
 
         binding.tvForgotPassword.setOnClickListener {
             val intent = Intent(this, ForgotPasswordActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun observer() {
+        viewModel.login.observe(this) {state ->
+            when (state) {
+                is UiState.Failure -> {
+                    loadingVisibility(false)
+                    toast(state.error)
+                }
+                UiState.Loading -> {
+                    loadingVisibility(true)
+                }
+                is UiState.Success -> {
+                    loadingVisibility(false)
+                    val intent = Intent(this@LoginWithEmailActivity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra("LOGIN_SUCCESSFUL", "true")
+                    startActivity(intent)
+                }
+            }
         }
     }
 

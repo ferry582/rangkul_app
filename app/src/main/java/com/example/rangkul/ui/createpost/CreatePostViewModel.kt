@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.rangkul.data.model.PostData
+import com.example.rangkul.data.model.UserData
 import com.example.rangkul.data.repository.PostRepository
 import com.example.rangkul.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,10 @@ class CreatePostViewModel @Inject constructor(private val repository: PostReposi
         repository.addPost(post) {
             _addPost.value = it
         }
+    }
+
+    fun getSessionData(result: (UserData?) -> Unit) {
+        repository.getSessionData(result)
     }
 
 }

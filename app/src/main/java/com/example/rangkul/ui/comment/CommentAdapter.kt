@@ -3,8 +3,10 @@ package com.example.rangkul.ui.comment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rangkul.R
 import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.databinding.ItemCommentBinding
+import com.example.rangkul.utils.capitalizeWords
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,9 +22,9 @@ class CommentAdapter (
         fun bind(item: CommentData) {
             binding.tvUserNameComment.apply {
                 text = if (item.userName.length > 20) {
-                    "${item.userName.substring(0,20)}..."
+                    "${item.userName.capitalizeWords().substring(0,20)}..."
                 } else {
-                    item.userName
+                    item.userName.capitalizeWords()
                 }
             }
             binding.tvTimeComment.text = sdf.format(item.commentedAt)
@@ -31,6 +33,23 @@ class CommentAdapter (
             binding.ivCommentOptions.setOnClickListener {
                 onOptionsCommentClicked.invoke(adapterPosition, item)
             }
+
+            // Set User Badge
+            binding.ivUserBadgeComment.apply {
+                when (item.userBadge) {
+                    "Trusted" -> {
+                        setImageResource(R.drawable.ic_badge_trusted)
+                    }
+                    "Psychologist" -> {
+                        setImageResource(R.drawable.ic_badge_psychologist)
+                    }
+                    else -> {
+                        setImageResource(R.drawable.ic_badge_basic)
+                    }
+                }
+            }
+
+//            binding.civProfilePictureComment.setImageResource("")
         }
     }
 

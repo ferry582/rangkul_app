@@ -9,15 +9,19 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.Window
+import androidx.activity.viewModels
 import androidx.core.app.NavUtils
-import androidx.lifecycle.ViewModelProvider
 import com.example.rangkul.R
 import com.example.rangkul.databinding.ActivityForgotPasswordBinding
+import com.example.rangkul.utils.UiState
+import com.example.rangkul.utils.toast
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ForgotPasswordActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityForgotPasswordBinding
-    private lateinit var viewModel: AuthenticationViewModel
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,29 +30,31 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
         setToolbar()
 
-        viewModel = ViewModelProvider(
-            this, ViewModelProvider.AndroidViewModelFactory
-                .getInstance(application)
-        )[AuthenticationViewModel::class.java]
-
-        viewModel.getProgressBarStatus().observe(this) {
-            if (!it){
-                loadingVisibility(false)
-            }
-        }
-
-        viewModel.getForgotPasswordStatus().observe(this) {
-            if (it){
-                sendSuccessfulMessage()
-            }
-        }
+        observer()
 
         binding.btSend.setOnClickListener{
             val email: String = binding.etEmail.text.toString()
 
             if (forgotPassValidation(email)) {
-                loadingVisibility(true)
                 viewModel.forgotPassword(email)
+            }
+        }
+    }
+
+    private fun observer() {
+        viewModel.forgotPassword.observe(this) {state ->
+            when (state) {
+                is UiState.Failure -> {
+                    loadingVisibility(false)
+                    toast(state.error)
+                }
+                UiState.Loading -> {
+                    loadingVisibility(true)
+                }
+                is UiState.Success -> {
+                    loadingVisibility(false)
+                    sendSuccessfulMessage()
+                }
             }
         }
     }

@@ -4,13 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.rangkul.R
 import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ActivityPostCommentBinding
-import com.example.rangkul.utils.UiState
-import com.example.rangkul.utils.hide
-import com.example.rangkul.utils.show
-import com.example.rangkul.utils.toast
+import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
@@ -67,21 +65,19 @@ class CommentActivity : AppCompatActivity() {
         // Add Comment
         binding.tvCommentPost.setOnClickListener {
             if (inputValidation()) {
-                viewModel.addComment(
-                    CommentData(
-                        commentId = "",
-                        commentedBy = "",
-                        commentedAt = Date(),
-                        comment = binding.etComment.text.toString(),
-                        userName = "",
-                        profilePicture = "",
-                        userBadge = ""
-                    ), objectPost!!.postId
-                )
-
-//                // Refresh list after add the new one
-//                // *find better solution, so the recylerview can update data automatically
-//                viewModel.getComments(objectPost!!.postId)
+                viewModel.getSessionData { user ->
+                    viewModel.addComment(
+                        CommentData(
+                            commentId = "",
+                            commentedBy = user?.userId ?: "",
+                            commentedAt = Date(),
+                            comment = binding.etComment.text.toString(),
+                            userName = user?.userName ?: "",
+                            profilePicture = user?.profilePicture ?: "",
+                            userBadge = user?.badge ?: ""
+                        ), objectPost!!.postId
+                    )
+                }
             }
         }
 
@@ -119,20 +115,35 @@ class CommentActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
         binding.tvUserNamePost.apply {
             text = if (objectPost?.userName?.length!! > 20) {
-                "${objectPost?.userName?.substring(0,20)}..."
+                "${objectPost?.userName?.capitalizeWords()?.substring(0,20)}..."
             } else {
-                objectPost?.userName
+                objectPost?.userName?.capitalizeWords()
             }
         }
         binding.tvCategoryPost.text = objectPost?.category
         binding.tvTimePost.text = sdf.format(objectPost?.createdAt!!)
         binding.tvCaptionPost.text = objectPost?.caption
+
+        // Set User Badge
+        binding.ivUserBadgePost.apply {
+            when (objectPost?.userBadge) {
+                "Trusted" -> {
+                    setImageResource(R.drawable.ic_badge_trusted)
+                }
+                "Psychologist" -> {
+                    setImageResource(R.drawable.ic_badge_psychologist)
+                }
+                else -> {
+                    setImageResource(R.drawable.ic_badge_basic)
+                }
+            }
+        }
     }
 
     private fun setToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(com.example.rangkul.R.drawable.ic_back_grey)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_grey)
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 

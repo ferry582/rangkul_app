@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.rangkul.data.model.CommentData
+import com.example.rangkul.data.model.UserData
 import com.example.rangkul.data.repository.PostRepository
 import com.example.rangkul.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,7 @@ class CommentViewModel @Inject constructor(private val repository: PostRepositor
     val getComments: LiveData<UiState<List<CommentData>>>
         get() = _getComments
 
-    fun getComments(postId: String,){
+    fun getComments(postId: String){
         _getComments.value = UiState.Loading
         repository.getComments(postId) {
             _getComments.value = it
@@ -33,5 +34,10 @@ class CommentViewModel @Inject constructor(private val repository: PostRepositor
             _addComment.value = it
         }
     }
+
+    fun getSessionData(result: (UserData?) -> Unit) {
+        repository.getSessionData(result)
+    }
+
 
 }

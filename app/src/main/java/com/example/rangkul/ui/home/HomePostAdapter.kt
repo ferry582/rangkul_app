@@ -3,8 +3,10 @@ package com.example.rangkul.ui.home
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rangkul.R
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ItemPostBinding
+import com.example.rangkul.utils.capitalizeWords
 import com.example.rangkul.utils.hide
 import java.text.SimpleDateFormat
 import java.util.*
@@ -13,7 +15,8 @@ class HomePostAdapter (
     val onOptionClicked: (Int, PostData) -> Unit,
     val onLikeClicked: (Int, PostData) -> Unit,
     val onCommentClicked: (Int, PostData) -> Unit,
-    val onBadgeClicked: (Int, PostData) -> Unit
+    val onBadgeClicked: (Int, PostData) -> Unit,
+    val getIsPostLikedData: (Int, PostData) -> Boolean
 ): RecyclerView.Adapter<HomePostAdapter.PostViewHolder>(){
 
     private var list: MutableList<PostData> = arrayListOf()
@@ -24,9 +27,9 @@ class HomePostAdapter (
         fun bind(item: PostData) {
             binding.tvUserNamePost.apply {
                 text = if (item.userName.length > 20) {
-                    "${item.userName.substring(0,20)}..."
+                    "${item.userName.capitalizeWords().substring(0,20)}..."
                 } else {
-                    item.userName
+                    item.userName.capitalizeWords()
                 }
             }
             binding.tvCategoryPost.text = item.category
@@ -35,19 +38,51 @@ class HomePostAdapter (
             binding.tvLikeCountPost.text = item.likesCount.toString()
             binding.tvCommentCountPost.text = item.commentsCount.toString()
 
-            binding.ivLikeButtonPost.setOnClickListener {
+            // Set Profile Picture
+            binding.civProfilePicturePost.apply {
+                if (item.category == "Anonymous") {
+                    setImageResource(R.drawable.ic_profile_picture_anonymous)
+                } else {
+                    setImageResource(R.drawable.ic_profile_picture_default)
+                }
+            }
 
+            // Set User Badge
+            binding.ivUserBadgePost.apply {
+                when (item.userBadge) {
+                    "Trusted" -> {
+                        setImageResource(R.drawable.ic_badge_trusted)
+                    }
+                    "Psychologist" -> {
+                        setImageResource(R.drawable.ic_badge_psychologist)
+                    }
+                    else -> {
+                        setImageResource(R.drawable.ic_badge_basic)
+                    }
+                }
+            }
+
+            // Hide cvImagePost when the post has no image
+            if (item.image == "null") {
+                binding.cvImagePost.hide()
+            }
+
+            getIsPostLikedData.invoke(adapterPosition, item).apply {
+                if (this) {
+                    binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_solid)
+                } else {
+                    binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_light)
+                }
+            }
+
+            binding.ivLikeButtonPost.setOnClickListener {
+                onLikeClicked.invoke(adapterPosition, item)
             }
             binding.ivCommentButtonPost.setOnClickListener {
                 onCommentClicked.invoke(adapterPosition, item)
             }
             binding.ivPostOptions.setOnClickListener {
 
-            }
-
-            // Hide cvImagePost when the post has no image
-            if (item.image == "null") {
-                binding.cvImagePost.hide()
             }
         }
     }
