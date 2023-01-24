@@ -89,7 +89,7 @@ class SignupWithEmailActivity : AppCompatActivity() {
             binding.tilPassword.isPasswordVisibilityToggleEnabled = false
             binding.etPassword.error = "Please enter password"
             false
-        } else if (!name.onlyLettersAndSpace()) {
+        } else if (!isOnlyLettersAndSpace(name)) {
             binding.etName.error = "Name should be contain alphabet only"
             false
         }
@@ -113,6 +113,17 @@ class SignupWithEmailActivity : AppCompatActivity() {
             binding.tvSignup.show()
             binding.progressBar.hide()
         }
+    }
+
+    private fun isOnlyLettersAndSpace(name: String): Boolean {
+        var x = true
+        for(i in name) {
+            if (!i.isLetter() && !i.isWhitespace()) {
+                x = false
+                break
+            }
+        }
+        return x
     }
 
     private fun isValidPassword(pass: String): Boolean {

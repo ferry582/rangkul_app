@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Rangkul"
         tools:targetApi="31">
         <activity
+            android:name=".ui.search.CategoryContentActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.comment.CommentActivity"
             android:exported="false" />
         <activity

@@ -22,7 +22,7 @@ class HomeFragment : Fragment() {
     lateinit var binding: FragmentHomeBinding
     private val viewModel: PostViewModel by viewModels()
     private val adapter by lazy {
-        HomePostAdapter(
+        PostAdapter(
             onCommentClicked = { pos, item ->
                 val intent = Intent(requireContext(), CommentActivity::class.java)
                 intent.putExtra("OBJECT_POST", item)
@@ -110,8 +110,12 @@ class HomeFragment : Fragment() {
 
         // Get the first Name
         binding.tvUserName.apply {
-            val firstSpace: Int = currentUserData()?.userName!!.indexOf(" ") // detect the first space character
-            val firstName: String = currentUserData()?.userName!!.substring(0,firstSpace) // get everything unto the first space character
+            val firstName: String = if(currentUserData()?.userName!!.contains(" ")) {
+                val firstSpace: Int = currentUserData()?.userName!!.indexOf(" ") // detect the first space character
+                currentUserData()?.userName!!.substring(0,firstSpace) // get everything unto the first space character
+            } else {
+                currentUserData()?.userName!!
+            }
 
             text =
                 if (firstName.length > 20) {
@@ -174,7 +178,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun currentUserData(): UserData? {
+    private fun currentUserData(): UserData {
         var user = UserData()
         viewModel.getSessionData {
             if (it != null) {

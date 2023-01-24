@@ -50,4 +50,16 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
         repository.getSessionData(result)
     }
 
+    // Used in CategoryContentActivity
+    private val _postsCategory = MutableLiveData<UiState<List<PostData>>>()
+    val postCategory: LiveData<UiState<List<PostData>>>
+        get() = _postsCategory
+
+    fun getPostsCategory(category: String){
+        _postsCategory.value = UiState.Loading
+        repository.getPostsCategory(category) {
+            _postsCategory.value = it
+        }
+    }
+
 }

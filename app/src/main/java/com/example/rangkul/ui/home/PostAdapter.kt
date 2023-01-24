@@ -10,13 +10,13 @@ import com.example.rangkul.utils.hide
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HomePostAdapter (
+class PostAdapter (
     val onOptionClicked: (Int, PostData) -> Unit,
     val onLikeClicked: (Int, PostData) -> Unit,
     val onCommentClicked: (Int, PostData) -> Unit,
     val onBadgeClicked: (Int, PostData) -> Unit,
     val getIsPostLikedData: (Int, PostData) -> Boolean
-): RecyclerView.Adapter<HomePostAdapter.PostViewHolder>(){
+): RecyclerView.Adapter<PostAdapter.PostViewHolder>(){
 
     private var list: MutableList<PostData> = arrayListOf()
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)

@@ -1,10 +1,7 @@
 package com.example.rangkul.di
 
 import android.content.SharedPreferences
-import com.example.rangkul.data.repository.AuthRepository
-import com.example.rangkul.data.repository.AuthRepositoryImp
-import com.example.rangkul.data.repository.PostRepository
-import com.example.rangkul.data.repository.PostRepositoryImp
+import com.example.rangkul.data.repository.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
@@ -36,5 +33,13 @@ object RepositoryModule {
         gson: Gson
     ): AuthRepository {
         return AuthRepositoryImp(database, auth, appPreferences, gson)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoryRepository(
+        database: FirebaseFirestore,
+    ): CategoryRepository {
+        return CategoryRepositoryImp(database)
     }
 }

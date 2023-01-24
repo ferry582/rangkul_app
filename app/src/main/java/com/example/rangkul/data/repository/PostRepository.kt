@@ -14,5 +14,6 @@ interface PostRepository {
     fun getIsPostLiked(postId: String, currentUserId: String, result: (UiState<Boolean>) -> Unit)
     fun addLike(like: LikeData, postId: String, currentUserId: String, result: (UiState<String>) -> Unit)
     fun getSessionData(result: (UserData?) -> Unit)
+    fun getPostsCategory(category: String, result: (UiState<List<PostData>>) -> Unit)
 
 }

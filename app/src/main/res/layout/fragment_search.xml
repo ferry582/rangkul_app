@@ -1,15 +1,314 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.search.SearchFragment"
-    android:background="@color/mainBackground">
+    android:background="@color/mainBackground"
+    android:paddingHorizontal="@dimen/safe_margin">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="search" />
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/searchToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvTitleToolbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:includeFontPadding="false"
+                    android:text="Search"
+                    android:textAlignment="center"
+                    android:textColor="@color/textBlack"
+                    android:textSize="22sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_weight="2"
+                android:background="@drawable/shape_text_input"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center_vertical|start"
+                android:hint="Search People"
+                android:maxLines="1"
+                android:paddingHorizontal="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="13dp"
+                android:textColor="@color/textBlack"
+                android:textColorHint="@color/textGrey"
+                android:textSize="16sp"
+                android:drawableLeft="@drawable/ic_search_edit_text"
+                android:drawablePadding="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/searchToolbar"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitleCategories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:includeFontPadding="false"
+                android:text="Categories"
+                android:textAlignment="center"
+                android:textColor="@color/textBlack"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etSearch" />
+
+            <GridLayout
+                android:id="@+id/gridCategory"
+                android:layout_width="0dp"
+                android:layout_height="1310dp"
+                android:layout_marginTop="5dp"
+                android:rowCount="10"
+                android:columnCount="2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitleCategories">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_mental_health"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_mentalhealth"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_relationship"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_relationship" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_family"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_family"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_health"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_health" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_abuse"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_abuse"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_bullying"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_cateogry_bullying" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_sara"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_sara"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_depression"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_depression" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_harassment"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_harassment"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_addiction"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_addictioin" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_work"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_work"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_education"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_education" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_personality"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_personality"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_body_shaming"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_bodyshaming" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_anxiety"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_anxiety"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_friends"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_friends" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_traumatic"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_traumatic"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_financial"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_financial" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_selfharm"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_selfharm"
+                    android:layout_marginRight="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_discimination"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:layout_gravity="fill"
+                    app:srcCompat="@drawable/il_category_discrimination" />
+
+            </GridLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
