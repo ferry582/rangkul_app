@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.rangkul.R
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ItemPostBinding
-import com.example.rangkul.utils.capitalizeWords
 import com.example.rangkul.utils.hide
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,10 +25,14 @@ class HomePostAdapter (
 
         fun bind(item: PostData) {
             binding.tvUserNamePost.apply {
-                text = if (item.userName.length > 20) {
-                    "${item.userName.capitalizeWords().substring(0,20)}..."
+                text = if (item.type == "Anonymous") {
+                    "Anonymous"
                 } else {
-                    item.userName.capitalizeWords()
+                    if (item.userName.length > 20) {
+                        "${item.userName.substring(0,20)}..."
+                    } else {
+                        item.userName
+                    }
                 }
             }
             binding.tvCategoryPost.text = item.category
@@ -40,7 +43,7 @@ class HomePostAdapter (
 
             // Set Profile Picture
             binding.civProfilePicturePost.apply {
-                if (item.category == "Anonymous") {
+                if (item.type == "Anonymous") {
                     setImageResource(R.drawable.ic_profile_picture_anonymous)
                 } else {
                     setImageResource(R.drawable.ic_profile_picture_default)
@@ -49,15 +52,19 @@ class HomePostAdapter (
 
             // Set User Badge
             binding.ivUserBadgePost.apply {
-                when (item.userBadge) {
-                    "Trusted" -> {
-                        setImageResource(R.drawable.ic_badge_trusted)
-                    }
-                    "Psychologist" -> {
-                        setImageResource(R.drawable.ic_badge_psychologist)
-                    }
-                    else -> {
-                        setImageResource(R.drawable.ic_badge_basic)
+                if (item.type == "Anonymous") {
+                    hide()
+                } else {
+                    when (item.userBadge) {
+                        "Trusted" -> {
+                            setImageResource(R.drawable.ic_badge_trusted)
+                        }
+                        "Psychologist" -> {
+                            setImageResource(R.drawable.ic_badge_psychologist)
+                        }
+                        else -> {
+                            setImageResource(R.drawable.ic_badge_basic)
+                        }
                     }
                 }
             }

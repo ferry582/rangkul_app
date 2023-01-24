@@ -8,14 +8,13 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
+import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.FragmentHomeBinding
 import com.example.rangkul.ui.comment.CommentActivity
-import com.example.rangkul.utils.UiState
-import com.example.rangkul.utils.hide
-import com.example.rangkul.utils.show
-import com.example.rangkul.utils.toast
+import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -56,6 +55,19 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setMessage()
+
+        // Get posts based on type
+        binding.chipForYou.setOnClickListener {
+            viewModel.getPosts("All")
+        }
+        binding.chipFollowing.setOnClickListener {
+
+        }
+        binding.chipSpeakUp.setOnClickListener {
+            viewModel.getPosts("Anonymous")
+        }
+
         // Configure Post RecyclerView
         binding.rvPost.adapter = adapter
         binding.rvPost.layoutManager = LinearLayoutManager(context)
@@ -63,7 +75,7 @@ class HomeFragment : Fragment() {
         binding.rvPost.isNestedScrollingEnabled = true
 
         //Get post list
-        viewModel.getPosts()
+        viewModel.getPosts("All")
         viewModel.post.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
@@ -83,11 +95,36 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun setMessage() {
+        val c = Calendar.getInstance()
+        val timeOfDay = c[Calendar.HOUR_OF_DAY]
+
+        binding.tvMessage.text =
+            when (timeOfDay) {
+                in 0..11 -> "Good Morning"
+                in 12..15 -> "Good Afternoon"
+                in 16..20 -> "Good Evening"
+                in 21..23 -> "Good Night"
+                else -> "Something wrong!"
+        }
+
+        // Get the first Name
+        binding.tvUserName.apply {
+            val firstSpace: Int = currentUserData()?.userName!!.indexOf(" ") // detect the first space character
+            val firstName: String = currentUserData()?.userName!!.substring(0,firstSpace) // get everything unto the first space character
+
+            text =
+                if (firstName.length > 20) {
+                    "${firstName.substring(0,20)}...!"
+                } else {
+                    "${firstName}!"
+                }
+        }
+    }
+
     private fun isPostLiked(item: PostData): Boolean {
 
-        viewModel.getSessionData { user ->
-            viewModel.getIsPostLiked(item.postId, user?.userId ?: "")
-        }
+        viewModel.getIsPostLiked(item.postId, currentUserData()!!.userId)
         var isLiked = false
 
         viewModel.getIsPostLiked.observe(viewLifecycleOwner) {state ->
@@ -111,14 +148,12 @@ class HomeFragment : Fragment() {
 
     private fun addLike(item: PostData) {
         // Add Like
-        viewModel.getSessionData { user ->
-            viewModel.addLike(
-                LikeData(
-                    likedBy = "",
-                    likedAt = Date(),
-                ), item.postId, user?.userId ?: ""
-            )
-        }
+        viewModel.addLike(
+            LikeData(
+                likedBy = "",
+                likedAt = Date(),
+            ), item.postId, currentUserData()!!.userId
+        )
 
         viewModel.addLike.observe(this) {state ->
             when(state) {
@@ -139,4 +174,13 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun currentUserData(): UserData? {
+        var user = UserData()
+        viewModel.getSessionData {
+            if (it != null) {
+                user = it
+            }
+        }
+        return user
+    }
 }

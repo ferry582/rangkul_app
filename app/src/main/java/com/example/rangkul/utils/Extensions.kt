@@ -27,3 +27,5 @@ fun String.capitalizeWords(): String = split(" ").joinToString(" ") { it.replace
         Locale.getDefault()
     ) else str.toString()
 } }
+
+fun String.onlyLettersAndSpace(): Boolean = (firstOrNull { !it.isLetter() && !it.isWhitespace() } == null)

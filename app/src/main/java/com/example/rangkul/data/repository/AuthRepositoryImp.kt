@@ -29,7 +29,7 @@ class AuthRepositoryImp(private val database: FirebaseFirestore,
                                     id = it.result.user?.uid ?: "") {user ->
                                     if (user == null) {
                                         result.invoke(
-                                            UiState.Failure("Sign Up Successful, Session Failed to store")
+                                            UiState.Failure("Session Failed to store")
                                         )
                                     } else {
                                         result.invoke(

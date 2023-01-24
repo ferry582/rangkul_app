@@ -8,10 +8,7 @@ import androidx.core.app.NavUtils
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.databinding.ActivitySignupWithEmailBinding
-import com.example.rangkul.utils.UiState
-import com.example.rangkul.utils.hide
-import com.example.rangkul.utils.show
-import com.example.rangkul.utils.toast
+import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -35,7 +32,7 @@ class SignupWithEmailActivity : AppCompatActivity() {
             val pass: String = binding.etPassword.text.toString()
             val name: String = binding.etName.text.toString()
 
-            if (signupValidation(email, pass, name)) {
+            if (signupValidation(email, pass, name.trim())) {
                 viewModel.register(
                     email = email,
                     password = pass,
@@ -69,7 +66,7 @@ class SignupWithEmailActivity : AppCompatActivity() {
     private fun getUserObj(): UserData {
         return UserData(
             userId = "",
-            userName = binding.etName.text.toString(),
+            userName = binding.etName.text.toString().capitalizeWords(),
             createdAt = Date(),
             bio = "",
             profilePicture = "",
@@ -92,7 +89,11 @@ class SignupWithEmailActivity : AppCompatActivity() {
             binding.tilPassword.isPasswordVisibilityToggleEnabled = false
             binding.etPassword.error = "Please enter password"
             false
-        } else {
+        } else if (!name.onlyLettersAndSpace()) {
+            binding.etName.error = "Name should be contain alphabet only"
+            false
+        }
+        else {
             if (isValidPassword(pass)) {
                 true
             } else {

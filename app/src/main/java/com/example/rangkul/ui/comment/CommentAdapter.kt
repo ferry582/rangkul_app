@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.rangkul.R
 import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.databinding.ItemCommentBinding
-import com.example.rangkul.utils.capitalizeWords
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,9 +21,9 @@ class CommentAdapter (
         fun bind(item: CommentData) {
             binding.tvUserNameComment.apply {
                 text = if (item.userName.length > 20) {
-                    "${item.userName.capitalizeWords().substring(0,20)}..."
+                    "${item.userName.substring(0,20)}..."
                 } else {
-                    item.userName.capitalizeWords()
+                    item.userName
                 }
             }
             binding.tvTimeComment.text = sdf.format(item.commentedAt)

@@ -10,6 +10,7 @@ object FirestoreCollection {
 object FirestoreDocumentField {
     const val COMMENTS_COUNT = "commentsCount"
     const val LIKES_COUNT = "likesCount"
+    const val POST_TYPE = "type"
 }
 
 object SharedPrefConstants {

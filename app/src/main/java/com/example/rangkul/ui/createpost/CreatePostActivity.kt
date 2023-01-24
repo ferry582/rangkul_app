@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.example.rangkul.data.model.PostData
+import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.ActivityCreatePostBinding
 import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.utils.*
@@ -32,9 +33,7 @@ class CreatePostActivity : AppCompatActivity() {
         binding.tvSelectedCategory.text = selectedCategory
 
         // Set User name
-        viewModel.getSessionData {
-            binding.tvUserName.text = it?.userName?.capitalizeWords()
-        }
+        binding.tvUserName.text = currentUserData()!!.userName
 
         binding.chipGroupPostType.setOnCheckedChangeListener { group, _ ->
             val ids = group.checkedChipIds
@@ -65,25 +64,23 @@ class CreatePostActivity : AppCompatActivity() {
         // publish post
         binding.btPublish.setOnClickListener {
             if (inputValidation()) {
-                viewModel.getSessionData { user ->
-                    viewModel.addPost(
-                        PostData(
-                            postId = "",
-                            createdBy = user?.userId ?: "",
-                            createdAt = Date(),
-                            caption = binding.etCaption.text.toString(),
-                            category = selectedCategory,
-                            image = "null",
-                            type = postType,
-                            modifiedAt = Date(),
-                            userName = user?.userName ?: "",
-                            profilePicture = user?.profilePicture ?: "",
-                            userBadge = user?.badge ?: "",
-                            commentsCount = 0,
-                            likesCount = 0
-                        )
+                viewModel.addPost(
+                    PostData(
+                        postId = "",
+                        createdBy = currentUserData()!!.userId,
+                        createdAt = Date(),
+                        caption = binding.etCaption.text.toString(),
+                        category = selectedCategory,
+                        image = "null",
+                        type = postType,
+                        modifiedAt = Date(),
+                        userName = currentUserData()!!.userName,
+                        profilePicture = currentUserData()!!.profilePicture,
+                        userBadge = currentUserData()!!.badge,
+                        commentsCount = 0,
+                        likesCount = 0
                     )
-                }
+                )
             }
         }
 
@@ -107,6 +104,16 @@ class CreatePostActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun currentUserData(): UserData {
+        var user = UserData()
+        viewModel.getSessionData {
+            if (it != null) {
+                user = it
+            }
+        }
+        return user
     }
 
     private fun loadingVisibility(isLoading: Boolean) {

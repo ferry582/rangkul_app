@@ -19,22 +19,35 @@ class PostRepositoryImp(
     private val gson: Gson
 ): PostRepository {
 
-    override fun getPosts(result: (UiState<List<PostData>>) -> Unit) {
-        database.collection(FirestoreCollection.POST).orderBy("createdAt", Query.Direction.DESCENDING).get()
-            .addOnSuccessListener {
-                val posts = arrayListOf<PostData>()
-                for (document in it) {
-                    val post = document.toObject(PostData::class.java)
-                    posts.add(post)
-                }
-                result.invoke(
-                    UiState.Success(posts)
-                )
+    override fun getPosts(type: String, result: (UiState<List<PostData>>) -> Unit) {
+        val document =
+            if (type == "Anonymous") {
+                database.collection(FirestoreCollection.POST)
+                    .whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
+                    .orderBy("createdAt", Query.Direction.DESCENDING)
+            } else {
+                database.collection(FirestoreCollection.POST)
+                    .orderBy("createdAt", Query.Direction.DESCENDING)
             }
-            .addOnFailureListener {
-                result.invoke(
-                    UiState.Failure(it.localizedMessage)
-                )
+
+        document
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    result.invoke(
+                        UiState.Failure(it.localizedMessage)
+                    )
+                }
+
+                value?.let {
+                    val posts = arrayListOf<PostData>()
+                    for (document in it) {
+                        val post = document.toObject(PostData::class.java)
+                        posts.add(post)
+                    }
+                    result.invoke(
+                        UiState.Success(posts)
+                    )
+                }
             }
     }
 
@@ -57,21 +70,24 @@ class PostRepositoryImp(
 
     override fun getComments(postId: String, result: (UiState<List<CommentData>>) -> Unit) {
         database.collection(FirestoreCollection.POST).document(postId)
-            .collection(FirestoreCollection.COMMENT).orderBy("commentedAt", Query.Direction.DESCENDING).get()
-            .addOnSuccessListener {
-                val comments = arrayListOf<CommentData>()
-                for (document in it) {
-                    val comment = document.toObject(CommentData::class.java)
-                    comments.add(comment)
+            .collection(FirestoreCollection.COMMENT).orderBy("commentedAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    result.invoke(
+                        UiState.Failure(it.localizedMessage)
+                    )
                 }
-                result.invoke(
-                    UiState.Success(comments)
-                )
-            }
-            .addOnFailureListener {
-                result.invoke(
-                    UiState.Failure(it.localizedMessage)
-                )
+
+                value?.let {
+                    val comments = arrayListOf<CommentData>()
+                    for (document in it) {
+                        val comment = document.toObject(CommentData::class.java)
+                        comments.add(comment)
+                    }
+                    result.invoke(
+                        UiState.Success(comments)
+                    )
+                }
             }
     }
 
@@ -102,29 +118,59 @@ class PostRepositoryImp(
             }
     }
 
+//    override fun getIsPostLiked(
+//        postId: String,
+//        currentUserId: String,
+//        result: (UiState<Boolean>) -> Unit
+//    ) {
+//        val documentPost = database.collection(FirestoreCollection.POST).document(postId)
+//        val documentLike = documentPost.collection(FirestoreCollection.LIKE).document(currentUserId)
+//
+//        documentLike.get().addOnSuccessListener {
+//            if (it.exists()) {
+//                result.invoke(
+//                    UiState.Success(true)
+//                )
+//            } else {
+//                result.invoke(
+//                    UiState.Success(false)
+//                )
+//            }
+//        }.addOnFailureListener {
+//            result.invoke(
+//                UiState.Failure(it.localizedMessage)
+//            )
+//        }
+//    }
+
     override fun getIsPostLiked(
         postId: String,
         currentUserId: String,
         result: (UiState<Boolean>) -> Unit
     ) {
-        val documentPost = database.collection(FirestoreCollection.POST).document(postId)
-        val documentLike = documentPost.collection(FirestoreCollection.LIKE).document(currentUserId)
+        database.collection(FirestoreCollection.POST).document(postId)
+            .collection(FirestoreCollection.LIKE)
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    result.invoke(
+                        UiState.Failure(it.localizedMessage)
+                    )
+                }
 
-        documentLike.get().addOnSuccessListener {
-            if (it.exists()) {
-                result.invoke(
-                    UiState.Success(true)
-                )
-            } else {
-                result.invoke(
-                    UiState.Success(false)
-                )
+                value?.let {
+                    var isUserExist = false
+                    for (document in it) {
+                        val like = document.toObject(LikeData::class.java)
+                        if (like.likedBy == currentUserId) {
+                            isUserExist = true
+                            break
+                        }
+                    }
+                    result.invoke(
+                        UiState.Success(isUserExist)
+                    )
+                }
             }
-        }.addOnFailureListener {
-            result.invoke(
-                UiState.Failure(it.localizedMessage)
-            )
-        }
     }
 
     override fun addLike(

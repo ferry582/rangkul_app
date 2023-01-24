@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rangkul.R
 import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.data.model.PostData
+import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.ActivityPostCommentBinding
 import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,20 +66,19 @@ class CommentActivity : AppCompatActivity() {
         // Add Comment
         binding.tvCommentPost.setOnClickListener {
             if (inputValidation()) {
-                viewModel.getSessionData { user ->
-                    viewModel.addComment(
-                        CommentData(
-                            commentId = "",
-                            commentedBy = user?.userId ?: "",
-                            commentedAt = Date(),
-                            comment = binding.etComment.text.toString(),
-                            userName = user?.userName ?: "",
-                            profilePicture = user?.profilePicture ?: "",
-                            userBadge = user?.badge ?: ""
-                        ), objectPost!!.postId
-                    )
-                }
+                viewModel.addComment(
+                    CommentData(
+                        commentId = "",
+                        commentedBy = currentUserData()!!.userId,
+                        commentedAt = Date(),
+                        comment = binding.etComment.text.toString(),
+                        userName = currentUserData()!!.userName,
+                        profilePicture = currentUserData()!!.profilePicture,
+                        userBadge =currentUserData()!!.badge
+                    ), objectPost!!.postId
+                )
             }
+            binding.etComment.text?.clear()
         }
 
         viewModel.addComment.observe(this) {state ->
@@ -100,6 +100,16 @@ class CommentActivity : AppCompatActivity() {
         }
     }
 
+    private fun currentUserData(): UserData? {
+        var user = UserData()
+        viewModel.getSessionData {
+            if (it != null) {
+                user = it
+            }
+        }
+        return user
+    }
+
     private fun inputValidation(): Boolean {
         var isValid = true
 
@@ -115,9 +125,9 @@ class CommentActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
         binding.tvUserNamePost.apply {
             text = if (objectPost?.userName?.length!! > 20) {
-                "${objectPost?.userName?.capitalizeWords()?.substring(0,20)}..."
+                "${objectPost?.userName?.substring(0,20)}..."
             } else {
-                objectPost?.userName?.capitalizeWords()
+                objectPost?.userName
             }
         }
         binding.tvCategoryPost.text = objectPost?.category
