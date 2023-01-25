@@ -86,7 +86,7 @@
             <GridLayout
                 android:id="@+id/gridCategory"
                 android:layout_width="0dp"
-                android:layout_height="1310dp"
+                android:layout_height="1270dp"
                 android:layout_marginTop="5dp"
                 android:rowCount="10"
                 android:columnCount="2"

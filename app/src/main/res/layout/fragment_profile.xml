@@ -7,23 +7,349 @@
     tools:context=".ui.profile.ProfileFragment"
     android:background="@color/mainBackground">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btSettings"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/profileToolbar"
         android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:padding="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/btSetting"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_settings_outline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Profile"
+            android:textColor="@color/textBlack"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/profileToolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileToolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/upperLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/shape_card_background"
+                    android:elevation="0dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_width="65dp"
+                                android:layout_height="65dp"
+                                android:layout_margin="15dp"
+                                android:src="@drawable/ic_profile_picture_default" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="35dp"
+                                android:layout_marginTop="15dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/post_counter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:fontFamily="@font/poppins_semibold"
+                                    android:text="3"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:text="Posts"
+                                    android:textAlignment="center"
+                                    android:textSize="12sp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/btFollowers"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="25dp"
+                                android:layout_marginTop="15dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/following_counter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:fontFamily="@font/poppins_semibold"
+                                    android:text="53"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:text="Followers"
+                                    android:textAlignment="center"
+                                    android:textSize="12sp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/btFollowing"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="25dp"
+                                android:layout_marginTop="15dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/follower_counter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:fontFamily="@font/poppins_semibold"
+                                    android:text="84"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:text="Following"
+                                    android:textAlignment="center"
+                                    android:textSize="12sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/profile_username"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:includeFontPadding="false"
+                                android:text="Della Delila"
+                                android:textColor="@color/textBlack"
+                                android:textSize="16sp" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/ivUserBadgePost"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="3dp"
+                                app:layout_constraintBottom_toBottomOf="@+id/tvUserNamePost"
+                                app:layout_constraintStart_toEndOf="@+id/tvUserNamePost"
+                                app:layout_constraintTop_toTopOf="@+id/tvUserNamePost"
+                                app:srcCompat="@drawable/ic_badge_basic" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/profile_bio"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:text="A true lover of animals, photography, travel, restaurants and clubs!"
+                            android:textSize="12sp" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/btProfileEdit"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:layout_marginHorizontal="@dimen/safe_margin"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginBottom="@dimen/safe_margin"
+                            android:background="@drawable/selector_button_main"
+                            android:backgroundTint="#3390B1A0"
+                            android:clickable="true"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvEditProfile"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:includeFontPadding="false"
+                                android:text="Edit Profile"
+                                android:textColor="@color/greenPrimary"
+                                android:textSize="12sp"
+                                android:visibility="visible"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/shape_card_background"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="15dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Post Type"
+                            android:textColor="@color/textGrey"
+                            android:textSize="12sp" />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupPostType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginBottom="15dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tvUserName"
+                            app:selectionRequired="true"
+                            app:singleSelection="true">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipPublic"
+                                style="@style/CustomChipStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="51dp"
+                                android:checked="true"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Public"
+                                android:textSize="14sp"
+                                app:chipCornerRadius="12dp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipFollowing"
+                                style="@style/CustomChipStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="51dp"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Anonymous"
+                                android:textSize="14sp"
+                                app:chipBackgroundColor="@color/chip_pink_color"
+                                app:chipCornerRadius="12dp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipDiary"
+                                style="@style/CustomChipStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="51dp"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Speak Up!"
+                                android:textSize="14sp"
+                                app:chipBackgroundColor="@color/chip_purple_color"
+                                app:chipCornerRadius="12dp" />
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_post"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/upperLayout"
+                tools:listitem="@layout/item_post" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </ScrollView>
+
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/safe_margin"
-        android:background="@drawable/selector_button_main"
-        android:fontFamily="@font/poppins_semibold"
-        android:gravity="center"
-        android:includeFontPadding="false"
-        android:stateListAnimator="@null"
-        android:text="settings"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

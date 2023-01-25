@@ -21,6 +21,10 @@ class CategoryContentAdapter (
             binding.tvTitleArticle.text = item.title
             binding.tvSourceArticle.text = item.source
             binding.tvTimeCreated.text = sdf.format(item.createdAt)
+
+            binding.itemArticle.setOnClickListener {
+                onItemClick.invoke(adapterPosition, item)
+            }
         }
     }
 

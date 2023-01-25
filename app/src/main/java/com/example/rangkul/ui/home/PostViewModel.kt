@@ -62,4 +62,14 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
         }
     }
 
+    private val _getPostsCurrentUser = MutableLiveData<UiState<List<PostData>>>()
+    val getPostsCurrentUser: LiveData<UiState<List<PostData>>>
+        get() = _getPostsCurrentUser
+
+    fun getPostsCurrentUser(uid: String){
+        _getPostsCurrentUser.value = UiState.Loading
+        repository.getPostsCurrentUser(uid) {
+            _getPostsCurrentUser.value = it
+        }
+    }
 }

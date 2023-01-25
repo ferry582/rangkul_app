@@ -75,6 +75,30 @@ class PostRepositoryImp(
             }
     }
 
+    override fun getPostsCurrentUser(uid: String, result: (UiState<List<PostData>>) -> Unit) {
+        database.collection(FirestoreCollection.POST)
+            .whereEqualTo(FirestoreDocumentField.POST_CREATED_BY, uid)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    result.invoke(
+                        UiState.Failure(it.localizedMessage)
+                    )
+                }
+
+                value?.let {
+                    val posts = arrayListOf<PostData>()
+                    for (document in it) {
+                        val post = document.toObject(PostData::class.java)
+                        posts.add(post)
+                    }
+                    result.invoke(
+                        UiState.Success(posts)
+                    )
+                }
+            }
+    }
+
     override fun addPost(post: PostData, result: (UiState<String>) -> Unit) {
         val document = database.collection(FirestoreCollection.POST).document()
         post.postId = document.id

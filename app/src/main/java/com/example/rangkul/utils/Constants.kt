@@ -15,6 +15,7 @@ object FirestoreDocumentField {
     const val POST_CATEGORY = "category"
     const val CONTENT_TYPE = "type"
     const val CONTENT_CATEGORY = "category"
+    const val POST_CREATED_BY = "createdBy"
 }
 
 object SharedPrefConstants {

@@ -1,6 +1,7 @@
 package com.example.rangkul.ui.search
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -50,6 +51,9 @@ class CategoryContentActivity : AppCompatActivity() {
     private val adapterContent by lazy {
         CategoryContentAdapter(
             onItemClick = { pos, item ->
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.setData(Uri.parse(item.url))
+                startActivity(intent)
             }
         )
     }
