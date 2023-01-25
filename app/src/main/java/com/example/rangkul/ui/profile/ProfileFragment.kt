@@ -6,19 +6,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
-import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rangkul.R
 import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
-import com.example.rangkul.databinding.FragmentHomeBinding
 import com.example.rangkul.databinding.FragmentProfileBinding
 import com.example.rangkul.ui.comment.CommentActivity
-import com.example.rangkul.ui.home.PostAdapter
-import com.example.rangkul.ui.home.PostViewModel
+import com.example.rangkul.ui.post.PostAdapter
+import com.example.rangkul.ui.post.PostViewModel
 import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
@@ -56,7 +53,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -70,17 +67,22 @@ class ProfileFragment : Fragment() {
 //            startActivity(intent)
 //        }
 
-        binding.profileUsername.text = currentUserData().userName
+        setUserProfileData()
+
+        binding.btSettings.setOnClickListener {
+            val intent = Intent(requireContext(), SettingsActivity::class.java)
+            startActivity(intent)
+        }
 
         // Configure Post RecyclerView
         binding.rvPost.adapter = adapterPost
         binding.rvPost.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPost.setHasFixedSize(true)
-        binding.rvPost.isNestedScrollingEnabled = true
+        binding.rvPost.isNestedScrollingEnabled = false
 
         // Get post list based on the selected category
-        viewModelPost.getPostsCurrentUser(currentUserData().userId)
-        viewModelPost.getPostsCurrentUser.observe(viewLifecycleOwner) {state ->
+        viewModelPost.getPosts("null", "null", currentUserData().userId)
+        viewModelPost.getPosts.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -98,6 +100,23 @@ class ProfileFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun setUserProfileData() {
+        binding.tvUserName.text = currentUserData().userName
+        binding.ivUserBadgePost.apply {
+            when (currentUserData().badge) {
+                "Trusted" -> {
+                    setImageResource(R.drawable.ic_badge_trusted)
+                }
+                "Psychologist" -> {
+                    setImageResource(R.drawable.ic_badge_psychologist)
+                }
+                else -> {
+                    setImageResource(R.drawable.ic_badge_basic)
+                }
+            }
+        }
     }
 
     private fun isPostLiked(item: PostData): Boolean {

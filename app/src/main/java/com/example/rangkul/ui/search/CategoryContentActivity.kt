@@ -11,8 +11,8 @@ import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.ActivityCategoryContentBinding
 import com.example.rangkul.ui.comment.CommentActivity
-import com.example.rangkul.ui.home.PostAdapter
-import com.example.rangkul.ui.home.PostViewModel
+import com.example.rangkul.ui.post.PostAdapter
+import com.example.rangkul.ui.post.PostViewModel
 import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
@@ -72,7 +72,7 @@ class CategoryContentActivity : AppCompatActivity() {
         // Handle chip button clicked
         binding.chipPost.setOnClickListener {
             binding.rvPost.adapter = adapterPost
-            viewModelPost.getPostsCategory(selectedCategory)
+            viewModelPost.getPosts("null", selectedCategory, "null")
         }
         binding.chipArticle.setOnClickListener {
             binding.rvPost.adapter = adapterContent
@@ -90,8 +90,8 @@ class CategoryContentActivity : AppCompatActivity() {
         binding.rvPost.isNestedScrollingEnabled = true
 
         // Get post list based on the selected category
-        viewModelPost.getPostsCategory(selectedCategory)
-        viewModelPost.postCategory.observe(this) {state ->
+        viewModelPost.getPosts("null", selectedCategory, "null")
+        viewModelPost.getPosts.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()

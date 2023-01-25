@@ -1,4 +1,4 @@
-package com.example.rangkul.ui.home
+package com.example.rangkul.ui.post
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,6 +7,7 @@ import com.example.rangkul.R
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ItemPostBinding
 import com.example.rangkul.utils.hide
+import com.example.rangkul.utils.show
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -66,6 +67,7 @@ class PostAdapter (
                             setImageResource(R.drawable.ic_badge_basic)
                         }
                     }
+                    show()
                 }
             }
 

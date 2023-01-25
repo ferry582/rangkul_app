@@ -11,10 +11,11 @@ import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.FragmentHomeBinding
 import com.example.rangkul.ui.comment.CommentActivity
+import com.example.rangkul.ui.post.PostAdapter
+import com.example.rangkul.ui.post.PostViewModel
 import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
-
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -59,24 +60,24 @@ class HomeFragment : Fragment() {
 
         // Get posts based on type
         binding.chipForYou.setOnClickListener {
-            viewModel.getPosts("All")
+            viewModel.getPosts("All", "null", "null")
         }
         binding.chipFollowing.setOnClickListener {
 
         }
         binding.chipSpeakUp.setOnClickListener {
-            viewModel.getPosts("Anonymous")
+            viewModel.getPosts("Anonymous", "null", "null")
         }
 
         // Configure Post RecyclerView
         binding.rvPost.adapter = adapter
         binding.rvPost.layoutManager = LinearLayoutManager(context)
         binding.rvPost.setHasFixedSize(true)
-        binding.rvPost.isNestedScrollingEnabled = true
+        binding.rvPost.isNestedScrollingEnabled = false
 
         //Get post list
-        viewModel.getPosts("All")
-        viewModel.post.observe(viewLifecycleOwner) {state ->
+        viewModel.getPosts("All", "null", "null")
+        viewModel.getPosts.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -110,11 +111,11 @@ class HomeFragment : Fragment() {
 
         // Get the first Name
         binding.tvUserName.apply {
-            val firstName: String = if(currentUserData()?.userName!!.contains(" ")) {
-                val firstSpace: Int = currentUserData()?.userName!!.indexOf(" ") // detect the first space character
-                currentUserData()?.userName!!.substring(0,firstSpace) // get everything unto the first space character
+            val firstName: String = if(currentUserData().userName.contains(" ")) {
+                val firstSpace: Int = currentUserData().userName.indexOf(" ") // detect the first space character
+                currentUserData().userName.substring(0,firstSpace) // get everything unto the first space character
             } else {
-                currentUserData()?.userName!!
+                currentUserData().userName
             }
 
             text =
@@ -128,7 +129,7 @@ class HomeFragment : Fragment() {
 
     private fun isPostLiked(item: PostData): Boolean {
 
-        viewModel.getIsPostLiked(item.postId, currentUserData()!!.userId)
+        viewModel.getIsPostLiked(item.postId, currentUserData().userId)
         var isLiked = false
 
         viewModel.getIsPostLiked.observe(viewLifecycleOwner) {state ->
@@ -156,7 +157,7 @@ class HomeFragment : Fragment() {
             LikeData(
                 likedBy = "",
                 likedAt = Date(),
-            ), item.postId, currentUserData()!!.userId
+            ), item.postId, currentUserData().userId
         )
 
         viewModel.addLike.observe(this) {state ->

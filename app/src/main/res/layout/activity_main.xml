@@ -46,6 +46,8 @@
         android:background="@color/white"
         app:menu="@menu/bottom_menu"
         app:labelVisibilityMode="labeled"
+        app:itemTextAppearanceActive="@style/BottomNavigationViewTextStyle"
+        app:itemTextAppearanceInactive="@style/BottomNavigationViewTextStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>

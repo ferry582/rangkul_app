@@ -1,4 +1,4 @@
-package com.example.rangkul.ui.home
+package com.example.rangkul.ui.post
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,12 +15,12 @@ import javax.inject.Inject
 class PostViewModel @Inject constructor(private val repository: PostRepository): ViewModel() {
 
     private val _posts = MutableLiveData<UiState<List<PostData>>>()
-    val post: LiveData<UiState<List<PostData>>>
+    val getPosts: LiveData<UiState<List<PostData>>>
         get() = _posts
 
-    fun getPosts(type: String){
+    fun getPosts(type: String, category: String, uid: String,){
         _posts.value = UiState.Loading
-        repository.getPosts(type) {
+        repository.getPosts(type, category, uid) {
             _posts.value = it
         }
     }
@@ -50,26 +50,4 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
         repository.getSessionData(result)
     }
 
-    // Used in CategoryContentActivity
-    private val _postsCategory = MutableLiveData<UiState<List<PostData>>>()
-    val postCategory: LiveData<UiState<List<PostData>>>
-        get() = _postsCategory
-
-    fun getPostsCategory(category: String){
-        _postsCategory.value = UiState.Loading
-        repository.getPostsCategory(category) {
-            _postsCategory.value = it
-        }
-    }
-
-    private val _getPostsCurrentUser = MutableLiveData<UiState<List<PostData>>>()
-    val getPostsCurrentUser: LiveData<UiState<List<PostData>>>
-        get() = _getPostsCurrentUser
-
-    fun getPostsCurrentUser(uid: String){
-        _getPostsCurrentUser.value = UiState.Loading
-        repository.getPostsCurrentUser(uid) {
-            _getPostsCurrentUser.value = it
-        }
-    }
 }
