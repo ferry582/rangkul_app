@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rangkul.R
+import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ItemPostBinding
 import com.example.rangkul.utils.hide
@@ -16,10 +17,10 @@ class PostAdapter (
     val onLikeClicked: (Int, PostData) -> Unit,
     val onCommentClicked: (Int, PostData) -> Unit,
     val onBadgeClicked: (Int, PostData) -> Unit,
-    val getIsPostLikedData: (Int, PostData) -> Boolean
 ): RecyclerView.Adapter<PostAdapter.PostViewHolder>(){
 
     private var list: MutableList<PostData> = arrayListOf()
+    private var userLikeDataList: MutableList<LikeData> = arrayListOf()
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
 
     inner class PostViewHolder (val binding: ItemPostBinding): RecyclerView.ViewHolder(binding.root) {
@@ -76,12 +77,13 @@ class PostAdapter (
                 binding.cvImagePost.hide()
             }
 
-            getIsPostLikedData.invoke(adapterPosition, item).apply {
-                if (this) {
-                    binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_solid)
-                } else {
-                    binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_light)
-                }
+             /* If list of like data in users collection contain current postId,
+                means this post was liked by current user
+              */
+            if (userLikeDataList.any {it.likeId == item.postId}) {
+                binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_solid)
+            } else {
+                binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_light)
             }
 
             binding.ivLikeButtonPost.setOnClickListener {
@@ -113,6 +115,10 @@ class PostAdapter (
     fun updateList(list: MutableList<PostData>) {
         this.list = list
         notifyDataSetChanged()
+    }
+
+    fun updateUserLikeDataList(list: MutableList<LikeData>) {
+        this.userLikeDataList = list
     }
 
 //    fun removeItem(position: Int) {

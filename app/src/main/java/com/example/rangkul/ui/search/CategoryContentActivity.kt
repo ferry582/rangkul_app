@@ -42,9 +42,6 @@ class CategoryContentActivity : AppCompatActivity() {
             },
             onBadgeClicked = { pos, item ->
 
-            },
-            getIsPostLikedData = { pos, item ->
-                isPostLiked(item)
             }
         )
     }
@@ -87,7 +84,7 @@ class CategoryContentActivity : AppCompatActivity() {
         binding.rvPost.adapter = adapterPost
         binding.rvPost.layoutManager = LinearLayoutManager(this)
         binding.rvPost.setHasFixedSize(true)
-        binding.rvPost.isNestedScrollingEnabled = true
+        binding.rvPost.isNestedScrollingEnabled = false
 
         // Get post list based on the selected category
         viewModelPost.getPosts("null", selectedCategory, "null")
@@ -127,42 +124,14 @@ class CategoryContentActivity : AppCompatActivity() {
                 }
             }
         }
+
+        isPostLiked()
     }
 
-    private fun isPostLiked(item: PostData): Boolean {
-
-        viewModelPost.getIsPostLiked(item.postId, currentUserData().userId)
-        var isLiked = false
-
-        viewModelPost.getIsPostLiked.observe(this) {state ->
-            when(state) {
-                is UiState.Loading -> {
-//                    binding.progressBar.show()
-                }
-
-                is UiState.Failure -> {
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    isLiked = state.data
-                }
-            }
-        }
-
-        return isLiked
-    }
-
-    private fun addLike(item: PostData) {
-        // Add Like
-        viewModelPost.addLike(
-            LikeData(
-                likedBy = "",
-                likedAt = Date(),
-            ), item.postId, currentUserData().userId
-        )
-
-        viewModelPost.addLike.observe(this) {state ->
+    private fun isPostLiked() {
+        //Get Like data list at users collection
+        viewModelPost.getUserLikeData(currentUserData().userId)
+        viewModelPost.getUserLikeData.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -175,7 +144,31 @@ class CategoryContentActivity : AppCompatActivity() {
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-                    toast(state.data)
+                    adapterPost.updateUserLikeDataList(state.data.toMutableList())
+                }
+            }
+        }
+    }
+
+    private fun addLike(item: PostData) {
+        // Add Like
+        viewModelPost.addLike(
+            LikeData(
+                likeId = "",
+                likedAt = Date(),
+            ), item.postId, currentUserData().userId
+        )
+
+        viewModelPost.addLike.observe(this) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                }
+
+                is UiState.Failure -> {
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
                 }
             }
         }

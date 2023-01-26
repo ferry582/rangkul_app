@@ -8,7 +8,7 @@ import java.util.Date
 @kotlinx.parcelize.Parcelize
 data class LikeData (
         @DocumentId
-        val likedBy: String = "",
+        val likeId: String = "", // likeId in posts collection is user id, likeId in users collection is postId
         @ServerTimestamp
         val likedAt: Date = Date(),
 ): Parcelable

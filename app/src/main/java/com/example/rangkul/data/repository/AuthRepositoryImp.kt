@@ -44,7 +44,7 @@ class AuthRepositoryImp(private val database: FirebaseFirestore,
                                     UiState.Failure(state.error)
                                 )
                             }
-                            UiState.Loading -> TODO()
+                            UiState.Loading -> {}
                         }
                     }
                 } else {

@@ -163,13 +163,67 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <LinearLayout
+                android:id="@+id/linearNoCommentMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="75dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/constraintPost">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivNoCommentIllustration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="56dp"
+                    android:adjustViewBounds="true"
+                    android:clipToOutline="true"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/il_no_comment"
+                    tools:targetApi="s" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvMessageTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-25dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:includeFontPadding="false"
+                    android:text="There is no comment yet!"
+                    android:textAlignment="center"
+                    android:textColor="@color/textBlack"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvMessageDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:includeFontPadding="false"
+                    android:text="Be the first to comment positively in this post"
+                    android:textAlignment="center"
+                    android:textColor="@color/textGrey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/safe_margin"
                 android:layout_marginTop="15dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -221,55 +275,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/etComment"
         app:layout_constraintEnd_toEndOf="@+id/etComment"
         app:layout_constraintTop_toBottomOf="@+id/nestedScrollView" />
-
-    <LinearLayout
-        android:id="@+id/linearNoCommentMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/etComment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivNoCommentIllustration"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            app:srcCompat="@drawable/il_no_comment" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvMessageTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-25dp"
-            android:fontFamily="@font/poppins_semibold"
-            android:includeFontPadding="false"
-            android:text="There is no comment yet!"
-            android:textAlignment="center"
-            android:textColor="@color/textBlack"
-            android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvMessageDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:fontFamily="@font/poppins_medium"
-            android:includeFontPadding="false"
-            android:text="Be the first to comment positively in this post"
-            android:textAlignment="center"
-            android:textColor="@color/textGrey"
-            android:textSize="12sp"
-            app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"

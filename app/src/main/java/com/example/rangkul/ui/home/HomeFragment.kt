@@ -14,6 +14,7 @@ import com.example.rangkul.ui.comment.CommentActivity
 import com.example.rangkul.ui.post.PostAdapter
 import com.example.rangkul.ui.post.PostViewModel
 import com.example.rangkul.utils.*
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -37,9 +38,6 @@ class HomeFragment : Fragment() {
             },
             onBadgeClicked = { pos, item ->
 
-            },
-            getIsPostLikedData = { pos, item ->
-                isPostLiked(item)
             }
         )
     }
@@ -59,14 +57,25 @@ class HomeFragment : Fragment() {
         setMessage()
 
         // Get posts based on type
-        binding.chipForYou.setOnClickListener {
-            viewModel.getPosts("All", "null", "null")
-        }
-        binding.chipFollowing.setOnClickListener {
+        binding.chipGroupPostType.setOnCheckedChangeListener { group, _ ->
+            val ids = group.checkedChipIds
+            for (id in ids) {
+                val chip: Chip = group.findViewById(id!!)
 
-        }
-        binding.chipSpeakUp.setOnClickListener {
-            viewModel.getPosts("Anonymous", "null", "null")
+                when (chip.text) {
+                    "For You" -> {
+                        viewModel.getPosts("All", "null", "null")
+                    }
+
+                    "Following" -> {
+
+                    }
+
+                    else -> {
+                        viewModel.getPosts("Anonymous", "null", "null")
+                    }
+                }
+            }
         }
 
         // Configure Post RecyclerView
@@ -75,7 +84,7 @@ class HomeFragment : Fragment() {
         binding.rvPost.setHasFixedSize(true)
         binding.rvPost.isNestedScrollingEnabled = false
 
-        //Get post list
+        // Get post list
         viewModel.getPosts("All", "null", "null")
         viewModel.getPosts.observe(viewLifecycleOwner) {state ->
             when(state) {
@@ -91,6 +100,31 @@ class HomeFragment : Fragment() {
                 is UiState.Success -> {
                     binding.progressBar.hide()
                     adapter.updateList(state.data.toMutableList())
+                }
+            }
+        }
+
+        isPostLiked()
+
+    }
+
+    private fun isPostLiked() {
+        //Get Like data list at users collection
+        viewModel.getUserLikeData(currentUserData().userId)
+        viewModel.getUserLikeData.observe(viewLifecycleOwner) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    adapter.updateUserLikeDataList(state.data.toMutableList())
                 }
             }
         }
@@ -127,35 +161,11 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun isPostLiked(item: PostData): Boolean {
-
-        viewModel.getIsPostLiked(item.postId, currentUserData().userId)
-        var isLiked = false
-
-        viewModel.getIsPostLiked.observe(viewLifecycleOwner) {state ->
-            when(state) {
-                is UiState.Loading -> {
-//                    binding.progressBar.show()
-                }
-
-                is UiState.Failure -> {
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    isLiked = state.data
-                }
-            }
-        }
-
-        return isLiked
-    }
-
     private fun addLike(item: PostData) {
         // Add Like
         viewModel.addLike(
             LikeData(
-                likedBy = "",
+                likeId = "",
                 likedAt = Date(),
             ), item.postId, currentUserData().userId
         )
@@ -163,17 +173,13 @@ class HomeFragment : Fragment() {
         viewModel.addLike.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
-                    binding.progressBar.show()
                 }
 
                 is UiState.Failure -> {
-                    binding.progressBar.hide()
                     toast(state.error)
                 }
 
                 is UiState.Success -> {
-                    binding.progressBar.hide()
-                    toast(state.data)
                 }
             }
         }

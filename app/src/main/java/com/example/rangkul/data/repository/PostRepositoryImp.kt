@@ -20,31 +20,28 @@ class PostRepositoryImp(
 ): PostRepository {
 
     override fun getPosts(type: String, category: String, uid: String, result: (UiState<List<PostData>>) -> Unit) {
+        val postRef = database.collection(FirestoreCollection.POST)
         // Initialize the document based on the usage
         val document =
             if (category != "null") {
                 // Only take posts based on the post's category
-                database.collection(FirestoreCollection.POST)
-                    .whereEqualTo(FirestoreDocumentField.POST_CATEGORY, category)
+                postRef.whereEqualTo(FirestoreDocumentField.POST_CATEGORY, category)
                     .orderBy("createdAt", Query.Direction.DESCENDING)
             } else if (uid != "null") {
                 // Only take posts that belongs to current user
-                database.collection(FirestoreCollection.POST)
-                    .whereEqualTo(FirestoreDocumentField.POST_CREATED_BY, uid)
+                postRef.whereEqualTo(FirestoreDocumentField.POST_CREATED_BY, uid)
+                    .whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
                     .orderBy("createdAt", Query.Direction.DESCENDING)
             } else if (type != "null") {
                 // Only take posts based on the post's type
                 if (type == "Anonymous") {
-                    database.collection(FirestoreCollection.POST)
-                        .whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
+                    postRef.whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
                         .orderBy("createdAt", Query.Direction.DESCENDING)
                 } else {
-                    database.collection(FirestoreCollection.POST)
-                        .orderBy("createdAt", Query.Direction.DESCENDING)
+                    postRef.orderBy("createdAt", Query.Direction.DESCENDING)
                 }
             } else {
-                database.collection(FirestoreCollection.POST)
-                    .orderBy("createdAt", Query.Direction.DESCENDING)
+                postRef.orderBy("createdAt", Query.Direction.DESCENDING)
             }
 
         document
@@ -135,36 +132,6 @@ class PostRepositoryImp(
             }
     }
 
-    override fun getIsPostLiked(
-        postId: String,
-        currentUserId: String,
-        result: (UiState<Boolean>) -> Unit
-    ) {
-        database.collection(FirestoreCollection.POST).document(postId)
-            .collection(FirestoreCollection.LIKE)
-            .addSnapshotListener { value, error ->
-                error?.let {
-                    result.invoke(
-                        UiState.Failure(it.localizedMessage)
-                    )
-                }
-
-                value?.let {
-                    var isUserExist = false
-                    for (document in it) {
-                        val like = document.toObject(LikeData::class.java)
-                        if (like.likedBy == currentUserId) {
-                            isUserExist = true
-                            break
-                        }
-                    }
-                    result.invoke(
-                        UiState.Success(isUserExist)
-                    )
-                }
-            }
-    }
-
     override fun addLike(
         like: LikeData,
         postId: String,
@@ -178,27 +145,118 @@ class PostRepositoryImp(
         documentLike.get().addOnSuccessListener {
             // Add userId as documentId in Like collection if user haven't liked the post, else delete the document
             if (!it.exists()) {
-                val likesAmount = post.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().plus(1)
-                documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
+                addLikeDataToUser(like, postId, currentUserId) {state ->
+                    when(state) {
+                        is UiState.Success -> {
+                            val likesAmount = post.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().plus(1)
+                            documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
+                            documentLike.set(like)
+                            result.invoke(
+                                UiState.Success("Post Liked")
+                            )
+                        }
 
-                documentLike.set(like)
-                result.invoke(
-                    UiState.Success("Post Liked")
-                )
+                        is UiState.Failure -> {
+                            result.invoke(
+                                UiState.Failure(state.error)
+                            )
+                        }
+                        UiState.Loading -> {}
+                    }
+                }
             } else {
-                val likesAmount = post.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().minus(1)
-                documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
+                deleteLikeDataAtUser(like, postId, currentUserId) {state ->
+                    when(state) {
+                        is UiState.Success -> {
+                            val likesAmount = post.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().minus(1)
+                            documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
+                            documentLike.delete()
+                            result.invoke(
+                                UiState.Success("Post Unliked")
+                            )
+                        }
 
-                documentLike.delete()
-                result.invoke(
-                    UiState.Success("Post Unliked")
-                )
+                        is UiState.Failure -> {
+                            result.invoke(
+                                UiState.Failure(state.error)
+                            )
+                        }
+                        UiState.Loading -> {}
+                    }
+                }
             }
         }.addOnFailureListener {
             result.invoke(
                 UiState.Failure(it.localizedMessage)
             )
         }
+    }
+
+    override fun addLikeDataToUser(
+        like: LikeData,
+        postId: String,
+        currentUserId: String,
+        result: (UiState<String>) -> Unit
+    ) {
+        database.collection(FirestoreCollection.USER).document(currentUserId)
+            .collection(FirestoreCollection.LIKE).document(postId).set(like)
+            .addOnSuccessListener {
+                result.invoke(
+                    UiState.Success("Like data has been added in user document")
+                )
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(
+                        it.localizedMessage
+                    )
+                )
+            }
+    }
+
+    override fun deleteLikeDataAtUser(
+        like: LikeData,
+        postId: String,
+        currentUserId: String,
+        result: (UiState<String>) -> Unit
+    ) {
+        database.collection(FirestoreCollection.USER).document(currentUserId)
+            .collection(FirestoreCollection.LIKE).document(postId).delete()
+            .addOnSuccessListener {
+                result.invoke(
+                    UiState.Success("Like data has been removed from user document")
+                )
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(
+                        it.localizedMessage
+                    )
+                )
+            }
+    }
+
+    override fun getUserLikeData(currentUserId: String, result: (UiState<List<LikeData>>) -> Unit) {
+        database.collection(FirestoreCollection.USER).document(currentUserId)
+            .collection(FirestoreCollection.LIKE)
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    result.invoke(
+                        UiState.Failure(it.localizedMessage)
+                    )
+                }
+
+                value?.let {
+                    val likes = arrayListOf<LikeData>()
+                    for (document in it) {
+                        val like = document.toObject(LikeData::class.java)
+                        likes.add(like)
+                    }
+                    result.invoke(
+                        UiState.Success(likes)
+                    )
+                }
+            }
     }
 
     override fun getSessionData(result: (UserData?) -> Unit) {

@@ -33,12 +33,12 @@ class CreatePostActivity : AppCompatActivity() {
         binding.tvSelectedCategory.text = selectedCategory
 
         // Set User name
-        binding.tvUserName.text = currentUserData()!!.userName
+        binding.tvUserName.text = currentUserData().userName
 
         binding.chipGroupPostType.setOnCheckedChangeListener { group, _ ->
             val ids = group.checkedChipIds
             for (id in ids) {
-                val chip: Chip = group.findViewById(id!!)
+                val chip: Chip = group.findViewById(id)
                 postType = chip.text.toString()
 
                 when (chip.text) {
@@ -58,7 +58,6 @@ class CreatePostActivity : AppCompatActivity() {
                     }
                 }
             }
-
         }
 
         // publish post
@@ -67,16 +66,16 @@ class CreatePostActivity : AppCompatActivity() {
                 viewModel.addPost(
                     PostData(
                         postId = "",
-                        createdBy = currentUserData()!!.userId,
+                        createdBy = currentUserData().userId,
                         createdAt = Date(),
                         caption = binding.etCaption.text.toString(),
                         category = selectedCategory,
                         image = "null",
                         type = postType,
                         modifiedAt = Date(),
-                        userName = currentUserData()!!.userName,
-                        profilePicture = currentUserData()!!.profilePicture,
-                        userBadge = currentUserData()!!.badge,
+                        userName = currentUserData().userName,
+                        profilePicture = currentUserData().profilePicture,
+                        userBadge = currentUserData().badge,
                         commentsCount = 0,
                         likesCount = 0
                     )

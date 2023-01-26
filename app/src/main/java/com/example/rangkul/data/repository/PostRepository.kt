@@ -11,7 +11,9 @@ interface PostRepository {
     fun addPost(post: PostData, result: (UiState<String>) -> Unit)
     fun getComments(postId: String, result: (UiState<List<CommentData>>) -> Unit)
     fun addComment(comment: CommentData, postId: String, result: (UiState<String>) -> Unit)
-    fun getIsPostLiked(postId: String, currentUserId: String, result: (UiState<Boolean>) -> Unit)
     fun addLike(like: LikeData, postId: String, currentUserId: String, result: (UiState<String>) -> Unit)
+    fun addLikeDataToUser(like: LikeData, postId: String, currentUserId: String, result: (UiState<String>) -> Unit)
+    fun getUserLikeData(currentUserId: String, result: (UiState<List<LikeData>>) -> Unit)
+    fun deleteLikeDataAtUser(like: LikeData, postId: String, currentUserId: String, result: (UiState<String>) -> Unit)
     fun getSessionData(result: (UserData?) -> Unit)
 }
