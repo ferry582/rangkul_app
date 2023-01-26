@@ -41,7 +41,7 @@ class CommentActivity : AppCompatActivity() {
         binding.rvComment.adapter = adapter
         binding.rvComment.layoutManager = LinearLayoutManager(this)
         binding.rvComment.setHasFixedSize(true)
-        binding.rvComment.isNestedScrollingEnabled = true
+        binding.rvComment.isNestedScrollingEnabled = false
 
         // Get Comment
         viewModel.getComments(objectPost!!.postId)
@@ -58,7 +58,14 @@ class CommentActivity : AppCompatActivity() {
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-                    adapter.updateList(state.data.toMutableList())
+                    if (state.data.isNotEmpty()) {
+                        binding.rvComment.show()
+                        binding.linearNoCommentMessage.hide()
+                        adapter.updateList(state.data.toMutableList())
+                    } else {
+                        binding.rvComment.hide()
+                        binding.linearNoCommentMessage.show()
+                    }
                 }
             }
         }
@@ -69,12 +76,12 @@ class CommentActivity : AppCompatActivity() {
                 viewModel.addComment(
                     CommentData(
                         commentId = "",
-                        commentedBy = currentUserData()!!.userId,
+                        commentedBy = currentUserData().userId,
                         commentedAt = Date(),
                         comment = binding.etComment.text.toString(),
-                        userName = currentUserData()!!.userName,
-                        profilePicture = currentUserData()!!.profilePicture,
-                        userBadge =currentUserData()!!.badge
+                        userName = currentUserData().userName,
+                        profilePicture = currentUserData().profilePicture,
+                        userBadge =currentUserData().badge
                     ), objectPost!!.postId
                 )
             }
@@ -100,7 +107,7 @@ class CommentActivity : AppCompatActivity() {
         }
     }
 
-    private fun currentUserData(): UserData? {
+    private fun currentUserData(): UserData {
         var user = UserData()
         viewModel.getSessionData {
             if (it != null) {

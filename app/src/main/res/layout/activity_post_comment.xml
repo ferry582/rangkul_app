@@ -31,184 +31,243 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintPost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginHorizontal="@dimen/safe_margin"
-        android:padding="15dp"
-        android:background="@drawable/shape_card_background"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/etComment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/civProfilePicturePost"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:src="@drawable/ic_profile_picture_default"
-                app:layout_constraintBottom_toBottomOf="parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintPost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/safe_margin"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/shape_card_background"
+                android:padding="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvUserNamePost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="3dp"
-                android:fontFamily="@font/poppins_medium"
-                android:includeFontPadding="false"
-                android:text="Della Delila"
-                android:textAlignment="center"
-                android:textColor="@color/textBlack"
-                android:textSize="16sp"
-                app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
-                app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivUserBadgePost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                app:layout_constraintBottom_toBottomOf="@+id/tvUserNamePost"
-                app:layout_constraintStart_toEndOf="@+id/tvUserNamePost"
-                app:layout_constraintTop_toTopOf="@+id/tvUserNamePost"
-                app:srcCompat="@drawable/ic_badge_trusted" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/civProfilePicturePost"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:src="@drawable/ic_profile_picture_default"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvCategoryPost"
-                android:layout_width="wrap_content"
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvUserNamePost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:includeFontPadding="false"
+                        android:text="Della Delila"
+                        android:textAlignment="center"
+                        android:textColor="@color/textBlack"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivUserBadgePost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvUserNamePost"
+                        app:layout_constraintStart_toEndOf="@+id/tvUserNamePost"
+                        app:layout_constraintTop_toTopOf="@+id/tvUserNamePost"
+                        app:srcCompat="@drawable/ic_badge_trusted" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvCategoryPost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="3dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:includeFontPadding="false"
+                        android:text="Education"
+                        android:textAlignment="center"
+                        android:textColor="@color/textGrey"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+                        app:layout_constraintTop_toBottomOf="@+id/tvUserNamePost" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvDot"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:includeFontPadding="false"
+                        android:text=" · "
+                        android:textAlignment="center"
+                        android:textColor="@color/textGrey"
+                        android:textSize="10sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tvCategoryPost"
+                        app:layout_constraintTop_toBottomOf="@+id/tvUserNamePost" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvTimePost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:includeFontPadding="false"
+                        android:text="1 hours ago"
+                        android:textAlignment="center"
+                        android:textColor="@color/textGrey"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tvDot"
+                        app:layout_constraintTop_toBottomOf="@+id/tvUserNamePost" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvCaptionPost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:includeFontPadding="false"
+                    android:text="Overwhelmed banget sama tugas kuliah ku.."
+                    android:textAlignment="textStart"
+                    android:textColor="@color/textBlack"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_comment"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="3dp"
-                android:fontFamily="@font/poppins_regular"
-                android:includeFontPadding="false"
-                android:text="Education"
-                android:textAlignment="center"
-                android:textColor="@color/textGrey"
-                android:textSize="12sp"
+                android:layout_marginHorizontal="@dimen/safe_margin"
+                android:layout_marginTop="15dp"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
-                app:layout_constraintTop_toBottomOf="@+id/tvUserNamePost" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvDot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:fontFamily="@font/poppins_semibold"
-                android:includeFontPadding="false"
-                android:text=" · "
-                android:textAlignment="center"
-                android:textColor="@color/textGrey"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tvCategoryPost"
-                app:layout_constraintTop_toBottomOf="@+id/tvUserNamePost" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvTimePost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:fontFamily="@font/poppins_regular"
-                android:includeFontPadding="false"
-                android:text="1 hours ago"
-                android:textAlignment="center"
-                android:textColor="@color/textGrey"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tvDot"
-                app:layout_constraintTop_toBottomOf="@+id/tvUserNamePost" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/constraintPost"
+                app:layout_constraintVertical_bias="0.0"
+                tools:listitem="@layout/item_comment" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvCaptionPost"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:fontFamily="@font/poppins_regular"
-            android:includeFontPadding="false"
-            android:text="Overwhelmed banget sama tugas kuliah ku.."
-            android:textAlignment="textStart"
-            android:textColor="@color/textBlack"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+    </androidx.core.widget.NestedScrollView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_comment"
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etComment"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/safe_margin"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="@dimen/safe_margin"
-        app:layout_constraintBottom_toTopOf="@id/linearComment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/constraintPost"
-        tools:listitem="@layout/item_comment" />
-
-    <LinearLayout
-        android:id="@+id/linearComment"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginHorizontal="@dimen/safe_margin"
         android:layout_marginBottom="@dimen/safe_margin"
         android:background="@drawable/shape_text_input"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center_vertical|start"
+        android:hint="What’s on your Mind?"
+        android:inputType="textMultiLine"
+        android:lines="20"
+        android:minLines="1"
+        android:paddingHorizontal="15dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="13dp"
+        android:scrollbars="vertical"
+        android:scrollHorizontally="false"
+        android:textColor="@color/textBlack"
+        android:textColorHint="@color/textGrey"
+        android:textSize="14sp"
+        android:maxLength="200"
+        android:layout_weight="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:gravity="center_vertical">
+        app:layout_constraintStart_toStartOf="parent"/>
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/etComment"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_text_input"
-            android:fontFamily="@font/poppins_regular"
-            android:gravity="center_vertical|start"
-            android:hint="What’s on your Mind?"
-            android:inputType="textMultiLine"
-            android:lines="20"
-            android:minLines="1"
-            android:paddingHorizontal="15dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="13dp"
-            android:scrollbars="vertical"
-            android:scrollHorizontally="false"
-            android:textColor="@color/textBlack"
-            android:textColorHint="@color/textGrey"
-            android:textSize="14sp"
-            android:maxLength="200"
-            android:layout_weight="2"/>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvCommentPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
+        android:text="POST"
+        android:textColor="@color/greenPrimary"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/etComment"
+        app:layout_constraintEnd_toEndOf="@+id/etComment"
+        app:layout_constraintTop_toBottomOf="@+id/nestedScrollView" />
+
+    <LinearLayout
+        android:id="@+id/linearNoCommentMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/etComment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivNoCommentIllustration"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:srcCompat="@drawable/il_no_comment" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvCommentPost"
+            android:id="@+id/tvMessageTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="-25dp"
             android:fontFamily="@font/poppins_semibold"
             android:includeFontPadding="false"
-            android:text="POST"
-            android:textColor="@color/greenPrimary"
-            android:textSize="14sp"
-            android:layout_marginEnd="15dp"
-            />
+            android:text="There is no comment yet!"
+            android:textAlignment="center"
+            android:textColor="@color/textBlack"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvMessageDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
+            android:text="Be the first to comment positively in this post"
+            android:textAlignment="center"
+            android:textColor="@color/textGrey"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </LinearLayout>
 
