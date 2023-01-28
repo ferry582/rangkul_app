@@ -42,7 +42,8 @@ class CategoryContentActivity : AppCompatActivity() {
             },
             onBadgeClicked = { pos, item ->
 
-            }
+            },
+            context = this
         )
     }
     private val adapterContent by lazy {

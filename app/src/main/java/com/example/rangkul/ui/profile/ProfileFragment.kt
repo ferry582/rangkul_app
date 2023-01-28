@@ -44,7 +44,8 @@ class ProfileFragment : Fragment() {
             },
             onBadgeClicked = { pos, item ->
 
-            }
+            },
+            context = requireContext()
         )
     }
 

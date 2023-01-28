@@ -63,6 +63,8 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.2'
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
 
     // LifeCycle
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
@@ -70,6 +72,13 @@ dependencies {
 
     // Gson
     implementation 'com.google.code.gson:gson:2.9.0'
+
+    // ImagePicker
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
 }
 
 // Allow references to generated code

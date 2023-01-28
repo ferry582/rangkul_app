@@ -1,8 +1,10 @@
 package com.example.rangkul.ui.post
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.rangkul.R
 import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
@@ -17,6 +19,7 @@ class PostAdapter (
     val onLikeClicked: (Int, PostData) -> Unit,
     val onCommentClicked: (Int, PostData) -> Unit,
     val onBadgeClicked: (Int, PostData) -> Unit,
+    val context: Context
 ): RecyclerView.Adapter<PostAdapter.PostViewHolder>(){
 
     private var list: MutableList<PostData> = arrayListOf()
@@ -26,6 +29,9 @@ class PostAdapter (
     inner class PostViewHolder (val binding: ItemPostBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: PostData) {
+            /*
+                ** Set User Info **
+             */
             binding.tvUserNamePost.apply {
                 text = if (item.type == "Anonymous") {
                     "Anonymous"
@@ -37,21 +43,6 @@ class PostAdapter (
                     }
                 }
             }
-            binding.tvCategoryPost.text = item.category
-            binding.tvTimePost.text = sdf.format(item.createdAt)
-            binding.tvCaptionPost.text = item.caption
-            binding.tvLikeCountPost.text = item.likesCount.toString()
-            binding.tvCommentCountPost.text = item.commentsCount.toString()
-
-            // Set Profile Picture
-            binding.civProfilePicturePost.apply {
-                if (item.type == "Anonymous") {
-                    setImageResource(R.drawable.ic_profile_picture_anonymous)
-                } else {
-                    setImageResource(R.drawable.ic_profile_picture_default)
-                }
-            }
-
             // Set User Badge
             binding.ivUserBadgePost.apply {
                 if (item.type == "Anonymous") {
@@ -71,21 +62,47 @@ class PostAdapter (
                     show()
                 }
             }
-
-            // Hide cvImagePost when the post has no image
-            if (item.image == "null") {
-                binding.cvImagePost.hide()
+            // Set Profile Picture
+            binding.civProfilePicturePost.apply {
+                if (item.type == "Anonymous") {
+                    setImageResource(R.drawable.ic_profile_picture_anonymous)
+                } else {
+                    setImageResource(R.drawable.ic_profile_picture_default)
+                }
             }
 
-             /* If list of like data in users collection contain current postId,
-                means this post was liked by current user
-              */
+            /*
+                ** Set Post Data **
+             */
+            binding.tvCategoryPost.text = item.category
+            binding.tvTimePost.text = sdf.format(item.createdAt)
+            binding.tvCaptionPost.text = item.caption
+            binding.tvLikeCountPost.text = item.likesCount.toString()
+            binding.tvCommentCountPost.text = item.commentsCount.toString()
+            // Set post's image
+            if (item.image == "null") {
+                // Hide cvImagePost when the post has no image
+                binding.cvImagePost.hide()
+            } else {
+                binding.cvImagePost.show()
+                Glide
+                    .with(context)
+                    .load(item.image)
+                    .placeholder(R.drawable.il_photo_dummy_post)
+                    .error(R.drawable.il_photo_dummy_post)
+                    .into(binding.ivImagePost)
+            }
+            // If list of like data in users collection contain current postId,
+            // means this post was liked by current user
             if (userLikeDataList.any {it.likeId == item.postId}) {
                 binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_solid)
             } else {
                 binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_light)
             }
 
+            /*
+                ** Handle onClick **
+             */
             binding.ivLikeButtonPost.setOnClickListener {
                 onLikeClicked.invoke(adapterPosition, item)
             }

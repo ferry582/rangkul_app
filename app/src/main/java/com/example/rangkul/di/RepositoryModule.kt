@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.example.rangkul.data.repository.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -20,8 +21,10 @@ object RepositoryModule {
     fun providePostRepository(
         database: FirebaseFirestore,
         appPreferences: SharedPreferences,
-        gson: Gson): PostRepository {
-        return PostRepositoryImp(database, appPreferences, gson)
+        gson: Gson,
+        storageReference: StorageReference
+    ): PostRepository {
+        return PostRepositoryImp(database, appPreferences, gson, storageReference)
     }
 
     @Provides

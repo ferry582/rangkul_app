@@ -38,7 +38,8 @@ class HomeFragment : Fragment() {
             },
             onBadgeClicked = { pos, item ->
 
-            }
+            },
+            context = requireContext()
         )
     }
 

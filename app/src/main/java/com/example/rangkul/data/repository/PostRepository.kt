@@ -1,5 +1,6 @@
 package com.example.rangkul.data.repository
 
+import android.net.Uri
 import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
@@ -18,4 +19,5 @@ interface PostRepository {
     fun getUserLikeData(currentUserId: String, result: (UiState<List<LikeData>>) -> Unit)
     fun deleteLikeDataAtUser(like: LikeData, postId: String, currentUserId: String, result: (UiState<String>) -> Unit)
     fun getSessionData(result: (UserData?) -> Unit)
+    suspend fun uploadPostImage(fileUri: Uri, onResult: (UiState<Uri>) -> Unit)
 }

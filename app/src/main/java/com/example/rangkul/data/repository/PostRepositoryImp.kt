@@ -1,19 +1,24 @@
 package com.example.rangkul.data.repository
 
 import android.content.SharedPreferences
+import android.net.Uri
 import com.example.rangkul.data.model.*
-import com.example.rangkul.utils.FirestoreCollection
-import com.example.rangkul.utils.FirestoreDocumentField
-import com.example.rangkul.utils.SharedPrefConstants
-import com.example.rangkul.utils.UiState
+import com.example.rangkul.utils.*
+import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.util.*
 
 class PostRepositoryImp(
     private val database: FirebaseFirestore,
     private val appPreferences: SharedPreferences,
-    private val gson: Gson
+    private val gson: Gson,
+    private val storageReference: StorageReference
 ): PostRepository {
 
     override fun getPosts(type: String, category: String, uid: String, result: (UiState<List<PostData>>) -> Unit) {
@@ -342,6 +347,31 @@ class PostRepositoryImp(
         } else {
             val user = gson.fromJson(userStr, UserData::class.java)
             result.invoke(user)
+        }
+    }
+
+    override suspend fun uploadPostImage(fileUri: Uri, onResult: (UiState<Uri>) -> Unit) {
+        try {
+            val uri: Uri = withContext(Dispatchers.IO) {
+                storageReference
+                    .child("${FirebaseStorageConstants.POST_IMAGE}/${UUID.randomUUID()}")
+                    .putFile(fileUri)
+                    .await()
+                    .storage
+                    .downloadUrl
+                    .await()
+            }
+            onResult.invoke(
+                UiState.Success(uri)
+            )
+        } catch (e: FirebaseException) {
+            onResult.invoke(
+                UiState.Failure(e.message)
+            )
+        } catch (e: Exception) {
+            onResult.invoke(
+                UiState.Failure(e.message)
+            )
         }
     }
 }
