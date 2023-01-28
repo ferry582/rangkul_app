@@ -100,7 +100,7 @@
             </com.google.android.material.chip.ChipGroup>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_post"
+                android:id="@+id/rv_contents"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"

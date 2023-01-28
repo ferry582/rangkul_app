@@ -9,6 +9,7 @@ import com.example.rangkul.data.model.UserData
 import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.databinding.ActivitySignupWithEmailBinding
 import com.example.rangkul.utils.*
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -47,7 +48,7 @@ class SignupWithEmailActivity : AppCompatActivity() {
             when (state) {
                 is UiState.Failure -> {
                     loadingVisibility(false)
-                    toast(state.error)
+                    Snackbar.make(binding.root, state.error.toString(), Snackbar.LENGTH_SHORT).show()
                 }
                 UiState.Loading -> {
                     loadingVisibility(true)

@@ -1,16 +1,20 @@
 package com.example.rangkul.ui.search
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.rangkul.R
 import com.example.rangkul.data.model.CategoryContentData
 import com.example.rangkul.databinding.ItemArticleBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CategoryContentAdapter (
+class ArticleAdapter (
     val onItemClick: (Int, CategoryContentData) -> Unit,
-): RecyclerView.Adapter<CategoryContentAdapter.ArticleViewHolder>(){
+    val context: Context
+): RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>(){
 
     private var list: MutableList<CategoryContentData> = arrayListOf()
     val sdf = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
@@ -24,6 +28,18 @@ class CategoryContentAdapter (
 
             binding.itemArticle.setOnClickListener {
                 onItemClick.invoke(adapterPosition, item)
+            }
+
+            if (item.image == "null") {
+                // Hide cvImagePost when the post has no image
+                binding.ivImageArticle.setImageResource(R.drawable.shape_image_content)
+            } else {
+                Glide
+                    .with(context)
+                    .load(item.image)
+                    .placeholder(R.drawable.shape_image_content)
+                    .error(R.drawable.shape_image_content)
+                    .into(binding.ivImageArticle)
             }
         }
     }
