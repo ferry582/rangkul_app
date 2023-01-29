@@ -15,6 +15,7 @@ import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.FragmentProfileBinding
 import com.example.rangkul.ui.comment.CommentActivity
 import com.example.rangkul.ui.post.PostAdapter
+import com.example.rangkul.ui.post.PostOptionsBottomSheetFragment
 import com.example.rangkul.ui.post.PostViewModel
 import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
@@ -40,7 +41,12 @@ class ProfileFragment : Fragment() {
                 addLike(item)
             },
             onOptionClicked = { pos, item ->
-
+                val postOptionsBottomDialogFragment: PostOptionsBottomSheetFragment =
+                    PostOptionsBottomSheetFragment.newInstance()
+                postOptionsBottomDialogFragment.show(
+                    parentFragmentManager,
+                    PostOptionsBottomSheetFragment.TAG
+                )
             },
             onBadgeClicked = { pos, item ->
 

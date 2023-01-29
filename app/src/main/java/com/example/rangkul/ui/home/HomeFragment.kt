@@ -12,6 +12,7 @@ import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.FragmentHomeBinding
 import com.example.rangkul.ui.comment.CommentActivity
 import com.example.rangkul.ui.post.PostAdapter
+import com.example.rangkul.ui.post.PostOptionsBottomSheetFragment
 import com.example.rangkul.ui.post.PostViewModel
 import com.example.rangkul.utils.*
 import com.google.android.material.chip.Chip
@@ -34,7 +35,12 @@ class HomeFragment : Fragment() {
                 addLike(item)
             },
             onOptionClicked = { pos, item ->
-
+                val postOptionsBottomDialogFragment: PostOptionsBottomSheetFragment =
+                    PostOptionsBottomSheetFragment.newInstance()
+                postOptionsBottomDialogFragment.show(
+                    parentFragmentManager,
+                    PostOptionsBottomSheetFragment.TAG
+                )
             },
             onBadgeClicked = { pos, item ->
 

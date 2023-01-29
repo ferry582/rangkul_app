@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheetPostOptions"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="@dimen/safe_margin"
+    >
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivPullIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_pull_bottom_dialog" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvSeeAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/poppins_regular"
+        android:includeFontPadding="false"
+        android:text="See Account"
+        android:textColor="@color/textBlack"
+        android:textSize="16sp"
+        android:drawableLeft="@drawable/ic_user_profile"
+        android:gravity="center_vertical"
+        android:drawablePadding="15dp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivPullIcon"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvFollow"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:drawableLeft="@drawable/ic_follow"
+        android:drawablePadding="15dp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="Follow Della"
+        android:textColor="@color/textBlack"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSeeAccount" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvReportPost"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:drawableLeft="@drawable/ic_report"
+        android:drawablePadding="15dp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="Report Post"
+        android:textColor="@color/red"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvFollow" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvLikeCountOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:drawableLeft="@drawable/ic_like_hide"
+        android:drawablePadding="15dp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="Hide like count"
+        android:textColor="@color/textBlack"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvReportPost" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvCommentOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:drawableLeft="@drawable/ic_comment_off"
+        android:drawablePadding="15dp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="Turn off comment"
+        android:textColor="@color/textBlack"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvLikeCountOptions" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvDeletePost"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:drawableLeft="@drawable/ic_delete"
+        android:drawablePadding="15dp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="Delete Post"
+        android:textColor="@color/red"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCommentOptions" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

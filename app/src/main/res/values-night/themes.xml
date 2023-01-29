@@ -13,16 +13,29 @@
         <item name="android:statusBarColor">@color/mainBackground</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
+    <!-- Chip button custom style. -->
     <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/chip_background_color</item>
         <item name="android:textColor">@color/chip_text_color</item>
         <item name="chipIconTint">@color/chip_text_color</item>
     </style>
 
+    <!-- Bottom navigation style. -->
     <style name="BottomNavigationViewTextStyle">
         <item name="android:fontFamily">@font/poppins_regular</item>
+    </style>
+
+    <!-- Bottom sheet dialog style. -->
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/shape_bottomsheet_background</item>
     </style>
 
 </resources>

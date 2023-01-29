@@ -110,7 +110,7 @@ class PostAdapter (
                 onCommentClicked.invoke(adapterPosition, item)
             }
             binding.ivPostOptions.setOnClickListener {
-
+                onOptionClicked.invoke(adapterPosition, item)
             }
         }
     }

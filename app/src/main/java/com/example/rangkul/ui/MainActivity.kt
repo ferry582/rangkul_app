@@ -14,10 +14,12 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.rangkul.R
 import com.example.rangkul.ui.createpost.SelectCategoryActivity
 import com.example.rangkul.databinding.ActivityMainBinding
+import com.example.rangkul.ui.post.PostOptionsBottomSheetFragment
+import com.example.rangkul.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.ItemClickListener {
 
     private lateinit var binding: ActivityMainBinding
     private var justSignUp = false
@@ -83,5 +85,10 @@ class MainActivity : AppCompatActivity() {
             // always back to homeFragment when back is clicked at search/notification/profile fragment
             binding.bottomView.selectedItemId = R.id.homeFragment
         }
+    }
+
+    // Handle bottomsheetdialogfragment
+    override fun onItemClick(item: String?) {
+        toast(item)
     }
 }

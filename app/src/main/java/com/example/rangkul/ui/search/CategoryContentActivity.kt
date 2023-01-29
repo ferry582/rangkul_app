@@ -16,6 +16,7 @@ import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.ActivityCategoryContentBinding
 import com.example.rangkul.ui.comment.CommentActivity
 import com.example.rangkul.ui.post.PostAdapter
+import com.example.rangkul.ui.post.PostOptionsBottomSheetFragment
 import com.example.rangkul.ui.post.PostViewModel
 import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
@@ -24,9 +25,8 @@ import com.example.rangkul.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
-
 @AndroidEntryPoint
-class CategoryContentActivity : AppCompatActivity() {
+class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.ItemClickListener {
 
     private lateinit var binding: ActivityCategoryContentBinding
     private var selectedCategory = ""
@@ -43,7 +43,12 @@ class CategoryContentActivity : AppCompatActivity() {
                 addLike(item)
             },
             onOptionClicked = { pos, item ->
-
+                val postOptionsBottomDialogFragment: PostOptionsBottomSheetFragment =
+                    PostOptionsBottomSheetFragment.newInstance()
+                postOptionsBottomDialogFragment.show(
+                    supportFragmentManager,
+                    PostOptionsBottomSheetFragment.TAG
+                )
             },
             onBadgeClicked = { pos, item ->
 
@@ -229,5 +234,10 @@ class CategoryContentActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
+    }
+
+    // Handle bottomsheetdialogfragment
+    override fun onItemClick(item: String?) {
+        toast(item)
     }
 }
