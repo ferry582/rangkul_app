@@ -18,10 +18,32 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
     val getPosts: LiveData<UiState<List<PostData>>>
         get() = _posts
 
-    fun getPosts(type: String, category: String, uid: String,){
+    fun getPosts(type: String){
         _posts.value = UiState.Loading
-        repository.getPosts(type, category, uid) {
+        repository.getPosts(type) {
             _posts.value = it
+        }
+    }
+
+    private val _getCurrentUserPosts = MutableLiveData<UiState<List<PostData>>>()
+    val getCurrentUserPosts: LiveData<UiState<List<PostData>>>
+        get() = _getCurrentUserPosts
+
+    fun getCurrentUserPosts(type: String, uid: String,){
+        _getCurrentUserPosts.value = UiState.Loading
+        repository.getCurrentUserPosts(type, uid) {
+            _getCurrentUserPosts.value = it
+        }
+    }
+
+    private val _getPostsWithCategory = MutableLiveData<UiState<List<PostData>>>()
+    val getPostsWithCategory: LiveData<UiState<List<PostData>>>
+        get() = _getPostsWithCategory
+
+    fun getPostsWithCategory(category: String){
+        _getPostsWithCategory.value = UiState.Loading
+        repository.getPostsWithCategory(category) {
+            _getPostsWithCategory.value = it
         }
     }
 

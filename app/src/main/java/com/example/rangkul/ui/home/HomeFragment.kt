@@ -64,22 +64,22 @@ class HomeFragment : Fragment() {
         setMessage()
 
         // Get posts based on type
-        binding.chipGroupPostType.setOnCheckedChangeListener { group, _ ->
+        binding.chipGroupPostType.setOnCheckedStateChangeListener  { group, _ ->
             val ids = group.checkedChipIds
             for (id in ids) {
                 val chip: Chip = group.findViewById(id!!)
 
                 when (chip.text) {
                     "For You" -> {
-                        viewModel.getPosts("All", "null", "null")
+                        viewModel.getPosts("All")
                     }
 
                     "Following" -> {
-
+                        // call view model to retrieve only following posts
                     }
 
                     else -> {
-                        viewModel.getPosts("Anonymous", "null", "null")
+                        viewModel.getPosts("Anonymous")
                     }
                 }
             }
@@ -92,7 +92,7 @@ class HomeFragment : Fragment() {
         binding.rvPost.isNestedScrollingEnabled = false
 
         // Get post list
-        viewModel.getPosts("All", "null", "null")
+        viewModel.getPosts("All")
         viewModel.getPosts.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {

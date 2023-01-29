@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import com.example.rangkul.R
 import com.example.rangkul.databinding.ActivitySelectCategoryBinding
 import com.example.rangkul.databinding.ItemChipCategoryBinding
@@ -23,7 +24,7 @@ class SelectCategoryActivity : AppCompatActivity() {
         setStatusBarColor()
         setupChip()
 
-        binding.chipGroupCategory.setOnCheckedChangeListener { group, _ ->
+        binding.chipGroupCategory.setOnCheckedStateChangeListener { group, _ ->
             val ids = group.checkedChipIds
             for (id in ids) {
                 val chip: Chip = group.findViewById(id!!)
@@ -69,7 +70,7 @@ class SelectCategoryActivity : AppCompatActivity() {
         val window = this.window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.statusBarColor = this.resources.getColor(R.color.greenBackground)
+        window.statusBarColor = ResourcesCompat.getColor(resources, R.color.greenBackground, null)
         window.decorView.systemUiVisibility = 0 //Change icon color in status bar
     }
 

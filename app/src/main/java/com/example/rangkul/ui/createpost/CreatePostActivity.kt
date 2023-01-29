@@ -67,7 +67,7 @@ class CreatePostActivity : AppCompatActivity() {
         // Set User name
         binding.tvUserName.text = currentUserData().userName
 
-        binding.chipGroupPostType.setOnCheckedChangeListener { group, _ ->
+        binding.chipGroupPostType.setOnCheckedStateChangeListener { group, _ ->
             val ids = group.checkedChipIds
             for (id in ids) {
                 val chip: Chip = group.findViewById(id)

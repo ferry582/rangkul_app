@@ -94,7 +94,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         binding.chipPost.setOnClickListener {
             binding.rvContents.adapter = adapterPost
             binding.rvContents.layoutManager = LinearLayoutManager(this)
-            viewModelPost.getPosts("null", selectedCategory, "null")
+            viewModelPost.getPostsWithCategory(selectedCategory)
             param.setMargins(getPixelValue(16),getPixelValue(15),getPixelValue(16),0)
         }
         binding.chipArticle.setOnClickListener {
@@ -117,8 +117,8 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         binding.rvContents.isNestedScrollingEnabled = false
 
         // Get post list based on the selected category
-        viewModelPost.getPosts("null", selectedCategory, "null")
-        viewModelPost.getPosts.observe(this) {state ->
+        viewModelPost.getPostsWithCategory(selectedCategory)
+        viewModelPost.getPostsWithCategory.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()

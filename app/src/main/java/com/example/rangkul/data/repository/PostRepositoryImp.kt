@@ -21,33 +21,70 @@ class PostRepositoryImp(
     private val storageReference: StorageReference
 ): PostRepository {
 
-    override fun getPosts(type: String, category: String, uid: String, result: (UiState<List<PostData>>) -> Unit) {
+    override fun getPosts(type: String, result: (UiState<List<PostData>>) -> Unit) {
         val postRef = database.collection(FirestoreCollection.POST)
 
-        // Initialize the document based on the usage
         val document =
-            if (category != "null") {
-                // Only take posts based on the post's category
-                postRef.whereEqualTo(FirestoreDocumentField.POST_CATEGORY, category)
+            // Only take posts based on the post's type
+            if (type == "Anonymous") {
+                postRef.whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
                     .orderBy("createdAt", Query.Direction.DESCENDING)
-            } else if (uid != "null") {
-                // Only take posts that belongs to current user
-                postRef.whereEqualTo(FirestoreDocumentField.POST_CREATED_BY, uid)
-                    .whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
-                    .orderBy("createdAt", Query.Direction.DESCENDING)
-            } else if (type != "null") {
-                // Only take posts based on the post's type
-                if (type == "Anonymous") {
-                    postRef.whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
-                        .orderBy("createdAt", Query.Direction.DESCENDING)
-                } else {
-                    postRef.orderBy("createdAt", Query.Direction.DESCENDING)
-                }
             } else {
                 postRef.orderBy("createdAt", Query.Direction.DESCENDING)
             }
 
         document
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    result.invoke(
+                        UiState.Failure(it.localizedMessage)
+                    )
+                }
+
+                value?.let {
+                    val posts = arrayListOf<PostData>()
+                    for (document in it) {
+                        val post = document.toObject(PostData::class.java)
+                        posts.add(post)
+                    }
+                    result.invoke(
+                        UiState.Success(posts)
+                    )
+                }
+            }
+    }
+
+    override fun getCurrentUserPosts(type: String, uid: String, result: (UiState<List<PostData>>) -> Unit) {
+        // Only take posts that belongs to current user
+        database.collection(FirestoreCollection.POST)
+            .whereEqualTo(FirestoreDocumentField.POST_CREATED_BY, uid)
+            .whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    result.invoke(
+                        UiState.Failure(it.localizedMessage)
+                    )
+                }
+
+                value?.let {
+                    val posts = arrayListOf<PostData>()
+                    for (document in it) {
+                        val post = document.toObject(PostData::class.java)
+                        posts.add(post)
+                    }
+                    result.invoke(
+                        UiState.Success(posts)
+                    )
+                }
+            }
+    }
+
+    override fun getPostsWithCategory(category: String, result: (UiState<List<PostData>>) -> Unit) {
+        // Only take posts based on the post's category
+        database.collection(FirestoreCollection.POST)
+            .whereEqualTo(FirestoreDocumentField.POST_CATEGORY, category)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { value, error ->
                 error?.let {
                     result.invoke(
@@ -152,12 +189,10 @@ class PostRepositoryImp(
         comment.commentId = documentComment.id
 
         database.runTransaction {transaction ->
-
             // Update Comment Count in Posts Collection
             val post = transaction.get(documentPost)
             val commentsAmount = post.getLong(FirestoreDocumentField.COMMENTS_COUNT)?.plus(1)
             transaction.update(documentPost, FirestoreDocumentField.COMMENTS_COUNT, commentsAmount)
-
             // Add Comment to Comments Collection
             transaction.set(documentComment, comment)
         }

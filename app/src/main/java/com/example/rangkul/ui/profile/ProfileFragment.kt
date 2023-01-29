@@ -80,18 +80,18 @@ class ProfileFragment : Fragment() {
         }
 
         // Get posts based on type
-        binding.chipGroupPostType.setOnCheckedChangeListener { group, _ ->
+        binding.chipGroupPostType.setOnCheckedStateChangeListener { group, _ ->
             val ids = group.checkedChipIds
             for (id in ids) {
                 val chip: Chip = group.findViewById(id!!)
 
                 when (chip.text) {
                     "Public" -> {
-                        viewModelPost.getPosts("Public", "null", currentUserData().userId)
+                        viewModelPost.getCurrentUserPosts("Public", currentUserData().userId)
                     }
 
                     "Anonymous" -> {
-                        viewModelPost.getPosts("Anonymous", "null", currentUserData().userId)
+                        viewModelPost.getCurrentUserPosts("Anonymous", currentUserData().userId)
                     }
 
                     else -> {
@@ -108,8 +108,8 @@ class ProfileFragment : Fragment() {
         binding.rvPost.isNestedScrollingEnabled = false
 
         // Get post list based on the selected category
-        viewModelPost.getPosts("Public", "null", currentUserData().userId)
-        viewModelPost.getPosts.observe(viewLifecycleOwner) {state ->
+        viewModelPost.getCurrentUserPosts("Public",  currentUserData().userId)
+        viewModelPost.getCurrentUserPosts.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
