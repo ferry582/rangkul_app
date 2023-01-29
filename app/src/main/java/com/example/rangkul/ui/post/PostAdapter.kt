@@ -88,8 +88,8 @@ class PostAdapter (
                 Glide
                     .with(context)
                     .load(item.image)
-                    .placeholder(R.drawable.il_photo_dummy_post)
-                    .error(R.drawable.il_photo_dummy_post)
+                    .placeholder(R.drawable.shape_image_content)
+                    .error(R.drawable.ic_baseline_error_24)
                     .into(binding.ivImagePost)
             }
             // If list of like data in users collection contain current postId,

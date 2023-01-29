@@ -24,7 +24,7 @@ class VideoAdapter (
         fun bind(item: CategoryContentData) {
             binding.tvTitleVideo.text = item.title
             binding.tvSourceVideo.text = item.source
-            binding.tvTimeCreated.text = sdf.format(item.createdAt)
+            binding.tvTimeCreated.text = sdf.format(item.publishedAt)
 
             binding.itemVideo.setOnClickListener {
                 onItemClick.invoke(adapterPosition, item)

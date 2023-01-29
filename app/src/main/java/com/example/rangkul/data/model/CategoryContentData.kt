@@ -13,11 +13,12 @@ data class CategoryContentData (
         val listedAt: Date = Date(),
         val title: String = "",
         @ServerTimestamp
-        val createdAt: Date = Date(),
+        val publishedAt: Date = Date(),
         val image: String = "",
         val url: String = "",
         val type: String = "",
         val source: String = "",
         val category: String = "",
-        val duration: String = ""
+        val duration: String = "",
+        val language: String = ""
 ): Parcelable

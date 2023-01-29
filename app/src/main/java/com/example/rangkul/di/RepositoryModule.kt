@@ -42,7 +42,7 @@ object RepositoryModule {
     @Singleton
     fun provideCategoryRepository(
         database: FirebaseFirestore,
-    ): CategoryRepository {
-        return CategoryRepositoryImp(database)
+    ): CategoryContentRepository {
+        return CategoryContentRepositoryImp(database)
     }
 }

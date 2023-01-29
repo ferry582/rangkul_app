@@ -24,7 +24,7 @@ class ArticleAdapter (
         fun bind(item: CategoryContentData) {
             binding.tvTitleArticle.text = item.title
             binding.tvSourceArticle.text = item.source
-            binding.tvTimeCreated.text = sdf.format(item.createdAt)
+            binding.tvTimeCreated.text = sdf.format(item.publishedAt)
 
             binding.itemArticle.setOnClickListener {
                 onItemClick.invoke(adapterPosition, item)
@@ -38,7 +38,7 @@ class ArticleAdapter (
                     .with(context)
                     .load(item.image)
                     .placeholder(R.drawable.shape_image_content)
-                    .error(R.drawable.shape_image_content)
+                    .error(R.drawable.ic_baseline_error_24)
                     .into(binding.ivImageArticle)
             }
         }

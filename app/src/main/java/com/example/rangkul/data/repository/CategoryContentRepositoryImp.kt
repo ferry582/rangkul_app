@@ -7,15 +7,15 @@ import com.example.rangkul.utils.UiState
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
-class CategoryRepositoryImp(
+class CategoryContentRepositoryImp(
     private val database: FirebaseFirestore
-): CategoryRepository {
+): CategoryContentRepository {
 
     override fun getCategoryContents(category: String, type: String, result: (UiState<List<CategoryContentData>>) -> Unit) {
         database.collection(FirestoreCollection.CATEGORY_CONTENT)
             .whereEqualTo(FirestoreDocumentField.CONTENT_TYPE, type)
             .whereEqualTo(FirestoreDocumentField.CONTENT_CATEGORY, category)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .orderBy(FirestoreDocumentField.CONTENT_PUBLISHED_DATE, Query.Direction.DESCENDING)
             .addSnapshotListener { value, error ->
                 error?.let {
                     result.invoke(
