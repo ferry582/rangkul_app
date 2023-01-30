@@ -82,6 +82,10 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         binding = ActivityCategoryContentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.srlCategoryContent.setOnRefreshListener {
+            viewModelPost.getPostsWithCategory(selectedCategory)
+        }
+
         setToolbar()
 
         // Get selected category data
@@ -116,27 +120,18 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         binding.rvContents.setHasFixedSize(true)
         binding.rvContents.isNestedScrollingEnabled = false
 
+        // Get user's like list
+        isPostLiked()
+
         // Get post list based on the selected category
         viewModelPost.getPostsWithCategory(selectedCategory)
-        viewModelPost.getPostsWithCategory.observe(this) {state ->
-            when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
-
-                is UiState.Failure -> {
-                    binding.progressBar.hide()
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    binding.progressBar.hide()
-                    adapterPost.updateList(state.data.toMutableList())
-                }
-            }
-        }
+        observeGetPostsWithCategory()
 
         // Get Article list based on the selected category
+        observeGetContent()
+    }
+
+    private fun observeGetContent() {
         viewModelCategoryContent.getContents.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
@@ -155,8 +150,27 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
                 }
             }
         }
+    }
 
-        isPostLiked()
+    private fun observeGetPostsWithCategory() {
+        viewModelPost.getPostsWithCategory.observe(this) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    binding.srlCategoryContent.isRefreshing = false // hide swipe refresh loading
+                    adapterPost.updateList(state.data.toMutableList())
+                }
+            }
+        }
     }
 
     private fun getPixelValue(dimenId: Int): Int {
@@ -209,6 +223,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
                 }
 
                 is UiState.Success -> {
+                    viewModelPost.getPostsWithCategory(selectedCategory)
                 }
             }
         }
@@ -239,5 +254,10 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
     // Handle bottomsheetdialogfragment
     override fun onItemClick(item: String?) {
         toast(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModelPost.getPostsWithCategory(selectedCategory)
     }
 }

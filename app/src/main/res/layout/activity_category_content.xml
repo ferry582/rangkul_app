@@ -1,129 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainBackground"
-    tools:context=".ui.search.CategoryContentActivity">
+    tools:context=".ui.search.CategoryContentActivity"
+    android:id="@+id/srlCategoryContent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scrollbars="none"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginHorizontal="@dimen/safe_margin"
-                android:fontFamily="@font/poppins_medium"
-                android:text="Let’s explore,"
-                android:textAlignment="center"
-                android:textColor="@color/textBlack"
-                android:textSize="26sp"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvSelectedCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/safe_margin"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="Mental Health"
-                android:textAlignment="center"
-                android:textColor="@color/textBlack"
-                android:textSize="26sp"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvMessage" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupPostType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginHorizontal="@dimen/safe_margin"
-                app:singleSelection="true"
-                app:selectionRequired="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvSelectedCategory">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipPost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="51dp"
-                    android:text="Post"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textSize="14sp"
-                    app:chipCornerRadius="12dp"
-                    android:checked="true"
-                    style="@style/CustomChipStyle"/>
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipArticle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="51dp"
-                    android:text="Article"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textSize="14sp"
-                    app:chipCornerRadius="12dp"
-                    style="@style/CustomChipStyle"/>
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipVideo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="51dp"
-                    android:text="Video"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textSize="14sp"
-                    app:chipCornerRadius="12dp"
-                    style="@style/CustomChipStyle"/>
-            </com.google.android.material.chip.ChipGroup>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_contents"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginHorizontal="@dimen/safe_margin"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/chipGroupPostType"
-                tools:listitem="@layout/item_post" />
+                android:layout_height="wrap_content">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginHorizontal="@dimen/safe_margin"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="Let’s explore,"
+                    android:textAlignment="center"
+                    android:textColor="@color/textBlack"
+                    android:textSize="26sp"
+                    android:includeFontPadding="false"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.core.widget.NestedScrollView>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvSelectedCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/safe_margin"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Mental Health"
+                    android:textAlignment="center"
+                    android:textColor="@color/textBlack"
+                    android:textSize="26sp"
+                    android:includeFontPadding="false"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvMessage" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="visible"/>
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupPostType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginHorizontal="@dimen/safe_margin"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSelectedCategory">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="51dp"
+                        android:text="Post"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="14sp"
+                        app:chipCornerRadius="12dp"
+                        android:checked="true"
+                        style="@style/CustomChipStyle"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipArticle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="51dp"
+                        android:text="Article"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="14sp"
+                        app:chipCornerRadius="12dp"
+                        style="@style/CustomChipStyle"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipVideo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="51dp"
+                        android:text="Video"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="14sp"
+                        app:chipCornerRadius="12dp"
+                        style="@style/CustomChipStyle"/>
+                </com.google.android.material.chip.ChipGroup>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_contents"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginHorizontal="@dimen/safe_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/chipGroupPostType"
+                    tools:listitem="@layout/item_post" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

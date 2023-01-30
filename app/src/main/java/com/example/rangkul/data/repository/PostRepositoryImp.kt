@@ -33,16 +33,9 @@ class PostRepositoryImp(
                 postRef.orderBy("createdAt", Query.Direction.DESCENDING)
             }
 
-        document
-            .addSnapshotListener { value, error ->
-                error?.let {
-                    result.invoke(
-                        UiState.Failure(it.localizedMessage)
-                    )
-                }
-
-                value?.let {
-                    val posts = arrayListOf<PostData>()
+        document.get()
+            .addOnSuccessListener {
+                val posts = arrayListOf<PostData>()
                     for (document in it) {
                         val post = document.toObject(PostData::class.java)
                         posts.add(post)
@@ -50,7 +43,11 @@ class PostRepositoryImp(
                     result.invoke(
                         UiState.Success(posts)
                     )
-                }
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(it.localizedMessage)
+                )
             }
     }
 
@@ -85,23 +82,21 @@ class PostRepositoryImp(
         database.collection(FirestoreCollection.POST)
             .whereEqualTo(FirestoreDocumentField.POST_CATEGORY, category)
             .orderBy("createdAt", Query.Direction.DESCENDING)
-            .addSnapshotListener { value, error ->
-                error?.let {
-                    result.invoke(
-                        UiState.Failure(it.localizedMessage)
-                    )
+            .get()
+            .addOnSuccessListener {
+                val posts = arrayListOf<PostData>()
+                for (document in it) {
+                    val post = document.toObject(PostData::class.java)
+                    posts.add(post)
                 }
-
-                value?.let {
-                    val posts = arrayListOf<PostData>()
-                    for (document in it) {
-                        val post = document.toObject(PostData::class.java)
-                        posts.add(post)
-                    }
-                    result.invoke(
-                        UiState.Success(posts)
-                    )
-                }
+                result.invoke(
+                    UiState.Success(posts)
+                )
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(it.localizedMessage)
+                )
             }
     }
 

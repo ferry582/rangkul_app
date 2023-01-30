@@ -15,7 +15,6 @@ import com.example.rangkul.ui.post.PostAdapter
 import com.example.rangkul.ui.post.PostOptionsBottomSheetFragment
 import com.example.rangkul.ui.post.PostViewModel
 import com.example.rangkul.utils.*
-import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -24,6 +23,7 @@ class HomeFragment : Fragment() {
 
     lateinit var binding: FragmentHomeBinding
     private val viewModel: PostViewModel by viewModels()
+    private var selectedType = "All"
     private val adapter by lazy {
         PostAdapter(
             onCommentClicked = { pos, item ->
@@ -61,28 +61,23 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.srlHomeFragment.setOnRefreshListener {
+            viewModel.getPosts(selectedType)
+        }
+
         setMessage()
 
         // Get posts based on type
-        binding.chipGroupPostType.setOnCheckedStateChangeListener  { group, _ ->
-            val ids = group.checkedChipIds
-            for (id in ids) {
-                val chip: Chip = group.findViewById(id!!)
-
-                when (chip.text) {
-                    "For You" -> {
-                        viewModel.getPosts("All")
-                    }
-
-                    "Following" -> {
-                        // call view model to retrieve only following posts
-                    }
-
-                    else -> {
-                        viewModel.getPosts("Anonymous")
-                    }
-                }
-            }
+        binding.chipForYou.setOnClickListener {
+            selectedType = "All"
+            viewModel.getPosts(selectedType)
+        }
+        binding.chipFollowing.setOnClickListener {
+            // call view model to retrieve only following posts
+        }
+        binding.chipSpeakUp.setOnClickListener {
+            selectedType = "Anonymous"
+            viewModel.getPosts(selectedType)
         }
 
         // Configure Post RecyclerView
@@ -91,8 +86,15 @@ class HomeFragment : Fragment() {
         binding.rvPost.setHasFixedSize(true)
         binding.rvPost.isNestedScrollingEnabled = false
 
+        // Get user's like list
+        isPostLiked()
+
         // Get post list
-        viewModel.getPosts("All")
+        viewModel.getPosts(selectedType)
+        observeGetPosts()
+    }
+
+    private fun observeGetPosts() {
         viewModel.getPosts.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
@@ -106,13 +108,11 @@ class HomeFragment : Fragment() {
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
+                    binding.srlHomeFragment.isRefreshing = false // hide swipe refresh loading
                     adapter.updateList(state.data.toMutableList())
                 }
             }
         }
-
-        isPostLiked()
-
     }
 
     private fun isPostLiked() {
@@ -187,6 +187,7 @@ class HomeFragment : Fragment() {
                 }
 
                 is UiState.Success -> {
+                    viewModel.getPosts(selectedType)
                 }
             }
         }
@@ -200,5 +201,10 @@ class HomeFragment : Fragment() {
             }
         }
         return user
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getPosts(selectedType)
     }
 }
