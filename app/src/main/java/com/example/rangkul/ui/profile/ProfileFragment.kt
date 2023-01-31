@@ -21,7 +21,6 @@ import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
 import com.example.rangkul.utils.toast
-import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -30,6 +29,7 @@ class ProfileFragment : Fragment() {
 
     lateinit var binding: FragmentProfileBinding
     private val viewModelPost: PostViewModel by viewModels()
+    private var selectedType = "Public"
     private val adapterPost by lazy {
         PostAdapter(
             onCommentClicked = { pos, item ->
@@ -79,26 +79,16 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
         }
 
-        // Get posts based on type
-        binding.chipGroupPostType.setOnCheckedStateChangeListener { group, _ ->
-            val ids = group.checkedChipIds
-            for (id in ids) {
-                val chip: Chip = group.findViewById(id!!)
-
-                when (chip.text) {
-                    "Public" -> {
-                        viewModelPost.getCurrentUserPosts("Public", currentUserData().userId)
-                    }
-
-                    "Anonymous" -> {
-                        viewModelPost.getCurrentUserPosts("Anonymous", currentUserData().userId)
-                    }
-
-                    else -> {
-
-                    }
-                }
-            }
+        binding.chipPublic.setOnClickListener {
+            selectedType = "Public"
+            viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
+        }
+        binding.chipAnonymous.setOnClickListener {
+            selectedType = "Anonymous"
+            viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
+        }
+        binding.chipDiary.setOnCloseIconClickListener {
+            selectedType = "Diary"
         }
 
         // Configure Post RecyclerView
@@ -108,7 +98,13 @@ class ProfileFragment : Fragment() {
         binding.rvPost.isNestedScrollingEnabled = false
 
         // Get post list based on the selected category
-        viewModelPost.getCurrentUserPosts("Public",  currentUserData().userId)
+        viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
+        observeGetCurrentUserPosts()
+
+        isPostLiked()
+    }
+
+    private fun observeGetCurrentUserPosts() {
         viewModelPost.getCurrentUserPosts.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
@@ -122,12 +118,33 @@ class ProfileFragment : Fragment() {
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-                    adapterPost.updateList(state.data.toMutableList())
+                    isPostDataEmpty(state.data)
                 }
             }
         }
+    }
 
-        isPostLiked()
+    private fun isPostDataEmpty(data: List<PostData>) {
+        if (data.isEmpty()) {
+            binding.rvPost.hide()
+            binding.linearNoPostMessage.show()
+            when (selectedType) {
+                "Anonymous" -> {
+                    binding.tvMessageDescription.text = "You haven't published anonymous post yet"
+                }
+                "Public" -> {
+                    binding.tvMessageDescription.text = "You haven't published any post yet"
+                }
+                else -> {
+                    binding.tvMessageDescription.text = "You haven't published any diary yet"
+                }
+            }
+
+        } else {
+            binding.rvPost.show()
+            binding.linearNoPostMessage.hide()
+            adapterPost.updateList(data.toMutableList())
+        }
     }
 
     private fun isPostLiked() {

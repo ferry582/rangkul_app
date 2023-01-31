@@ -1,11 +1,13 @@
 package com.example.rangkul.ui.search
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -37,7 +39,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
             onCommentClicked = { pos, item ->
                 val intent = Intent(this, CommentActivity::class.java)
                 intent.putExtra("OBJECT_POST", item)
-                startActivity(intent)
+                resultLauncher.launch(intent)
             },
             onLikeClicked = { pos, item ->
                 addLike(item)
@@ -55,6 +57,12 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
             },
             context = this
         )
+    }
+    // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            viewModelPost.getPostsWithCategory(selectedCategory)
+        }
     }
     private val articleAdapter by lazy {
         ArticleAdapter(
@@ -251,13 +259,9 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         return true
     }
 
-    // Handle bottomsheetdialogfragment
+    // Handle bottom sheet dialog fragment
     override fun onItemClick(item: String?) {
         toast(item)
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModelPost.getPostsWithCategory(selectedCategory)
-    }
 }

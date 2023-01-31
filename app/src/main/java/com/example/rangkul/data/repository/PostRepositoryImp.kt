@@ -157,24 +157,23 @@ class PostRepositoryImp(
 
     override fun getComments(postId: String, result: (UiState<List<CommentData>>) -> Unit) {
         database.collection(FirestoreCollection.POST).document(postId)
-            .collection(FirestoreCollection.COMMENT).orderBy("commentedAt", Query.Direction.DESCENDING)
-            .addSnapshotListener { value, error ->
-                error?.let {
-                    result.invoke(
-                        UiState.Failure(it.localizedMessage)
-                    )
+            .collection(FirestoreCollection.COMMENT)
+            .orderBy("commentedAt", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener {
+                val comments = arrayListOf<CommentData>()
+                for (document in it) {
+                    val comment = document.toObject(CommentData::class.java)
+                    comments.add(comment)
                 }
-
-                value?.let {
-                    val comments = arrayListOf<CommentData>()
-                    for (document in it) {
-                        val comment = document.toObject(CommentData::class.java)
-                        comments.add(comment)
-                    }
-                    result.invoke(
-                        UiState.Success(comments)
-                    )
-                }
+                result.invoke(
+                    UiState.Success(comments)
+                )
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(it.localizedMessage)
+                )
             }
     }
 

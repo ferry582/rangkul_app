@@ -1,18 +1,24 @@
 package com.example.rangkul.ui.comment
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rangkul.R
 import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.ActivityPostCommentBinding
-import com.example.rangkul.utils.*
+import com.example.rangkul.utils.UiState
+import com.example.rangkul.utils.hide
+import com.example.rangkul.utils.show
+import com.example.rangkul.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 @AndroidEntryPoint
 class CommentActivity : AppCompatActivity() {
@@ -20,6 +26,7 @@ class CommentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPostCommentBinding
     private val viewModel: CommentViewModel by viewModels()
     private var objectPost: PostData? = null
+    private var justAddedOrRefreshedComment = false
     private val adapter by lazy {
         CommentAdapter(
             onOptionsCommentClicked = { pos, item ->
@@ -32,10 +39,17 @@ class CommentActivity : AppCompatActivity() {
         binding = ActivityPostCommentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
         objectPost = intent.getParcelableExtra("OBJECT_POST")
+        setObjectPost()
 
         setToolbar()
-        setObjectPost()
+
+        binding.srlPostCommentActivity.setOnRefreshListener {
+            viewModel.getComments(objectPost!!.postId)
+            justAddedOrRefreshedComment = true
+        }
 
         // Configure Comment RecyclerView
         binding.rvComment.adapter = adapter
@@ -45,30 +59,7 @@ class CommentActivity : AppCompatActivity() {
 
         // Get Comment
         viewModel.getComments(objectPost!!.postId)
-        viewModel.getComments.observe(this) {state ->
-            when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
-
-                is UiState.Failure -> {
-                    binding.progressBar.hide()
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    binding.progressBar.hide()
-                    if (state.data.isNotEmpty()) {
-                        binding.rvComment.show()
-                        binding.linearNoCommentMessage.hide()
-                        adapter.updateList(state.data.toMutableList())
-                    } else {
-                        binding.rvComment.hide()
-                        binding.linearNoCommentMessage.show()
-                    }
-                }
-            }
-        }
+        observeGetComments()
 
         // Add Comment
         binding.tvCommentPost.setOnClickListener {
@@ -88,6 +79,38 @@ class CommentActivity : AppCompatActivity() {
             binding.etComment.text?.clear()
         }
 
+        observeAddComment()
+    }
+
+    private fun observeGetComments() {
+        viewModel.getComments.observe(this) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.srlPostCommentActivity.isRefreshing = false
+                    binding.progressBar.hide()
+                    if (state.data.isNotEmpty()) {
+                        binding.rvComment.show()
+                        binding.linearNoCommentMessage.hide()
+                        adapter.updateList(state.data.toMutableList())
+                    } else {
+                        binding.rvComment.hide()
+                        binding.linearNoCommentMessage.show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeAddComment() {
         viewModel.addComment.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
@@ -101,7 +124,8 @@ class CommentActivity : AppCompatActivity() {
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-                    toast(state.data)
+                    justAddedOrRefreshedComment = true
+                    viewModel.getComments(objectPost!!.postId)
                 }
             }
         }
@@ -165,7 +189,15 @@ class CommentActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+        if (justAddedOrRefreshedComment) setResult(Activity.RESULT_OK)
         finish()
         return true
+    }
+
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (justAddedOrRefreshedComment) setResult(Activity.RESULT_OK)
+            finish()
+        }
     }
 }

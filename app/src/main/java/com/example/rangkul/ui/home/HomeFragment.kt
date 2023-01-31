@@ -1,8 +1,10 @@
 package com.example.rangkul.ui.home
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,7 +31,7 @@ class HomeFragment : Fragment() {
             onCommentClicked = { pos, item ->
                 val intent = Intent(requireContext(), CommentActivity::class.java)
                 intent.putExtra("OBJECT_POST", item)
-                startActivity(intent)
+                resultLauncher.launch(intent)
             },
             onLikeClicked = { pos, item ->
                 addLike(item)
@@ -47,6 +49,12 @@ class HomeFragment : Fragment() {
             },
             context = requireContext()
         )
+    }
+    // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            viewModel.getPosts(selectedType)
+        }
     }
 
     override fun onCreateView(
@@ -203,8 +211,4 @@ class HomeFragment : Fragment() {
         return user
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getPosts(selectedType)
-    }
 }

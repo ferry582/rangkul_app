@@ -11,7 +11,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Rangkul"
-        tools:targetApi="31">
+        tools:targetApi="tiramisu"
+        android:enableOnBackInvokedCallback="true">
+
         <activity
             android:name=".ui.search.CategoryContentActivity"
             android:exported="false" />
