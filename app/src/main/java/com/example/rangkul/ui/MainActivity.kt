@@ -14,12 +14,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.rangkul.R
 import com.example.rangkul.ui.createpost.SelectCategoryActivity
 import com.example.rangkul.databinding.ActivityMainBinding
-import com.example.rangkul.ui.post.PostOptionsBottomSheetFragment
-import com.example.rangkul.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.ItemClickListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var justSignUp = false
@@ -75,7 +73,7 @@ class MainActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.ItemCli
     }
 
     override fun onBackPressed() {
-        if (binding.bottomView.selectedItemId == R.id.homeFragment){
+        if (binding.bottomView.selectedItemId == R.id.homeFragment) {
             // Close app (open home window) when onBackPressed, and prevent user navigate back to auth when onBackPress
             val a = Intent(Intent.ACTION_MAIN)
             a.addCategory(Intent.CATEGORY_HOME)
@@ -85,10 +83,5 @@ class MainActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.ItemCli
             // always back to homeFragment when back is clicked at search/notification/profile fragment
             binding.bottomView.selectedItemId = R.id.homeFragment
         }
-    }
-
-    // Handle bottomsheetdialogfragment
-    override fun onItemClick(item: String?) {
-        toast(item)
     }
 }

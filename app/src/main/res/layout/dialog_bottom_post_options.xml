@@ -19,7 +19,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSeeAccount"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="15dp"
         android:fontFamily="@font/poppins_regular"
@@ -27,7 +27,7 @@
         android:text="See Account"
         android:textColor="@color/textBlack"
         android:textSize="16sp"
-        android:drawableLeft="@drawable/ic_user_profile"
+        android:drawableStart="@drawable/ic_user_profile"
         android:gravity="center_vertical"
         android:drawablePadding="15dp"
         android:visibility="visible"
@@ -36,9 +36,9 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvFollow"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:drawableLeft="@drawable/ic_follow"
+        android:drawableStart="@drawable/ic_follow"
         android:drawablePadding="15dp"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"
@@ -52,9 +52,9 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvReportPost"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:drawableLeft="@drawable/ic_report"
+        android:drawableStart="@drawable/ic_report"
         android:drawablePadding="15dp"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"
@@ -68,9 +68,9 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvLikeCountOptions"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:drawableLeft="@drawable/ic_like_hide"
+        android:drawableStart="@drawable/ic_like_hide"
         android:drawablePadding="15dp"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"
@@ -84,9 +84,9 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvCommentOptions"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:drawableLeft="@drawable/ic_comment_off"
+        android:drawableStart="@drawable/ic_comment_off"
         android:drawablePadding="15dp"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"
@@ -100,9 +100,9 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvDeletePost"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:drawableLeft="@drawable/ic_delete"
+        android:drawableStart="@drawable/ic_delete"
         android:drawablePadding="15dp"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"

@@ -28,10 +28,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.ItemClickListener {
+class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.DeleteStatusListener {
 
     private lateinit var binding: ActivityCategoryContentBinding
     private var selectedCategory = ""
+    private var postList: MutableList<PostData> = arrayListOf()
     private val viewModelPost: PostViewModel by viewModels()
     private val viewModelCategoryContent: CategoryContentViewModel by viewModels()
     private val adapterPost by lazy {
@@ -45,11 +46,16 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
                 addLike(item)
             },
             onOptionClicked = { pos, item ->
-                val postOptionsBottomDialogFragment: PostOptionsBottomSheetFragment =
-                    PostOptionsBottomSheetFragment.newInstance()
+                val postOptionsBottomDialogFragment = PostOptionsBottomSheetFragment(this)
+
+                val bundle = Bundle()
+                bundle.putParcelable("OBJECT_POST", item)
+                bundle.putInt("POST_POSITION", pos)
+                postOptionsBottomDialogFragment.arguments = bundle
+
                 postOptionsBottomDialogFragment.show(
                     supportFragmentManager,
-                    PostOptionsBottomSheetFragment.TAG
+                    "PostOptionsBottomSheetFragment"
                 )
             },
             onBadgeClicked = { pos, item ->
@@ -175,7 +181,8 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
                 is UiState.Success -> {
                     binding.progressBar.hide()
                     binding.srlCategoryContent.isRefreshing = false // hide swipe refresh loading
-                    adapterPost.updateList(state.data.toMutableList())
+                    postList = state.data.toMutableList()
+                    adapterPost.updateList(postList)
                 }
             }
         }
@@ -259,9 +266,12 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         return true
     }
 
-    // Handle bottom sheet dialog fragment
-    override fun onItemClick(item: String?) {
-        toast(item)
+    // if post deleted, then notify the adapter
+    override fun deleteStatus(status: Boolean?, position: Int?) {
+        if (status == true) {
+            position?.let { postList.removeAt(it) }
+            adapterPost.updateList(postList)
+            position?.let { adapterPost.notifyItemChanged(it) }
+        }
     }
-
 }

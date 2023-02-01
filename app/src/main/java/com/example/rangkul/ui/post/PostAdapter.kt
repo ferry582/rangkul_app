@@ -112,6 +112,9 @@ class PostAdapter (
             binding.ivPostOptions.setOnClickListener {
                 onOptionClicked.invoke(adapterPosition, item)
             }
+            binding.ivUserBadgePost.setOnClickListener {
+                onBadgeClicked.invoke(adapterPosition, item)
+            }
         }
     }
 
@@ -138,8 +141,4 @@ class PostAdapter (
         this.userLikeDataList = list
     }
 
-//    fun removeItem(position: Int) {
-//        list.removeAt(position)
-//        notifyItemChanged(position)
-//    }
 }

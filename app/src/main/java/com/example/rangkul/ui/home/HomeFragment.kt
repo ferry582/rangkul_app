@@ -21,11 +21,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusListener {
 
     lateinit var binding: FragmentHomeBinding
     private val viewModel: PostViewModel by viewModels()
     private var selectedType = "All"
+    private var postList: MutableList<PostData> = arrayListOf()
     private val adapter by lazy {
         PostAdapter(
             onCommentClicked = { pos, item ->
@@ -37,12 +38,18 @@ class HomeFragment : Fragment() {
                 addLike(item)
             },
             onOptionClicked = { pos, item ->
-                val postOptionsBottomDialogFragment: PostOptionsBottomSheetFragment =
-                    PostOptionsBottomSheetFragment.newInstance()
+                val postOptionsBottomDialogFragment = PostOptionsBottomSheetFragment(this)
+
+                val bundle = Bundle()
+                bundle.putParcelable("OBJECT_POST", item)
+                bundle.putInt("POST_POSITION", pos)
+                postOptionsBottomDialogFragment.arguments = bundle
+
                 postOptionsBottomDialogFragment.show(
-                    parentFragmentManager,
-                    PostOptionsBottomSheetFragment.TAG
+                    childFragmentManager,
+                    "PostOptionsBottomSheetFragment"
                 )
+
             },
             onBadgeClicked = { pos, item ->
 
@@ -117,7 +124,8 @@ class HomeFragment : Fragment() {
                 is UiState.Success -> {
                     binding.progressBar.hide()
                     binding.srlHomeFragment.isRefreshing = false // hide swipe refresh loading
-                    adapter.updateList(state.data.toMutableList())
+                    postList = state.data.toMutableList()
+                    adapter.updateList(postList)
                 }
             }
         }
@@ -209,6 +217,15 @@ class HomeFragment : Fragment() {
             }
         }
         return user
+    }
+
+    // if post deleted, then notify the adapter
+    override fun deleteStatus(status: Boolean?, position: Int?) {
+        if (status == true) {
+            position?.let { postList.removeAt(it) }
+            adapter.updateList(postList)
+            position?.let { adapter.notifyItemChanged(it) }
+        }
     }
 
 }

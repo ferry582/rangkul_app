@@ -7,4 +7,5 @@
     <string name="signup_message">Hi, welcome to</string>
     <string name="signup_email">Sign up with Email</string>
     <string name="login_email">Log In with Email</string>
+    <string name="delete_post_confirmation">Are you sure want to delete this post?\nThis can’t be undone and it will be\nremove premanently.</string>
 </resources>

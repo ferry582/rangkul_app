@@ -7,7 +7,7 @@ import com.example.rangkul.utils.*
 import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -18,7 +18,7 @@ class PostRepositoryImp(
     private val database: FirebaseFirestore,
     private val appPreferences: SharedPreferences,
     private val gson: Gson,
-    private val storageReference: StorageReference
+    private val storageReference: FirebaseStorage
 ): PostRepository {
 
     override fun getPosts(type: String, result: (UiState<List<PostData>>) -> Unit) {
@@ -57,23 +57,21 @@ class PostRepositoryImp(
             .whereEqualTo(FirestoreDocumentField.POST_CREATED_BY, uid)
             .whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
             .orderBy("createdAt", Query.Direction.DESCENDING)
-            .addSnapshotListener { value, error ->
-                error?.let {
-                    result.invoke(
-                        UiState.Failure(it.localizedMessage)
-                    )
+            .get()
+            .addOnSuccessListener {
+                val posts = arrayListOf<PostData>()
+                for (document in it) {
+                    val post = document.toObject(PostData::class.java)
+                    posts.add(post)
                 }
-
-                value?.let {
-                    val posts = arrayListOf<PostData>()
-                    for (document in it) {
-                        val post = document.toObject(PostData::class.java)
-                        posts.add(post)
-                    }
-                    result.invoke(
-                        UiState.Success(posts)
-                    )
-                }
+                result.invoke(
+                    UiState.Success(posts)
+                )
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(it.localizedMessage)
+                )
             }
     }
 
@@ -130,7 +128,7 @@ class PostRepositoryImp(
             }
     }
 
-    override fun addPostDataToUser(
+    private fun addPostDataToUser(
         post: PostData,
         result: (UiState<String>) -> Unit
     ) {
@@ -215,7 +213,7 @@ class PostRepositoryImp(
             }
     }
 
-    override fun addCommentDataToUser(
+    private fun addCommentDataToUser(
         comment: CommentData,
         postId: String,
         result: (UiState<String>) -> Unit
@@ -275,7 +273,7 @@ class PostRepositoryImp(
                     }
                 }
             } else {
-                deleteLikeDataAtUser(like, postId, currentUserId) {state ->
+                deleteLikeDataAtUser(postId, currentUserId) {state ->
                     when(state) {
                         is UiState.Success -> {
                             val likesAmount = post.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().minus(1)
@@ -302,7 +300,7 @@ class PostRepositoryImp(
         }
     }
 
-    override fun addLikeDataToUser(
+    private fun addLikeDataToUser(
         like: LikeData,
         postId: String,
         currentUserId: String,
@@ -324,8 +322,7 @@ class PostRepositoryImp(
             }
     }
 
-    override fun deleteLikeDataAtUser(
-        like: LikeData,
+    private fun deleteLikeDataAtUser(
         postId: String,
         currentUserId: String,
         result: (UiState<String>) -> Unit
@@ -383,6 +380,7 @@ class PostRepositoryImp(
         try {
             val uri: Uri = withContext(Dispatchers.IO) {
                 storageReference
+                    .getReference(FirebaseStorageConstants.ROOT_DIRECTORY)
                     .child("${FirebaseStorageConstants.POST_IMAGE}/${UUID.randomUUID()}")
                     .putFile(fileUri)
                     .await()

@@ -1,11 +1,13 @@
 package com.example.rangkul.ui.profile
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rangkul.R
@@ -21,31 +23,38 @@ import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
 import com.example.rangkul.utils.toast
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusListener {
 
     lateinit var binding: FragmentProfileBinding
     private val viewModelPost: PostViewModel by viewModels()
     private var selectedType = "Public"
+    private var postList: MutableList<PostData> = arrayListOf()
     private val adapterPost by lazy {
         PostAdapter(
             onCommentClicked = { pos, item ->
                 val intent = Intent(requireContext(), CommentActivity::class.java)
                 intent.putExtra("OBJECT_POST", item)
-                startActivity(intent)
+                resultLauncher.launch(intent)
             },
             onLikeClicked = { pos, item ->
                 addLike(item)
             },
             onOptionClicked = { pos, item ->
-                val postOptionsBottomDialogFragment: PostOptionsBottomSheetFragment =
-                    PostOptionsBottomSheetFragment.newInstance()
+                val postOptionsBottomDialogFragment = PostOptionsBottomSheetFragment(this)
+
+                val bundle = Bundle()
+                bundle.putParcelable("OBJECT_POST", item)
+                bundle.putInt("POST_POSITION", pos)
+                postOptionsBottomDialogFragment.arguments = bundle
+
                 postOptionsBottomDialogFragment.show(
-                    parentFragmentManager,
-                    PostOptionsBottomSheetFragment.TAG
+                    childFragmentManager,
+                    "PostOptionsBottomSheetFragment"
                 )
             },
             onBadgeClicked = { pos, item ->
@@ -53,6 +62,12 @@ class ProfileFragment : Fragment() {
             },
             context = requireContext()
         )
+    }
+    // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
+        }
     }
 
     override fun onCreateView(
@@ -72,6 +87,10 @@ class ProfileFragment : Fragment() {
 //            startActivity(intent)
 //        }
 
+        binding.srlProfileFragment.setOnRefreshListener {
+            viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
+        }
+
         setUserProfileData()
 
         binding.btSettings.setOnClickListener {
@@ -79,16 +98,29 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
         }
 
-        binding.chipPublic.setOnClickListener {
-            selectedType = "Public"
-            viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
-        }
-        binding.chipAnonymous.setOnClickListener {
-            selectedType = "Anonymous"
-            viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
-        }
-        binding.chipDiary.setOnCloseIconClickListener {
-            selectedType = "Diary"
+        // Get posts based on type
+        // Use OnCheckedStateChangeListener to always sync the chip and post type
+        binding.chipGroupPostType.setOnCheckedStateChangeListener { group, _ ->
+            val ids = group.checkedChipIds
+            for (id in ids) {
+                val chip: Chip = group.findViewById(id!!)
+
+                when (chip.text) {
+                    "Public" -> {
+                        selectedType = "Public"
+                        viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
+                    }
+
+                    "Anonymous" -> {
+                        selectedType = "Anonymous"
+                        viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
+                    }
+
+                    else -> {
+                        selectedType = "Diary"
+                    }
+                }
+            }
         }
 
         // Configure Post RecyclerView
@@ -97,11 +129,13 @@ class ProfileFragment : Fragment() {
         binding.rvPost.setHasFixedSize(true)
         binding.rvPost.isNestedScrollingEnabled = false
 
+        // Get user's like list
+        isPostLiked()
+
         // Get post list based on the selected category
         viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
         observeGetCurrentUserPosts()
 
-        isPostLiked()
     }
 
     private fun observeGetCurrentUserPosts() {
@@ -118,7 +152,9 @@ class ProfileFragment : Fragment() {
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-                    isPostDataEmpty(state.data)
+                    binding.srlProfileFragment.isRefreshing = false
+                    postList = state.data.toMutableList()
+                    isPostDataEmpty(postList)
                 }
             }
         }
@@ -143,7 +179,7 @@ class ProfileFragment : Fragment() {
         } else {
             binding.rvPost.show()
             binding.linearNoPostMessage.hide()
-            adapterPost.updateList(data.toMutableList())
+            adapterPost.updateList(postList)
         }
     }
 
@@ -205,6 +241,7 @@ class ProfileFragment : Fragment() {
                 }
 
                 is UiState.Success -> {
+                    viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
                 }
             }
         }
@@ -218,5 +255,15 @@ class ProfileFragment : Fragment() {
             }
         }
         return user
+    }
+
+    // if post deleted, then notify the adapter
+    override fun deleteStatus(status: Boolean?, position: Int?) {
+
+        if (status == true) {
+            position?.let { postList.removeAt(it) }
+            adapterPost.updateList(postList)
+            position?.let { adapterPost.notifyItemChanged(it) }
+        }
     }
 }

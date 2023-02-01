@@ -1,65 +1,143 @@
 package com.example.rangkul.ui.post
 
-import android.content.Context
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.fragment.app.viewModels
 import com.example.rangkul.R
+import com.example.rangkul.data.model.PostData
+import com.example.rangkul.data.model.UserData
+import com.example.rangkul.databinding.DialogBottomPostOptionsBinding
+import com.example.rangkul.utils.UiState
+import com.example.rangkul.utils.hide
+import com.example.rangkul.utils.show
+import com.example.rangkul.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
 // This is a Bottom Sheet Dialog Fragment for handle action in post options
-class PostOptionsBottomSheetFragment : BottomSheetDialogFragment(), View.OnClickListener {
-    private var mListener: ItemClickListener? = null
+@AndroidEntryPoint
+class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteStatusListener) : BottomSheetDialogFragment(){
+
+    private var _binding: DialogBottomPostOptionsBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var objectPost: PostData
+    private var postPosition: Int? = null
+    private val viewModel: PostOptionsViewModel by viewModels()
+//    private var mDeleteStatus: deleteStatusListener? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_bottom_post_options, container, false)
+    ): View {
+        objectPost = arguments?.getParcelable("OBJECT_POST")!!
+        postPosition = arguments?.getInt("POST_POSITION")!!
+        _binding = DialogBottomPostOptionsBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<View>(R.id.tvSeeAccount).setOnClickListener(this)
-        view.findViewById<View>(R.id.tvFollow).setOnClickListener(this)
-        view.findViewById<View>(R.id.tvReportPost).setOnClickListener(this)
-        view.findViewById<View>(R.id.tvLikeCountOptions).setOnClickListener(this)
-        view.findViewById<View>(R.id.tvCommentOptions).setOnClickListener(this)
-        view.findViewById<View>(R.id.tvDeletePost).setOnClickListener(this)
+
+        setOptionsVisibility()
+
+        binding.tvDeletePost.setOnClickListener {
+            showDeleteConfirmation()
+        }
+
+        binding.tvLikeCountOptions.setOnClickListener {
+
+        }
+
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mListener = if (context is ItemClickListener) {
-            context
+    private fun showDeleteConfirmation() {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.dialog_delete_post_confirmation)
+
+        val tvCancel = dialog.findViewById<TextView>(R.id.tvCancel)
+        val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
+        val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
+
+        tvCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        tvDelete.setOnClickListener {
+            viewModel.deletePost(objectPost)
+
+            viewModel.deletePost.observe(viewLifecycleOwner) {state ->
+                when(state) {
+                    is UiState.Loading -> {
+                        progressBar.show()
+                    }
+
+                    is UiState.Failure -> {
+                        progressBar.hide()
+                        toast(state.error)
+                        dialog.dismiss()
+                        dismiss()
+                    }
+
+                    is UiState.Success -> {
+                        progressBar.hide()
+                        toast(state.data)
+                        deleteStatusListener.deleteStatus(true, postPosition)
+                        dialog.dismiss()
+                        dismiss()
+                    }
+                }
+            }
+        }
+
+        dialog.show()
+
+    }
+
+    private fun setOptionsVisibility() {
+        if (objectPost.createdBy == currentUserData().userId) {
+            binding.tvDeletePost.show()
+            binding.tvLikeCountOptions.show()
+            binding.tvCommentOptions.show()
+            binding.tvReportPost.hide()
+            binding.tvFollow.hide()
+            binding.tvSeeAccount.hide()
         } else {
-            throw RuntimeException(
-                context.toString()
-                        + " must implement ItemClickListener"
-            )
+            binding.tvDeletePost.hide()
+            binding.tvLikeCountOptions.hide()
+            binding.tvCommentOptions.hide()
+            binding.tvReportPost.show()
+            binding.tvFollow.show()
+            binding.tvSeeAccount.show()
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        mListener = null
-    }
-
-    override fun onClick(view: View) {
-        val tvSelected = view as TextView
-        mListener!!.onItemClick(tvSelected.text.toString())
-        dismiss()
-    }
-
-    interface ItemClickListener {
-        fun onItemClick(item: String?)
-    }
-
-    companion object {
-        const val TAG = "ActionBottomDialog"
-        fun newInstance(): PostOptionsBottomSheetFragment {
-            return PostOptionsBottomSheetFragment()
+    private fun currentUserData(): UserData {
+        var user = UserData()
+        viewModel.getSessionData {
+            if (it != null) {
+                user = it
+            }
         }
+        return user
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    interface DeleteStatusListener {
+        fun deleteStatus(status: Boolean?, position: Int?)
+    }
+
+
 }
