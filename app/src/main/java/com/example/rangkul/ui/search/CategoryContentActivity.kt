@@ -32,6 +32,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
 
     private lateinit var binding: ActivityCategoryContentBinding
     private var selectedCategory = ""
+    private var selectedChip = ""
     private var postList: MutableList<PostData> = arrayListOf()
     private val viewModelPost: PostViewModel by viewModels()
     private val viewModelCategoryContent: CategoryContentViewModel by viewModels()
@@ -97,7 +98,11 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         setContentView(binding.root)
 
         binding.srlCategoryContent.setOnRefreshListener {
-            viewModelPost.getPostsWithCategory(selectedCategory)
+            when (selectedChip) {
+                "Post" -> viewModelPost.getPostsWithCategory(selectedCategory)
+                "Article" -> viewModelCategoryContent.getContents(selectedCategory, "Article")
+                else -> viewModelCategoryContent.getContents(selectedCategory, "Video")
+            }
         }
 
         setToolbar()
@@ -110,18 +115,21 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         // Change recyclerview margin to fit the gridlayout item
         val param = binding.rvContents.layoutParams as ViewGroup.MarginLayoutParams
         binding.chipPost.setOnClickListener {
+            selectedChip = "Post"
             binding.rvContents.adapter = adapterPost
             binding.rvContents.layoutManager = LinearLayoutManager(this)
             viewModelPost.getPostsWithCategory(selectedCategory)
             param.setMargins(getPixelValue(16),getPixelValue(15),getPixelValue(16),0)
         }
         binding.chipArticle.setOnClickListener {
+            selectedChip = "Article"
             binding.rvContents.adapter = articleAdapter
             binding.rvContents.layoutManager = LinearLayoutManager(this)
             viewModelCategoryContent.getContents(selectedCategory, "Article")
             param.setMargins(getPixelValue(16),getPixelValue(15),getPixelValue(16),0)
         }
         binding.chipVideo.setOnClickListener {
+            selectedChip = "Video"
             binding.rvContents.adapter = videoAdapter
             binding.rvContents.layoutManager = GridLayoutManager(this, 2)
             viewModelCategoryContent.getContents(selectedCategory, "Video")
@@ -159,6 +167,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
+                    binding.srlCategoryContent.isRefreshing = false // hide swipe refresh loading
                     articleAdapter.updateList(state.data.toMutableList())
                     videoAdapter.updateList(state.data.toMutableList())
                 }

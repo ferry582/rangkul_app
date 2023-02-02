@@ -1,4 +1,4 @@
-package com.example.rangkul.ui.post
+package com.example.rangkul.ui.comment
 
 import android.app.Dialog
 import android.graphics.Color
@@ -12,9 +12,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.example.rangkul.R
-import com.example.rangkul.data.model.PostData
+import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.data.model.UserData
-import com.example.rangkul.databinding.DialogBottomPostOptionsBinding
+import com.example.rangkul.databinding.DialogBottomCommentOptionsBinding
 import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
@@ -22,23 +22,25 @@ import com.example.rangkul.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
-// This is a Bottom Sheet Dialog Fragment for handle action in post options
+// This is a Bottom Sheet Dialog Fragment for handle action in comment options
 @AndroidEntryPoint
-class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteStatusListener) : BottomSheetDialogFragment(){
+class CommentOptionsBottomSheetFragment(private val deleteStatusListener: DeleteStatusListener) : BottomSheetDialogFragment(){
 
-    private var _binding: DialogBottomPostOptionsBinding? = null
+    private var _binding: DialogBottomCommentOptionsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var objectPost: PostData
-    private var postPosition: Int? = null
-    private val viewModel: PostOptionsViewModel by viewModels()
+    private lateinit var objectComment: CommentData
+    private var commentPosition: Int? = null
+    private lateinit var postId: String
+    private val viewModel: CommentOptionsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        objectPost = arguments?.getParcelable("OBJECT_POST")!!
-        postPosition = arguments?.getInt("POST_POSITION")!!
-        _binding = DialogBottomPostOptionsBinding.inflate(layoutInflater, container, false)
+        objectComment = arguments?.getParcelable("OBJECT_COMMENT")!!
+        commentPosition = arguments?.getInt("COMMENT_POSITION")!!
+        postId = arguments?.getString("POST_ID")!!
+        _binding = DialogBottomCommentOptionsBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -48,20 +50,8 @@ class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteSta
         setOptionsVisibility()
         setFollowTextView()
 
-        binding.tvDeletePost.setOnClickListener {
+        binding.tvDeleteComment.setOnClickListener {
             showDeleteConfirmation()
-        }
-
-        binding.tvLikeCountOptions.setOnClickListener {
-            toast("Under development")
-        }
-
-        binding.tvCommentOptions.setOnClickListener {
-            toast("Under development")
-        }
-
-        binding.tvReportPost.setOnClickListener {
-            toast("Under development")
         }
 
         binding.tvFollow.setOnClickListener {
@@ -72,16 +62,20 @@ class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteSta
             toast("Under development")
         }
 
+        binding.tvReportComment.setOnClickListener {
+            toast("Under development")
+        }
+
     }
 
     private fun setFollowTextView() {
         binding.tvFollow.apply {
             // Get the first Name
-            val firstName: String = if(objectPost.userName.contains(" ")) {
-                val firstSpace: Int = objectPost.userName.indexOf(" ") // detect the first space character
-                objectPost.userName.substring(0,firstSpace) // get everything unto the first space character
+            val firstName: String = if(objectComment.userName.contains(" ")) {
+                val firstSpace: Int = objectComment.userName.indexOf(" ") // detect the first space character
+                objectComment.userName.substring(0,firstSpace) // get everything unto the first space character
             } else {
-                objectPost.userName
+                objectComment.userName
             }
 
             text =
@@ -99,17 +93,21 @@ class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteSta
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.dialog_delete_confirmation)
 
+        val tvMessageTitle = dialog.findViewById<TextView>(R.id.tvTitle)
+        val tvMessageDescription = dialog.findViewById<TextView>(R.id.tvDescription)
         val tvCancel = dialog.findViewById<TextView>(R.id.tvCancel)
         val tvDelete = dialog.findViewById<TextView>(R.id.tvDelete)
         val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
 
+        tvMessageTitle.text = getString(R.string.delete_comment_title)
+        tvMessageDescription.text = getString(R.string.delete_comment_description)
         tvCancel.setOnClickListener {
             dialog.dismiss()
         }
         tvDelete.setOnClickListener {
-            viewModel.deletePost(objectPost)
+            viewModel.deleteComment(postId, objectComment)
 
-            viewModel.deletePost.observe(viewLifecycleOwner) {state ->
+            viewModel.deleteComment.observe(viewLifecycleOwner) {state ->
                 when(state) {
                     is UiState.Loading -> {
                         progressBar.show()
@@ -125,7 +123,7 @@ class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteSta
                     is UiState.Success -> {
                         progressBar.hide()
                         toast(state.data)
-                        deleteStatusListener.deleteStatus(true, postPosition)
+                        deleteStatusListener.deleteStatus(true, commentPosition)
                         dialog.dismiss()
                         dismiss()
                     }
@@ -138,28 +136,16 @@ class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteSta
     }
 
     private fun setOptionsVisibility() {
-        if (objectPost.createdBy == currentUserData().userId) {
-            binding.tvDeletePost.show()
-            binding.tvLikeCountOptions.show()
-            binding.tvCommentOptions.show()
-            binding.tvReportPost.hide()
+        if (objectComment.commentedBy == currentUserData().userId) {
             binding.tvFollow.hide()
             binding.tvSeeAccount.hide()
-        } else if (objectPost.type == "Anonymous") {
-            binding.tvDeletePost.hide()
-            binding.tvLikeCountOptions.hide()
-            binding.tvCommentOptions.hide()
-            binding.tvReportPost.show()
-            binding.tvFollow.hide()
-            binding.tvSeeAccount.hide()
-        }
-        else {
-            binding.tvDeletePost.hide()
-            binding.tvLikeCountOptions.hide()
-            binding.tvCommentOptions.hide()
-            binding.tvReportPost.show()
+            binding.tvReportComment.hide()
+            binding.tvDeleteComment.show()
+        } else {
             binding.tvFollow.show()
             binding.tvSeeAccount.show()
+            binding.tvReportComment.show()
+            binding.tvDeleteComment.hide()
         }
     }
 
@@ -181,6 +167,5 @@ class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteSta
     interface DeleteStatusListener {
         fun deleteStatus(status: Boolean?, position: Int?)
     }
-
 
 }

@@ -19,17 +19,29 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 @AndroidEntryPoint
-class CommentActivity : AppCompatActivity() {
+class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.DeleteStatusListener {
 
     private lateinit var binding: ActivityPostCommentBinding
     private val viewModel: CommentViewModel by viewModels()
     private var objectPost: PostData? = null
-    private var justAddedOrRefreshedComment = false
+    private var commentList: MutableList<CommentData> = arrayListOf()
+    private var isPostNeedReload = false
     private val adapter by lazy {
         CommentAdapter(
             onOptionsCommentClicked = { pos, item ->
+                val commentOptionsBottomDialogFragment = CommentOptionsBottomSheetFragment(this)
+
+                val bundle = Bundle()
+                bundle.putParcelable("OBJECT_COMMENT", item)
+                bundle.putInt("COMMENT_POSITION", pos)
+                bundle.putString("POST_ID", objectPost?.postId)
+                commentOptionsBottomDialogFragment.arguments = bundle
+
+                commentOptionsBottomDialogFragment.show(
+                    supportFragmentManager,
+                    "CommentOptionsBottomSheetFragment"
+                )
             }
         )
     }
@@ -48,7 +60,7 @@ class CommentActivity : AppCompatActivity() {
 
         binding.srlPostCommentActivity.setOnRefreshListener {
             viewModel.getComments(objectPost!!.postId)
-            justAddedOrRefreshedComment = true
+            isPostNeedReload = true
         }
 
         // Configure Comment RecyclerView
@@ -100,7 +112,8 @@ class CommentActivity : AppCompatActivity() {
                     if (state.data.isNotEmpty()) {
                         binding.rvComment.show()
                         binding.linearNoCommentMessage.hide()
-                        adapter.updateList(state.data.toMutableList())
+                        commentList = state.data.toMutableList()
+                        adapter.updateList(commentList)
                     } else {
                         binding.rvComment.hide()
                         binding.linearNoCommentMessage.show()
@@ -124,7 +137,7 @@ class CommentActivity : AppCompatActivity() {
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-                    justAddedOrRefreshedComment = true
+                    isPostNeedReload = true
                     viewModel.getComments(objectPost!!.postId)
                 }
             }
@@ -188,16 +201,26 @@ class CommentActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
+    // Handle back button at toolbar
     override fun onSupportNavigateUp(): Boolean {
-        if (justAddedOrRefreshedComment) setResult(Activity.RESULT_OK)
+        if (isPostNeedReload) setResult(Activity.RESULT_OK)
         finish()
         return true
     }
 
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (justAddedOrRefreshedComment) setResult(Activity.RESULT_OK)
+            if (isPostNeedReload) setResult(Activity.RESULT_OK)
             finish()
+        }
+    }
+
+    override fun deleteStatus(status: Boolean?, position: Int?) {
+        if (status == true) {
+            position?.let { commentList.removeAt(it) }
+            adapter.updateList(commentList)
+            position?.let { adapter.notifyItemChanged(it) }
+            isPostNeedReload = true
         }
     }
 }

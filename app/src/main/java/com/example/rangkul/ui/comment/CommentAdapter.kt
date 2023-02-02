@@ -48,6 +48,10 @@ class CommentAdapter (
                 }
             }
 
+            binding.ivCommentOptions.setOnClickListener {
+                onOptionsCommentClicked.invoke(adapterPosition, item)
+            }
+
 //            binding.civProfilePictureComment.setImageResource("")
         }
     }

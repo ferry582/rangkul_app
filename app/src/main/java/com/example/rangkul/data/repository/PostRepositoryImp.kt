@@ -180,7 +180,7 @@ class PostRepositoryImp(
         val documentComment = documentPost.collection(FirestoreCollection.COMMENT).document()
         comment.commentId = documentComment.id
 
-        database.runTransaction {transaction ->
+        database.runTransaction { transaction ->
             // Update Comment Count in Posts Collection
             val post = transaction.get(documentPost)
             val commentsAmount = post.getLong(FirestoreDocumentField.COMMENTS_COUNT)?.plus(1)

@@ -184,4 +184,61 @@ class OptionsRepositoryImp(
         }
     }
 
+    override fun deleteComment( postId: String, comment: CommentData, result: (UiState<String>) -> Unit) {
+        val documentPost = database.collection(FirestoreCollection.POST).document(postId)
+
+        database.runTransaction {transaction ->
+            // Update Comment Count in Posts Collection
+            val post = transaction.get(documentPost)
+            val commentsAmount = post.getLong(FirestoreDocumentField.COMMENTS_COUNT)?.minus(1)
+            transaction.update(documentPost, FirestoreDocumentField.COMMENTS_COUNT, commentsAmount)
+        }
+            .addOnSuccessListener {
+                // Delete comment data at user
+                deleteCommentDataAtUser(comment.commentId, comment.commentedBy) { state ->
+                    when(state) {
+                        is UiState.Success -> {
+                            // Delete comment document
+                            database.collection(FirestoreCollection.POST).document(postId)
+                                .collection(FirestoreCollection.COMMENT).document(comment.commentId)
+                                .delete()
+                                .addOnSuccessListener {
+                                    result.invoke(UiState.Success("Comment has been deleted"))
+                                }
+                                .addOnFailureListener {
+                                    result.invoke(UiState.Failure(it.localizedMessage))
+                                }
+                        }
+
+                        is UiState.Failure -> {
+                            result.invoke(
+                                UiState.Failure(state.error)
+                            )
+                        }
+                        UiState.Loading -> {}
+                    }
+                }
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(it.localizedMessage)
+                )
+            }
+    }
+
+    private fun deleteCommentDataAtUser(commentId : String, userId: String, result: (UiState<String>) -> Unit){
+        database.collection(FirestoreCollection.USER).document(userId)
+            .collection(FirestoreCollection.COMMENT).document(commentId).delete()
+            .addOnSuccessListener {
+                result.invoke(
+                    UiState.Success("Comment data at user collection has been deleted")
+                )
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(it.localizedMessage)
+                )
+            }
+    }
+
 }
