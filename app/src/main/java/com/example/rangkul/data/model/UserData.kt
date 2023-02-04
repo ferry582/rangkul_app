@@ -11,11 +11,11 @@ data class UserData (
     var userId: String = "",
     @ServerTimestamp
     val createdAt: Date = Date(),
-    val userName: String = "",
-    val bio: String = "",
-    val profilePicture: String = "",
+    var userName: String = "",
+    var bio: String? = null,
+    var profilePicture: String? = null,
     val email: String = "",
-    val gender: String = "",
-    val birthDate: Date = Date(),
+    var gender: String? = null,
+    var birthDate: Date? = null,
     val badge: String = ""
 ): Parcelable

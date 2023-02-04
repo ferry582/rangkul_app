@@ -13,7 +13,7 @@ interface PostRepository {
     fun getPostsWithCategory(category: String, result: (UiState<List<PostData>>) -> Unit)
     fun addPost(post: PostData, result: (UiState<String>) -> Unit)
     fun getComments(postId: String, result: (UiState<List<CommentData>>) -> Unit)
-    fun addComment(comment: CommentData, postId: String, result: (UiState<String>) -> Unit)
+    fun addComment(comment: CommentData, result: (UiState<String>) -> Unit)
     fun addLike(like: LikeData, postId: String, currentUserId: String, result: (UiState<String>) -> Unit)
     fun getUserLikeData(currentUserId: String, result: (UiState<List<LikeData>>) -> Unit)
     fun getSessionData(result: (UserData?) -> Unit)

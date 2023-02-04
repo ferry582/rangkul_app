@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.rangkul.R
 import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
@@ -23,7 +25,6 @@ import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
 import com.example.rangkul.utils.toast
-import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -63,10 +64,16 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
             context = requireContext()
         )
     }
-    // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
+
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
+            // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
             viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
+        } else if (result.resultCode == 100) {
+            // Restart fragment if user just edit the profile to get newest data from shared preference
+            val fragmentId = findNavController().currentDestination?.id
+            findNavController().popBackStack(fragmentId!!,true)
+            findNavController().navigate(fragmentId)
         }
     }
 
@@ -82,11 +89,6 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        view.findViewById<AppCompatButton>(R.id.btSettings).setOnClickListener {
-//            val intent = Intent(context, SettingsActivity::class.java)
-//            startActivity(intent)
-//        }
-
         binding.srlProfileFragment.setOnRefreshListener {
             viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
         }
@@ -98,28 +100,26 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
             startActivity(intent)
         }
 
+        binding.btEditProfile.setOnClickListener {
+            val intent = Intent(requireContext(), EditProfileActivity::class.java)
+            resultLauncher.launch(intent)
+        }
+
         // Get posts based on type
         // Use OnCheckedStateChangeListener to always sync the chip and post type
         binding.chipGroupPostType.setOnCheckedStateChangeListener { group, _ ->
-            val ids = group.checkedChipIds
-            for (id in ids) {
-                val chip: Chip = group.findViewById(id!!)
-
-                when (chip.text) {
-                    "Public" -> {
-                        selectedType = "Public"
-                        viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
-                    }
-
-                    "Anonymous" -> {
-                        selectedType = "Anonymous"
-                        viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
-                    }
-
-                    else -> {
-                        selectedType = "Diary"
-                    }
+            when (group.checkedChipId) {
+                R.id.chipPublic -> {
+                    selectedType = "Public"
+                    viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
                 }
+
+                R.id.chipAnonymous -> {
+                    selectedType = "Anonymous"
+                    viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
+                }
+
+                else -> selectedType = "Diary"
             }
         }
 
@@ -180,6 +180,7 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
             binding.rvPost.show()
             binding.linearNoPostMessage.hide()
             adapterPost.updateList(postList)
+            adapterPost.updateCurrentUser(currentUserData().userId)
         }
     }
 
@@ -218,6 +219,26 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
                 else -> {
                     setImageResource(R.drawable.ic_badge_basic)
                 }
+            }
+        }
+        binding.civProfilePicture.apply {
+            if (currentUserData().profilePicture.isNullOrEmpty()) setImageResource(R.drawable.ic_profile_picture_default)
+            else {
+                Glide
+                    .with(context)
+                    .load(currentUserData().profilePicture)
+                    .placeholder(R.drawable.ic_profile_picture_default)
+                    .error(R.drawable.ic_baseline_error_24)
+                    .into(binding.civProfilePicture)
+            }
+        }
+        binding.tvProfileBio.apply {
+            if (currentUserData().bio.isNullOrEmpty()) {
+                hide()
+            }
+            else {
+                show()
+                text = currentUserData().bio
             }
         }
     }
@@ -266,4 +287,5 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
             position?.let { adapterPost.notifyItemChanged(it) }
         }
     }
+
 }

@@ -7,6 +7,6 @@ import com.example.rangkul.utils.UiState
 
 interface OptionsRepository {
     fun deletePost(post: PostData, result: (UiState<String>) -> Unit)
-    fun deleteComment(postId: String, comment: CommentData, result: (UiState<String>) -> Unit)
+    fun deleteComment(comment: CommentData, result: (UiState<String>) -> Unit)
     fun getSessionData(result: (UserData?) -> Unit)
 }

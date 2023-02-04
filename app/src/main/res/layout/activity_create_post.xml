@@ -206,7 +206,7 @@
                 android:hint="What’s on your Mind?"
                 android:inputType="textMultiLine"
                 android:lines="20"
-                android:maxLength="250"
+                android:maxLength="500"
                 android:minLines="5"
                 android:padding="15dp"
                 android:scrollbars="vertical"

@@ -14,6 +14,7 @@ data class CommentData (
         val commentedAt: Date = Date(),
         val comment: String = "",
         val userName: String = "",
-        val profilePicture: String = "",
-        val userBadge: String = ""
+        val profilePicture: String? = null,
+        val userBadge: String = "",
+        val postId: String = ""
 ): Parcelable

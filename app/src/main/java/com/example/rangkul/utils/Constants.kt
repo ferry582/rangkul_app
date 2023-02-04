@@ -10,13 +10,19 @@ object FirestoreCollection {
 
 object FirestoreDocumentField {
     const val COMMENTS_COUNT = "commentsCount"
+    const val COMMENT_OWNER = "commentedBy"
+    const val COMMENT_PROFILE_PICTURE = "profilePicture"
+    const val COMMENT_USER_NAME = "userName"
     const val LIKES_COUNT = "likesCount"
-    const val POST_TYPE = "type"
-    const val POST_CATEGORY = "category"
     const val CONTENT_TYPE = "type"
     const val CONTENT_CATEGORY = "category"
     const val CONTENT_PUBLISHED_DATE = "publishedAt"
     const val POST_CREATED_BY = "createdBy"
+    const val POST_PROFILE_PICTURE = "profilePicture"
+    const val POST_USER_NAME = "userName"
+    const val POST_TYPE = "type"
+    const val POST_CATEGORY = "category"
+    const val POST_ID = "postId"
 }
 
 object SharedPrefConstants {
@@ -26,5 +32,6 @@ object SharedPrefConstants {
 
 object FirebaseStorageConstants {
     const val ROOT_DIRECTORY = "app"
-    const val POST_IMAGE = "post"
+    const val POST_IMAGE = "posts"
+    const val USER_IMAGE = "users"
 }

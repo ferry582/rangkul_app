@@ -56,4 +56,15 @@ object RepositoryModule {
     ): OptionsRepository {
         return OptionsRepositoryImp(database, appPreferences, gson, storageReference)
     }
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(
+        database: FirebaseFirestore,
+        appPreferences: SharedPreferences,
+        gson: Gson,
+        storageReference: FirebaseStorage
+    ): EditProfileRepository {
+        return EditProfileRepositoryImp(database, appPreferences, gson, storageReference)
+    }
 }

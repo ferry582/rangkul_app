@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.rangkul.R
 import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.data.model.PostData
@@ -84,8 +85,9 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
                         comment = binding.etComment.text.toString(),
                         userName = currentUserData().userName,
                         profilePicture = currentUserData().profilePicture,
-                        userBadge =currentUserData().badge
-                    ), objectPost!!.postId
+                        userBadge = currentUserData().badge,
+                        postId = objectPost!!.postId
+                    )
                 )
             }
             binding.etComment.text?.clear()
@@ -114,6 +116,7 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
                         binding.linearNoCommentMessage.hide()
                         commentList = state.data.toMutableList()
                         adapter.updateList(commentList)
+                        adapter.updatePostType(objectPost!!)
                     } else {
                         binding.rvComment.hide()
                         binding.linearNoCommentMessage.show()
@@ -167,28 +170,60 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
 
     private fun setObjectPost() {
         val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
+
         binding.tvUserNamePost.apply {
-            text = if (objectPost?.userName?.length!! > 20) {
-                "${objectPost?.userName?.substring(0,20)}..."
+            text = if (objectPost?.type == "Anonymous") {
+                if (objectPost?.createdBy == currentUserData().userId) {
+                    "Anonymous (You)"
+                } else {
+                    "Anonymous"
+                }
             } else {
-                objectPost?.userName
+                if (objectPost?.userName?.length!! > 20) {
+                    "${objectPost?.userName?.substring(0,20)}..."
+                } else {
+                    objectPost?.userName
+                }
             }
         }
+
         binding.tvCategoryPost.text = objectPost?.category
         binding.tvTimePost.text = sdf.format(objectPost?.createdAt!!)
         binding.tvCaptionPost.text = objectPost?.caption
 
         // Set User Badge
         binding.ivUserBadgePost.apply {
-            when (objectPost?.userBadge) {
-                "Trusted" -> {
-                    setImageResource(R.drawable.ic_badge_trusted)
+            if (objectPost?.type == "Anonymous") {
+                hide()
+            } else {
+                when (objectPost?.userBadge) {
+                    "Trusted" -> {
+                        setImageResource(R.drawable.ic_badge_trusted)
+                    }
+                    "Psychologist" -> {
+                        setImageResource(R.drawable.ic_badge_psychologist)
+                    }
+                    else -> {
+                        setImageResource(R.drawable.ic_badge_basic)
+                    }
                 }
-                "Psychologist" -> {
-                    setImageResource(R.drawable.ic_badge_psychologist)
-                }
-                else -> {
-                    setImageResource(R.drawable.ic_badge_basic)
+                show()
+            }
+        }
+
+        // Set Profile Picture
+        binding.civProfilePicturePost.apply {
+            if (objectPost?.type == "Anonymous") {
+                setImageResource(R.drawable.ic_profile_picture_anonymous)
+            } else {
+                if (objectPost?.profilePicture.isNullOrEmpty()) setImageResource(R.drawable.ic_profile_picture_default)
+                else {
+                    Glide
+                        .with(context)
+                        .load(objectPost?.profilePicture)
+                        .placeholder(R.drawable.ic_profile_picture_default)
+                        .error(R.drawable.ic_baseline_error_24)
+                        .into(binding.civProfilePicturePost)
                 }
             }
         }

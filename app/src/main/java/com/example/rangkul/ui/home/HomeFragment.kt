@@ -8,6 +8,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.example.rangkul.R
 import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
@@ -126,6 +128,7 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusList
                     binding.srlHomeFragment.isRefreshing = false // hide swipe refresh loading
                     postList = state.data.toMutableList()
                     adapter.updateList(postList)
+                    adapter.updateCurrentUser(currentUserData().userId)
                 }
             }
         }
@@ -181,6 +184,18 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusList
                 } else {
                     "${firstName}!"
                 }
+        }
+
+        binding.civProfilePicture.apply {
+            if (currentUserData().profilePicture.isNullOrEmpty()) setImageResource(R.drawable.ic_profile_picture_default)
+            else {
+                Glide
+                    .with(context)
+                    .load(currentUserData().profilePicture)
+                    .placeholder(R.drawable.ic_profile_picture_default)
+                    .error(R.drawable.ic_baseline_error_24)
+                    .into(binding.civProfilePicture)
+            }
         }
     }
 

@@ -17,9 +17,9 @@ class CommentOptionsViewModel @Inject constructor(private val repository: Option
     val deleteComment: LiveData<UiState<String>>
         get() = _deleteComment
 
-    fun deleteComment(postId: String, comment: CommentData){
+    fun deleteComment(comment: CommentData){
         _deleteComment.value = UiState.Loading
-        repository.deleteComment(postId, comment) {
+        repository.deleteComment(comment) {
             _deleteComment.value = it
         }
     }

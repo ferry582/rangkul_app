@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.Window
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -51,14 +52,20 @@ class MainActivity : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.dialog_successful_message)
+
+        val title = dialog.findViewById<TextView>(R.id.tvTitle)
+        val description = dialog.findViewById<TextView>(R.id.tvDescription)
 
         if (justLogIn) {
-            dialog.setContentView(R.layout.dialog_login_successful)
+            title.setText(R.string.login_success_title)
+            description.setText(R.string.login_success_description)
             dialog.show()
         }
 
         if (justSignUp) {
-            dialog.setContentView(R.layout.dialog_signup_successful)
+            title.setText(R.string.signup_success_title)
+            description.setText(R.string.signup_success_description)
             dialog.show()
         }
 

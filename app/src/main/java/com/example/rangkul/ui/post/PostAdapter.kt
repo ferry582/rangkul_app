@@ -24,6 +24,7 @@ class PostAdapter (
 
     private var list: MutableList<PostData> = arrayListOf()
     private var userLikeDataList: MutableList<LikeData> = arrayListOf()
+    private lateinit var currentUserId: String
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
 
     inner class PostViewHolder (val binding: ItemPostBinding): RecyclerView.ViewHolder(binding.root) {
@@ -34,7 +35,13 @@ class PostAdapter (
              */
             binding.tvUserNamePost.apply {
                 text = if (item.type == "Anonymous") {
-                    "Anonymous"
+                    // check if post belongs to the current user
+                    if (item.createdBy == currentUserId) {
+                        "Anonymous (You)"
+                    } else {
+                        "Anonymous"
+                    }
+
                 } else {
                     if (item.userName.length > 20) {
                         "${item.userName.substring(0,20)}..."
@@ -67,7 +74,15 @@ class PostAdapter (
                 if (item.type == "Anonymous") {
                     setImageResource(R.drawable.ic_profile_picture_anonymous)
                 } else {
-                    setImageResource(R.drawable.ic_profile_picture_default)
+                    if (item.profilePicture.isNullOrEmpty()) setImageResource(R.drawable.ic_profile_picture_default)
+                    else {
+                        Glide
+                            .with(context)
+                            .load(item.profilePicture)
+                            .placeholder(R.drawable.ic_profile_picture_default)
+                            .error(R.drawable.ic_baseline_error_24)
+                            .into(binding.civProfilePicturePost)
+                    }
                 }
             }
 
@@ -80,7 +95,7 @@ class PostAdapter (
             binding.tvLikeCountPost.text = item.likesCount.toString()
             binding.tvCommentCountPost.text = item.commentsCount.toString()
             // Set post's image
-            if (item.image == "null") {
+            if (item.image == null) {
                 // Hide cvImagePost when the post has no image
                 binding.cvImagePost.hide()
             } else {
@@ -139,6 +154,10 @@ class PostAdapter (
 
     fun updateUserLikeDataList(list: MutableList<LikeData>) {
         this.userLikeDataList = list
+    }
+
+    fun updateCurrentUser(userId: String) {
+        this.currentUserId = userId
     }
 
 }

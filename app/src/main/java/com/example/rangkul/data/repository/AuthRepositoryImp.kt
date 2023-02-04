@@ -66,7 +66,7 @@ class AuthRepositoryImp(private val database: FirebaseFirestore,
 
     }
 
-    override fun updateUserInfo(user: UserData, result: (UiState<String>) -> Unit) {
+    private fun updateUserInfo(user: UserData, result: (UiState<String>) -> Unit) {
         val document = database.collection(FirestoreCollection.USER).document(user.userId)
         document
             .set(user)

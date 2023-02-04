@@ -9,6 +9,7 @@ import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.databinding.ActivityLoginWithEmailBinding
 import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
+import com.example.rangkul.utils.hideKeyboard
 import com.example.rangkul.utils.show
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,12 +30,14 @@ class LoginWithEmailActivity : AppCompatActivity() {
         observer()
 
         binding.btLogIn.setOnClickListener{
-            val email: String = binding.etEmail.text.toString()
+            val email: String = binding.etEmail.text.toString().trim()
             val pass: String = binding.etPassword.text.toString()
 
             if (loginValidation(email, pass)) {
                 viewModel.login(email, pass)
             }
+
+            hideKeyboard()
         }
 
         binding.tvForgotPassword.setOnClickListener {

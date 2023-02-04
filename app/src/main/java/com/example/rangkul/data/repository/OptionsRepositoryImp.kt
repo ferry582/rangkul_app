@@ -17,7 +17,7 @@ class OptionsRepositoryImp(
 ): OptionsRepository {
 
     override fun deletePost( post: PostData, result: (UiState<String>) -> Unit) {
-        deleteCommentsSubCollection(post.postId) {
+        deleteAllComments(post.postId) {
             when (it) {
                 is UiState.Failure -> {
                     Log.e("deletePost", it.error.toString())
@@ -43,20 +43,7 @@ class OptionsRepositoryImp(
             }
         }
 
-        deletePostDataAtUser(post.postId, post.createdBy) {
-            when (it) {
-                is UiState.Failure -> {
-                    Log.e("deletePost", it.error.toString())
-                }
-
-                is UiState.Success -> {
-                    Log.w("deletePost", it.data)
-                }
-                UiState.Loading -> {}
-            }
-        }
-
-        if (post.image != "null") {
+        if (!post.image.isNullOrEmpty()) {
             deletePostImage(post.image) {
                 when (it) {
                     is UiState.Failure -> {
@@ -83,12 +70,10 @@ class OptionsRepositoryImp(
             }
     }
 
-    private fun deleteCommentsSubCollection(postId: String, result: (UiState<String>) -> Unit){
-        // Note: to delete entire collection, would be better to use callable cloud function
-        // https://firebase.google.com/docs/firestore/solutions/delete-collections
-
-        val ref = database.collection(FirestoreCollection.POST).document(postId)
-            .collection(FirestoreCollection.COMMENT)
+    private fun deleteAllComments(postId: String, result: (UiState<String>) -> Unit){
+        val ref =
+            database.collection(FirestoreCollection.COMMENT)
+            .whereEqualTo(FirestoreDocumentField.POST_ID, postId)
 
         ref.get()
             .addOnSuccessListener {
@@ -99,7 +84,7 @@ class OptionsRepositoryImp(
                 batch.commit()
                     .addOnSuccessListener {
                         result.invoke(
-                            UiState.Success("Delete comments sub-collection successful")
+                            UiState.Success("Delete all comments successful")
                         )
                     }
                     .addOnFailureListener {
@@ -145,21 +130,6 @@ class OptionsRepositoryImp(
             }
     }
 
-    private fun deletePostDataAtUser(postId: String, userId: String, result: (UiState<String>) -> Unit){
-        database.collection(FirestoreCollection.USER).document(userId)
-            .collection(FirestoreCollection.POST).document(postId).delete()
-            .addOnSuccessListener {
-                result.invoke(
-                    UiState.Success("Post data at user collection has been deleted")
-                )
-            }
-            .addOnFailureListener {
-                result.invoke(
-                    UiState.Failure(it.localizedMessage)
-                )
-            }
-    }
-
     private fun deletePostImage(imageUrl: String, result: (UiState<String>) -> Unit){
         storageReference.getReferenceFromUrl(imageUrl).delete()
             .addOnSuccessListener {
@@ -184,8 +154,8 @@ class OptionsRepositoryImp(
         }
     }
 
-    override fun deleteComment( postId: String, comment: CommentData, result: (UiState<String>) -> Unit) {
-        val documentPost = database.collection(FirestoreCollection.POST).document(postId)
+    override fun deleteComment( comment: CommentData, result: (UiState<String>) -> Unit) {
+        val documentPost = database.collection(FirestoreCollection.POST).document(comment.postId)
 
         database.runTransaction {transaction ->
             // Update Comment Count in Posts Collection
@@ -194,45 +164,16 @@ class OptionsRepositoryImp(
             transaction.update(documentPost, FirestoreDocumentField.COMMENTS_COUNT, commentsAmount)
         }
             .addOnSuccessListener {
-                // Delete comment data at user
-                deleteCommentDataAtUser(comment.commentId, comment.commentedBy) { state ->
-                    when(state) {
-                        is UiState.Success -> {
-                            // Delete comment document
-                            database.collection(FirestoreCollection.POST).document(postId)
-                                .collection(FirestoreCollection.COMMENT).document(comment.commentId)
-                                .delete()
-                                .addOnSuccessListener {
-                                    result.invoke(UiState.Success("Comment has been deleted"))
-                                }
-                                .addOnFailureListener {
-                                    result.invoke(UiState.Failure(it.localizedMessage))
-                                }
-                        }
-
-                        is UiState.Failure -> {
-                            result.invoke(
-                                UiState.Failure(state.error)
-                            )
-                        }
-                        UiState.Loading -> {}
+                // Delete comment document
+                database.collection(FirestoreCollection.COMMENT).document(comment.commentId)
+                    .delete()
+                    .addOnSuccessListener {
+                        result.invoke(UiState.Success("Comment has been deleted"))
                     }
-                }
-            }
-            .addOnFailureListener {
-                result.invoke(
-                    UiState.Failure(it.localizedMessage)
-                )
-            }
-    }
+                    .addOnFailureListener {
+                        result.invoke(UiState.Failure(it.localizedMessage))
+                    }
 
-    private fun deleteCommentDataAtUser(commentId : String, userId: String, result: (UiState<String>) -> Unit){
-        database.collection(FirestoreCollection.USER).document(userId)
-            .collection(FirestoreCollection.COMMENT).document(commentId).delete()
-            .addOnSuccessListener {
-                result.invoke(
-                    UiState.Success("Comment data at user collection has been deleted")
-                )
             }
             .addOnFailureListener {
                 result.invoke(

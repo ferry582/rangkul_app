@@ -104,22 +104,9 @@ class PostRepositoryImp(
 
         document.set(post)
             .addOnSuccessListener {
-                addPostDataToUser(post) {state ->
-                    when(state) {
-                        is UiState.Success -> {
-                            result.invoke(
-                                UiState.Success("Post has been published")
-                            )
-                        }
-
-                        is UiState.Failure -> {
-                            result.invoke(
-                                UiState.Failure(state.error)
-                            )
-                        }
-                        UiState.Loading -> {}
-                    }
-                }
+                result.invoke(
+                    UiState.Success("Post has been published")
+                )
             }
             .addOnFailureListener {
                 result.invoke(
@@ -128,34 +115,9 @@ class PostRepositoryImp(
             }
     }
 
-    private fun addPostDataToUser(
-        post: PostData,
-        result: (UiState<String>) -> Unit
-    ) {
-        val userPostData = UserPostData(
-            postId = post.postId,
-            createdAt = post.createdAt
-        )
-
-        database.collection(FirestoreCollection.USER).document(post.createdBy)
-            .collection(FirestoreCollection.POST).document(post.postId).set(userPostData)
-            .addOnSuccessListener {
-                result.invoke(
-                    UiState.Success("Post data has been added in user document")
-                )
-            }
-            .addOnFailureListener {
-                result.invoke(
-                    UiState.Failure(
-                        it.localizedMessage
-                    )
-                )
-            }
-    }
-
     override fun getComments(postId: String, result: (UiState<List<CommentData>>) -> Unit) {
-        database.collection(FirestoreCollection.POST).document(postId)
-            .collection(FirestoreCollection.COMMENT)
+        database.collection(FirestoreCollection.COMMENT)
+            .whereEqualTo(FirestoreDocumentField.POST_ID, postId)
             .orderBy("commentedAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener {
@@ -175,9 +137,9 @@ class PostRepositoryImp(
             }
     }
 
-    override fun addComment(comment: CommentData, postId: String, result: (UiState<String>) -> Unit) {
-        val documentPost = database.collection(FirestoreCollection.POST).document(postId)
-        val documentComment = documentPost.collection(FirestoreCollection.COMMENT).document()
+    override fun addComment(comment: CommentData, result: (UiState<String>) -> Unit) {
+        val documentPost = database.collection(FirestoreCollection.POST).document(comment.postId)
+        val documentComment = database.collection(FirestoreCollection.COMMENT).document()
         comment.commentId = documentComment.id
 
         database.runTransaction { transaction ->
@@ -189,53 +151,13 @@ class PostRepositoryImp(
             transaction.set(documentComment, comment)
         }
             .addOnSuccessListener {
-                addCommentDataToUser(comment, postId) {state ->
-                    when(state) {
-                        is UiState.Success -> {
-                            result.invoke(
-                                UiState.Success("Comment has been published")
-                            )
-                        }
-
-                        is UiState.Failure -> {
-                            result.invoke(
-                                UiState.Failure(state.error)
-                            )
-                        }
-                        UiState.Loading -> {}
-                    }
-                }
+                result.invoke(
+                    UiState.Success("Comment has been published")
+                )
             }
             .addOnFailureListener {
                 result.invoke(
                     UiState.Failure(it.localizedMessage)
-                )
-            }
-    }
-
-    private fun addCommentDataToUser(
-        comment: CommentData,
-        postId: String,
-        result: (UiState<String>) -> Unit
-    ) {
-        val userCommentData = UserCommentData(
-            commentId = comment.commentId,
-            commentedAt = comment.commentedAt,
-            postId = postId
-        )
-
-        database.collection(FirestoreCollection.USER).document(comment.commentedBy)
-            .collection(FirestoreCollection.COMMENT).document(comment.commentId).set(userCommentData)
-            .addOnSuccessListener {
-                result.invoke(
-                    UiState.Success("Comment data has been added in user document")
-                )
-            }
-            .addOnFailureListener {
-                result.invoke(
-                    UiState.Failure(
-                        it.localizedMessage
-                    )
                 )
             }
     }

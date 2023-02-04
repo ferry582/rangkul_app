@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.Window
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.app.NavUtils
 import com.example.rangkul.R
@@ -73,7 +74,13 @@ class ForgotPasswordActivity : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setContentView(R.layout.dialog_forgot_pass_successful)
+        dialog.setContentView(R.layout.dialog_successful_message)
+
+        val title = dialog.findViewById<TextView>(R.id.tvTitle)
+        val description = dialog.findViewById<TextView>(R.id.tvDescription)
+
+        title.setText(R.string.forgotpass_success_title)
+        description.setText(R.string.forgotpass_success_description)
 
         dialog.show()
 

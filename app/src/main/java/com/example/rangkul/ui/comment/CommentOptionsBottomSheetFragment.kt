@@ -105,7 +105,7 @@ class CommentOptionsBottomSheetFragment(private val deleteStatusListener: Delete
             dialog.dismiss()
         }
         tvDelete.setOnClickListener {
-            viewModel.deleteComment(postId, objectComment)
+            viewModel.deleteComment(objectComment)
 
             viewModel.deleteComment.observe(viewLifecycleOwner) {state ->
                 when(state) {

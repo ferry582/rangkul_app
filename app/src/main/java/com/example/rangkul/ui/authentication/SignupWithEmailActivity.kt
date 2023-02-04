@@ -29,17 +29,19 @@ class SignupWithEmailActivity : AppCompatActivity() {
         observer()
 
         binding.btSignUp.setOnClickListener{
-            val email: String = binding.etEmail.text.toString()
+            val email: String = binding.etEmail.text.toString().trim()
             val pass: String = binding.etPassword.text.toString()
-            val name: String = binding.etName.text.toString()
+            val name: String = binding.etName.text.toString().trim()
 
-            if (signupValidation(email, pass, name.trim())) {
+            if (signupValidation(email, pass, name)) {
                 viewModel.register(
                     email = email,
                     password = pass,
                     user = getUserObj()
                 )
             }
+
+            hideKeyboard()
         }
     }
 
@@ -67,13 +69,13 @@ class SignupWithEmailActivity : AppCompatActivity() {
     private fun getUserObj(): UserData {
         return UserData(
             userId = "",
-            userName = binding.etName.text.toString().capitalizeWords(),
+            userName = binding.etName.text.toString().capitalizeWords().trim(),
             createdAt = Date(),
-            bio = "",
-            profilePicture = "",
-            email = binding.etEmail.text.toString(),
-            gender = "",
-            birthDate = Date(),
+            bio = null,
+            profilePicture = null,
+            email = binding.etEmail.text.toString().trim(),
+            gender = null,
+            birthDate = null,
             badge = "Basic" // Default value for new user
         )
     }

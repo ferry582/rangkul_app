@@ -11,4 +11,15 @@
     <string name="delete_post_title">Delete Post?</string>
     <string name="delete_comment_description">Are you sure want to delete this comment?\nThis can’t be undone and it will be\nremove premanently.</string>
     <string name="delete_comment_title">Delete Comment?</string>
+    <string name="title_create_post_public">Write a Post</string>
+    <string name="title_create_post_anonymous">Speak Up!</string>
+    <string name="title_create_post_diary">Write a Diary</string>
+    <string name="login_success_title">Log in success!</string>
+    <string name="login_success_description">Hi, welcome back</string>
+    <string name="forgotpass_success_title">Check your email!</string>
+    <string name="forgotpass_success_description">We’ve sent you a link to your email</string>
+    <string name="signup_success_title">Sign up success!</string>
+    <string name="signup_success_description">Your account has been created</string>
+    <string name="update_profile_success_title">Profile updated!</string>
+    <string name="update_profile_success_description">Your profile data has been\nsuccessfully updated</string>
 </resources>

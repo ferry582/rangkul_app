@@ -192,6 +192,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
                     binding.srlCategoryContent.isRefreshing = false // hide swipe refresh loading
                     postList = state.data.toMutableList()
                     adapterPost.updateList(postList)
+                    adapterPost.updateCurrentUser(currentUserData().userId)
                 }
             }
         }

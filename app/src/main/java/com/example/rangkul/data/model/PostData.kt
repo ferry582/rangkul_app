@@ -7,20 +7,22 @@ import java.util.Date
 
 @kotlinx.parcelize.Parcelize
 data class PostData (
-        @DocumentId
+    @DocumentId
         var postId: String = "",
-        val createdBy: String = "",
-        @ServerTimestamp
+    val createdBy: String = "",
+    @ServerTimestamp
         val createdAt: Date = Date(),
-        val caption: String = "",
-        val category: String = "",
-        val image: String = "",
-        val type: String = "",
-        @ServerTimestamp
+    val caption: String = "",
+    val category: String = "",
+    val image: String? = null,
+    val type: String = "",
+    @ServerTimestamp
         val modifiedAt: Date = Date(),
-        val userName: String = "",
-        val profilePicture: String = "",
-        val userBadge: String = "",
-        val commentsCount: Int? = 0,
-        val likesCount: Int = 0
+    var userName: String = "",
+    var profilePicture: String? = null,
+    val userBadge: String = "",
+    val commentsCount: Int = 0,
+    val likesCount: Int = 0,
+    val likeVisibility: Boolean = true,
+    val commentVisibility: Boolean = true
 ): Parcelable

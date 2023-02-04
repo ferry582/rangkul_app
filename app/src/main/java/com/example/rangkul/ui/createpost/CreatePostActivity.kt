@@ -9,6 +9,8 @@ import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import com.bumptech.glide.Glide
+import com.example.rangkul.R
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
@@ -67,6 +69,19 @@ class CreatePostActivity : AppCompatActivity() {
         // Set User name
         binding.tvUserName.text = currentUserData().userName
 
+        // Set profile picture
+        binding.civProfilePicture.apply {
+            if (currentUserData().profilePicture.isNullOrEmpty()) setImageResource(R.drawable.ic_profile_picture_default)
+            else {
+                Glide
+                    .with(context)
+                    .load(currentUserData().profilePicture)
+                    .placeholder(R.drawable.ic_profile_picture_default)
+                    .error(R.drawable.ic_baseline_error_24)
+                    .into(binding.civProfilePicture)
+            }
+        }
+
         binding.chipGroupPostType.setOnCheckedStateChangeListener { group, _ ->
             val ids = group.checkedChipIds
             for (id in ids) {
@@ -75,17 +90,17 @@ class CreatePostActivity : AppCompatActivity() {
 
                 when (chip.text) {
                     "Public" -> {
-                        updateHeaderUI(chip.text.toString())
+                        updateUI(chip.text.toString())
                         postType = chip.text.toString()
                     }
 
                     "Anonymous" -> {
-                        updateHeaderUI(chip.text.toString())
+                        updateUI(chip.text.toString())
                         postType = chip.text.toString()
                     }
 
                     else -> {
-                       updateHeaderUI(chip.text.toString())
+                       updateUI(chip.text.toString())
                         postType = chip.text.toString()
                     }
                 }
@@ -148,7 +163,7 @@ class CreatePostActivity : AppCompatActivity() {
             }
     }
 
-    private fun addPostData(imageUrl: String) {
+    private fun addPostData(imageUrl: String?) {
         viewModel.addPost(
             PostData(
                 postId = "",
@@ -163,7 +178,9 @@ class CreatePostActivity : AppCompatActivity() {
                 profilePicture = currentUserData().profilePicture,
                 userBadge = currentUserData().badge,
                 commentsCount = 0,
-                likesCount = 0
+                likesCount = 0,
+                likeVisibility = true,
+                commentVisibility = true
             )
         )
     }
@@ -185,7 +202,7 @@ class CreatePostActivity : AppCompatActivity() {
                 }
             }
         }else{
-            addPostData("null")
+            addPostData(null)
         }
     }
 
@@ -220,13 +237,16 @@ class CreatePostActivity : AppCompatActivity() {
         return isValid
     }
 
-    private fun updateHeaderUI(type: String) {
+    private fun updateUI(type: String) {
         if (type == "Diary") {
             binding.clPublicAnonymous.hide()
             binding.clDiary.show()
+            binding.tvTitleToolbar.text = getString(R.string.title_create_post_diary)
         } else {
             binding.clPublicAnonymous.show()
             binding.clDiary.hide()
+            if (type == "Public") binding.tvTitleToolbar.text = getString(R.string.title_create_post_public)
+            else binding.tvTitleToolbar.text = getString(R.string.title_create_post_anonymous)
         }
 
     }
@@ -234,7 +254,7 @@ class CreatePostActivity : AppCompatActivity() {
     private fun setToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(com.example.rangkul.R.drawable.ic_back_grey)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_grey)
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
