@@ -1,6 +1,6 @@
 package com.example.rangkul.data.model
 
-data class CategoryListData(
+data class ImageListData(
     val image: Int,
     val name: String
 )

@@ -11,6 +11,8 @@
     <string name="delete_post_title">Delete Post?</string>
     <string name="delete_comment_description">Are you sure want to delete this comment?\nThis can’t be undone and it will be\nremove premanently.</string>
     <string name="delete_comment_title">Delete Comment?</string>
+    <string name="delete_diary_description">Are you sure want to delete this diary?\nThis can’t be undone and it will be\nremove premanently.</string>
+    <string name="delete_diary_title">Delete Diary?</string>
     <string name="title_create_post_public">Write a Post</string>
     <string name="title_create_post_anonymous">Speak Up!</string>
     <string name="title_create_post_diary">Write a Diary</string>
@@ -22,4 +24,11 @@
     <string name="signup_success_description">Your account has been created</string>
     <string name="update_profile_success_title">Profile updated!</string>
     <string name="update_profile_success_description">Your profile data has been\nsuccessfully updated</string>
+    <string name="description_empty_notification">All notifications about you will appear here</string>
+    <string name="title_empty_notification">No Notifications Yet!</string>
+    <string name="title_no_post_message">No Post Yet!</string>
+    <string name="title_no_diary_message">No Diary Yet!</string>
+    <string name="description_no_anonymous_post_message">You haven\'t published anonymous post yet</string>
+    <string name="description_no_post_message">You haven\'t published any post yet</string>
+    <string name="description_no_diary_message">You haven\'t published any diary yet</string>
 </resources>

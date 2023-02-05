@@ -3,16 +3,16 @@ package com.example.rangkul.ui.search
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.rangkul.data.model.CategoryListData
+import com.example.rangkul.data.model.ImageListData
 import com.example.rangkul.databinding.ItemCategoryListBinding
 
 class CategoryListAdapter (
-    private val categoryList: ArrayList<CategoryListData>,
-    val onItemClicked: (Int, CategoryListData) -> Unit)
+    private val categoryList: ArrayList<ImageListData>,
+    val onItemClicked: (Int, ImageListData) -> Unit)
     : RecyclerView.Adapter<CategoryListAdapter.CategoryListViewHolder>() {
 
     inner class CategoryListViewHolder (val binding: ItemCategoryListBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: CategoryListData) {
+        fun bind(item: ImageListData) {
             binding.ivCategory.setImageResource(item.image)
 
             binding.itemCategoryList.setOnClickListener {

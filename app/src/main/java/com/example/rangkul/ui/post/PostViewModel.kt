@@ -3,6 +3,7 @@ package com.example.rangkul.ui.post
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.rangkul.data.model.DiaryData
 import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
@@ -44,6 +45,17 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
         _getPostsWithCategory.value = UiState.Loading
         repository.getPostsWithCategory(category) {
             _getPostsWithCategory.value = it
+        }
+    }
+
+    private val _getUserDiaries = MutableLiveData<UiState<List<DiaryData>>>()
+    val getUserDiaries: LiveData<UiState<List<DiaryData>>>
+        get() = _getUserDiaries
+
+    fun getUserDiaries(uid: String,){
+        _getUserDiaries.value = UiState.Loading
+        repository.getUserDiaries(uid) {
+            _getUserDiaries.value = it
         }
     }
 

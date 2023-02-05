@@ -28,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.DeleteStatusListener {
+class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.DeletePostStatusListener {
 
     private lateinit var binding: ActivityCategoryContentBinding
     private var selectedCategory = ""
@@ -277,7 +277,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
     }
 
     // if post deleted, then notify the adapter
-    override fun deleteStatus(status: Boolean?, position: Int?) {
+    override fun deletePostStatus(status: Boolean?, position: Int?) {
         if (status == true) {
             position?.let { postList.removeAt(it) }
             adapterPost.updateList(postList)

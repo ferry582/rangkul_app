@@ -24,7 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 // This is a Bottom Sheet Dialog Fragment for handle action in post options
 @AndroidEntryPoint
-class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteStatusListener) : BottomSheetDialogFragment(){
+class PostOptionsBottomSheetFragment(private val deletePostStatusListener: DeletePostStatusListener) : BottomSheetDialogFragment(){
 
     private var _binding: DialogBottomPostOptionsBinding? = null
     private val binding get() = _binding!!
@@ -125,7 +125,7 @@ class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteSta
                     is UiState.Success -> {
                         progressBar.hide()
                         toast(state.data)
-                        deleteStatusListener.deleteStatus(true, postPosition)
+                        deletePostStatusListener.deletePostStatus(true, postPosition)
                         dialog.dismiss()
                         dismiss()
                     }
@@ -178,8 +178,8 @@ class PostOptionsBottomSheetFragment(private val deleteStatusListener: DeleteSta
         _binding = null
     }
 
-    interface DeleteStatusListener {
-        fun deleteStatus(status: Boolean?, position: Int?)
+    interface DeletePostStatusListener {
+        fun deletePostStatus(status: Boolean?, position: Int?)
     }
 
 

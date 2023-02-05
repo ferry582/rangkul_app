@@ -182,4 +182,18 @@ class OptionsRepositoryImp(
             }
     }
 
+    override fun deleteDiary(diary: DiaryData, result: (UiState<String>) -> Unit) {
+        // Delete post document
+        database.collection(FirestoreCollection.USER).document(diary.createdBy)
+            .collection(FirestoreCollection.DIARY)
+            .document(diary.diaryId)
+            .delete()
+            .addOnSuccessListener {
+                result.invoke(UiState.Success("Diary has been deleted"))
+            }
+            .addOnFailureListener {
+                result.invoke(UiState.Failure(it.localizedMessage))
+            }
+    }
+
 }

@@ -2,6 +2,7 @@ package com.example.rangkul.utils
 
 object FirestoreCollection {
     const val POST = "posts"
+    const val DIARY = "diaries"
     const val COMMENT = "comments"
     const val LIKE = "likes"
     const val USER = "users"

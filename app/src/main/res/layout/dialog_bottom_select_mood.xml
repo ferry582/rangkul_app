@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheetPostOptions"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    >
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivPullIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:srcCompat="@drawable/ic_pull_bottom_dialog" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_mood_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="11dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btNext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/safe_margin"
+        android:layout_marginHorizontal="@dimen/safe_margin"
+        android:background="@drawable/selector_button_main"
+        android:elevation="0dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:stateListAnimator="@null"
+        android:text="Next"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>

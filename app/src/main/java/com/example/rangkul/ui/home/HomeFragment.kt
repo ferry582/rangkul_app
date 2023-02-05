@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusListener {
+class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatusListener {
 
     lateinit var binding: FragmentHomeBinding
     private val viewModel: PostViewModel by viewModels()
@@ -134,6 +134,32 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusList
         }
     }
 
+    private fun addLike(item: PostData) {
+        // Add Like
+        viewModel.addLike(
+            LikeData(
+                likeId = "",
+                likedAt = Date(),
+            ), item.postId, currentUserData().userId
+        )
+
+        viewModel.addLike.observe(this) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                }
+
+                is UiState.Failure -> {
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    // Need to update this code, because it recall entire post everytime user addLike
+                    viewModel.getPosts(selectedType)
+                }
+            }
+        }
+    }
+
     private fun isPostLiked() {
         //Get Like data list at users collection
         viewModel.getUserLikeData(currentUserData().userId)
@@ -199,31 +225,6 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusList
         }
     }
 
-    private fun addLike(item: PostData) {
-        // Add Like
-        viewModel.addLike(
-            LikeData(
-                likeId = "",
-                likedAt = Date(),
-            ), item.postId, currentUserData().userId
-        )
-
-        viewModel.addLike.observe(this) {state ->
-            when(state) {
-                is UiState.Loading -> {
-                }
-
-                is UiState.Failure -> {
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    viewModel.getPosts(selectedType)
-                }
-            }
-        }
-    }
-
     private fun currentUserData(): UserData {
         var user = UserData()
         viewModel.getSessionData {
@@ -235,7 +236,7 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusList
     }
 
     // if post deleted, then notify the adapter
-    override fun deleteStatus(status: Boolean?, position: Int?) {
+    override fun deletePostStatus(status: Boolean?, position: Int?) {
         if (status == true) {
             position?.let { postList.removeAt(it) }
             adapter.updateList(postList)

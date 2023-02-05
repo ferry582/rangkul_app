@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/shape_card_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civEmoticonMood"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/emoticon_sad"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvMood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
+            android:text="Sad"
+            android:textAlignment="center"
+            android:textColor="@color/textBlack"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/civEmoticonMood"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTimeDiary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="3dp"
+            android:fontFamily="@font/poppins_regular"
+            android:includeFontPadding="false"
+            android:text="12 January 2023, 10:01 PM"
+            android:textAlignment="center"
+            android:textColor="@color/textGrey"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/civEmoticonMood"
+            app:layout_constraintTop_toBottomOf="@+id/tvMood" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivDiaryOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="-7dp"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+        app:srcCompat="@drawable/ic_menu_kebab" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvCaptionDiary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/poppins_regular"
+        android:includeFontPadding="false"
+        android:text="Overwhelmed banget sama tugas kuliah ku.."
+        android:textAlignment="textStart"
+        android:textColor="@color/textBlack"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvImageDiary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCaptionDiary"
+        android:visibility="visible"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivImageDiary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            app:srcCompat="@drawable/il_photo_dummy_post"
+            android:clipToOutline="true"
+            android:visibility="visible"
+            tools:targetApi="s" />
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,7 +24,7 @@ class PostRepositoryImp(
     override fun getPosts(type: String, result: (UiState<List<PostData>>) -> Unit) {
         val postRef = database.collection(FirestoreCollection.POST)
 
-        val document =
+        val documentRef =
             // Only take posts based on the post's type
             if (type == "Anonymous") {
                 postRef.whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
@@ -33,7 +33,7 @@ class PostRepositoryImp(
                 postRef.orderBy("createdAt", Query.Direction.DESCENDING)
             }
 
-        document.get()
+        documentRef.get()
             .addOnSuccessListener {
                 val posts = arrayListOf<PostData>()
                     for (document in it) {
@@ -98,6 +98,29 @@ class PostRepositoryImp(
             }
     }
 
+    override fun getUserDiaries(uid: String, result: (UiState<List<DiaryData>>) -> Unit) {
+        database.collection(FirestoreCollection.USER)
+            .document(uid)
+            .collection(FirestoreCollection.DIARY)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener {
+                val diaries = arrayListOf<DiaryData>()
+                for (document in it) {
+                    val diary = document.toObject(DiaryData::class.java)
+                    diaries.add(diary)
+                }
+                result.invoke(
+                    UiState.Success(diaries)
+                )
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(it.localizedMessage)
+                )
+            }
+    }
+
     override fun addPost(post: PostData, result: (UiState<String>) -> Unit) {
         val document = database.collection(FirestoreCollection.POST).document()
         post.postId = document.id
@@ -106,6 +129,24 @@ class PostRepositoryImp(
             .addOnSuccessListener {
                 result.invoke(
                     UiState.Success("Post has been published")
+                )
+            }
+            .addOnFailureListener {
+                result.invoke(
+                    UiState.Failure(it.localizedMessage)
+                )
+            }
+    }
+
+    override fun addDiary(diary: DiaryData, result: (UiState<String>) -> Unit) {
+        val document = database.collection(FirestoreCollection.USER).document(diary.createdBy)
+            .collection(FirestoreCollection.DIARY).document()
+        diary.diaryId = document.id
+
+        document.set(diary)
+            .addOnSuccessListener {
+                result.invoke(
+                    UiState.Success("Diary has been published")
                 )
             }
             .addOnFailureListener {
@@ -170,7 +211,7 @@ class PostRepositoryImp(
     ) {
         val documentPost = database.collection(FirestoreCollection.POST).document(postId)
         val documentLike = documentPost.collection(FirestoreCollection.LIKE).document(currentUserId)
-        val post = documentPost.get()
+        val getPost = documentPost.get()
 
         documentLike.get().addOnSuccessListener {
             // Add userId as documentId in Like collection if user haven't liked the post, else delete the document
@@ -178,7 +219,7 @@ class PostRepositoryImp(
                 addLikeDataToUser(like, postId, currentUserId) {state ->
                     when(state) {
                         is UiState.Success -> {
-                            val likesAmount = post.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().plus(1)
+                            val likesAmount = getPost.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().plus(1)
                             documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
                             documentLike.set(like)
                             result.invoke(
@@ -198,7 +239,7 @@ class PostRepositoryImp(
                 deleteLikeDataAtUser(postId, currentUserId) {state ->
                     when(state) {
                         is UiState.Success -> {
-                            val likesAmount = post.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().minus(1)
+                            val likesAmount = getPost.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().minus(1)
                             documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
                             documentLike.delete()
                             result.invoke(

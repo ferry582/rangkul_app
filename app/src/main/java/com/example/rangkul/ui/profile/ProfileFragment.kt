@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.rangkul.R
+import com.example.rangkul.data.model.DiaryData
 import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
@@ -29,12 +30,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusListener {
+class ProfileFragment : Fragment(),
+    PostOptionsBottomSheetFragment.DeletePostStatusListener,
+    DiaryOptionsBottomSheetFragment.DeleteDiaryStatusListener {
 
     lateinit var binding: FragmentProfileBinding
     private val viewModelPost: PostViewModel by viewModels()
     private var selectedType = "Public"
     private var postList: MutableList<PostData> = arrayListOf()
+    private var diaryList: MutableList<DiaryData> = arrayListOf()
     private val adapterPost by lazy {
         PostAdapter(
             onCommentClicked = { pos, item ->
@@ -65,6 +69,25 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
         )
     }
 
+    private val adapterDiary by lazy {
+        DiaryAdapter (
+            onOptionClicked = { pos, item ->
+                val diaryOptionsBottomSheetFragment = DiaryOptionsBottomSheetFragment(this)
+
+                val bundle = Bundle()
+                bundle.putParcelable("OBJECT_DIARY", item)
+                bundle.putInt("DIARY_POSITION", pos)
+                diaryOptionsBottomSheetFragment.arguments = bundle
+
+                diaryOptionsBottomSheetFragment.show(
+                    childFragmentManager,
+                    "PostOptionsBottomSheetFragment"
+                )
+            },
+            context = requireContext()
+        )
+    }
+
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
@@ -90,7 +113,8 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
         super.onViewCreated(view, savedInstanceState)
 
         binding.srlProfileFragment.setOnRefreshListener {
-            viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
+            if (selectedType == "Diary")  viewModelPost.getUserDiaries(currentUserData().userId)
+            else viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
         }
 
         setUserProfileData()
@@ -105,6 +129,12 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
             resultLauncher.launch(intent)
         }
 
+        // Configure Post RecyclerView
+        binding.rvPost.adapter = adapterPost
+        binding.rvPost.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPost.setHasFixedSize(true)
+        binding.rvPost.isNestedScrollingEnabled = false
+
         // Get posts based on type
         // Use OnCheckedStateChangeListener to always sync the chip and post type
         binding.chipGroupPostType.setOnCheckedStateChangeListener { group, _ ->
@@ -112,22 +142,22 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
                 R.id.chipPublic -> {
                     selectedType = "Public"
                     viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
+                    binding.rvPost.adapter = adapterPost
                 }
 
                 R.id.chipAnonymous -> {
                     selectedType = "Anonymous"
                     viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
+                    binding.rvPost.adapter = adapterPost
                 }
 
-                else -> selectedType = "Diary"
+                else -> {
+                    selectedType = "Diary"
+                    viewModelPost.getUserDiaries(currentUserData().userId)
+                    binding.rvPost.adapter = adapterDiary
+                }
             }
         }
-
-        // Configure Post RecyclerView
-        binding.rvPost.adapter = adapterPost
-        binding.rvPost.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvPost.setHasFixedSize(true)
-        binding.rvPost.isNestedScrollingEnabled = false
 
         // Get user's like list
         isPostLiked()
@@ -135,7 +165,30 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
         // Get post list based on the selected category
         viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
         observeGetCurrentUserPosts()
+        observeGetUserDiaries()
 
+    }
+
+    private fun observeGetUserDiaries() {
+        viewModelPost.getUserDiaries.observe(viewLifecycleOwner) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    binding.srlProfileFragment.isRefreshing = false
+                    diaryList = state.data.toMutableList()
+                    isDataEmpty(diaryList)
+                }
+            }
+        }
     }
 
     private fun observeGetCurrentUserPosts() {
@@ -154,33 +207,43 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
                     binding.progressBar.hide()
                     binding.srlProfileFragment.isRefreshing = false
                     postList = state.data.toMutableList()
-                    isPostDataEmpty(postList)
+                    isDataEmpty(postList)
                 }
             }
         }
     }
 
-    private fun isPostDataEmpty(data: List<PostData>) {
+    private fun isDataEmpty(data: List<Any>) {
         if (data.isEmpty()) {
             binding.rvPost.hide()
             binding.linearNoPostMessage.show()
             when (selectedType) {
                 "Anonymous" -> {
-                    binding.tvMessageDescription.text = "You haven't published anonymous post yet"
+                    binding.tvMessageTitle.setText(R.string.title_no_post_message)
+                    binding.tvMessageDescription.setText(R.string.description_no_anonymous_post_message)
                 }
                 "Public" -> {
-                    binding.tvMessageDescription.text = "You haven't published any post yet"
+                    binding.tvMessageTitle.setText(R.string.title_no_post_message)
+                    binding.tvMessageDescription.setText(R.string.description_no_post_message)
                 }
                 else -> {
-                    binding.tvMessageDescription.text = "You haven't published any diary yet"
+                    binding.tvMessageTitle.setText(R.string.title_no_diary_message)
+                    binding.tvMessageDescription.setText(R.string.description_no_diary_message)
                 }
             }
 
         } else {
-            binding.rvPost.show()
-            binding.linearNoPostMessage.hide()
-            adapterPost.updateList(postList)
-            adapterPost.updateCurrentUser(currentUserData().userId)
+            if (selectedType == "Diary") {
+                binding.rvPost.show()
+                binding.linearNoPostMessage.hide()
+                adapterDiary.updateList(diaryList)
+            } else {
+                binding.rvPost.show()
+                binding.linearNoPostMessage.hide()
+                adapterPost.updateList(postList)
+                adapterPost.updateCurrentUser(currentUserData().userId)
+            }
+
         }
     }
 
@@ -279,12 +342,19 @@ class ProfileFragment : Fragment(), PostOptionsBottomSheetFragment.DeleteStatusL
     }
 
     // if post deleted, then notify the adapter
-    override fun deleteStatus(status: Boolean?, position: Int?) {
-
+    override fun deletePostStatus(status: Boolean?, position: Int?) {
         if (status == true) {
             position?.let { postList.removeAt(it) }
             adapterPost.updateList(postList)
             position?.let { adapterPost.notifyItemChanged(it) }
+        }
+    }
+
+    override fun deleteDiaryStatus(status: Boolean?, position: Int?) {
+        if (status == true) {
+            position?.let { diaryList.removeAt(it) }
+            adapterDiary.updateList(diaryList)
+            position?.let { adapterDiary.notifyItemChanged(it) }
         }
     }
 

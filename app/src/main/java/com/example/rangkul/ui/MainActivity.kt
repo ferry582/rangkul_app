@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private var justSignUp = false
     private var justLogIn = false
     private var justPublishedPost = false
+    private var justPublishedDiary = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +38,8 @@ class MainActivity : AppCompatActivity() {
         // Show message dialog
         justLogIn = intent.getStringExtra("LOGIN_SUCCESSFUL").toBoolean()
         justSignUp = intent.getStringExtra("SIGNUP_SUCCESSFUL").toBoolean()
-        justPublishedPost = intent.getStringExtra("PUBLISH_SUCCESSFUL").toBoolean()
+        justPublishedPost = intent.getStringExtra("PUBLISH_POST_SUCCESSFUL").toBoolean()
+        justPublishedDiary = intent.getStringExtra("PUBLISH_DIARY_SUCCESSFUL").toBoolean()
         showMessageDialog()
 
         // Navigate to Create Post
@@ -71,6 +73,15 @@ class MainActivity : AppCompatActivity() {
 
         if (justPublishedPost) {
             dialog.setContentView(R.layout.dialog_published_post_successful)
+            dialog.show()
+        }
+
+        if (justPublishedDiary) {
+            dialog.setContentView(R.layout.dialog_published_post_successful)
+            val title = dialog.findViewById<TextView>(R.id.tvTitle)
+            val description = dialog.findViewById<TextView>(R.id.tvDescription)
+            title.text = "Diary was saved!"
+            description.text = "Your diary has been saved"
             dialog.show()
         }
 

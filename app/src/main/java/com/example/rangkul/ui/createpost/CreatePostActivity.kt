@@ -9,8 +9,11 @@ import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.rangkul.R
+import com.example.rangkul.data.model.DiaryData
+import com.example.rangkul.data.model.ImageListData
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
@@ -18,17 +21,19 @@ import com.example.rangkul.databinding.ActivityCreatePostBinding
 import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.utils.*
 import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 
 @AndroidEntryPoint
-class CreatePostActivity : AppCompatActivity() {
+class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.SelectedMoodListener {
 
     private lateinit var binding: ActivityCreatePostBinding
     private lateinit var selectedCategory: String
     private var postType: String = "Public" // Default post type
     private val viewModel: CreatePostViewModel by viewModels()
     private var imageLocalUri: Uri? = null
+    private var selectedMood: ImageListData? = null
 
     private val startForPostImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         val resultCode = result.resultCode
@@ -53,6 +58,14 @@ class CreatePostActivity : AppCompatActivity() {
                 Log.e("CreatePostActivity","Task Cancelled")
             }
         }
+    }
+
+    // Get selected mood from bottom sheet dialog fragment
+    override fun selectedMood(selectedMood: ImageListData) {
+        this.selectedMood = selectedMood
+        binding.civEmoticon.setImageResource(selectedMood.image)
+        binding.tvUserMood.text = selectedMood.name
+        binding.tvUserMood.setTextColor(ContextCompat.getColor(this, R.color.black))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +93,14 @@ class CreatePostActivity : AppCompatActivity() {
                     .error(R.drawable.ic_baseline_error_24)
                     .into(binding.civProfilePicture)
             }
+        }
+
+        binding.clDiary.setOnClickListener {
+            val commentOptionsBottomDialogFragment = SelectMoodBottomSheetFragment(this)
+            commentOptionsBottomDialogFragment.show(
+                supportFragmentManager,
+                "SelectMoodBottomSheetFragment"
+            )
         }
 
         binding.chipGroupPostType.setOnCheckedStateChangeListener { group, _ ->
@@ -125,11 +146,41 @@ class CreatePostActivity : AppCompatActivity() {
 
         // publish post
         binding.btPublish.setOnClickListener {
+            hideKeyboard()
             if (inputValidation()) {
                 isPostImageExist()
             }
         }
 
+        observeAddPost()
+
+        observeAddDiary()
+    }
+
+    private fun observeAddDiary() {
+        viewModel.addDiary.observe(this) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    loadingVisibility(true)
+                }
+
+                is UiState.Failure -> {
+                    loadingVisibility(false)
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    loadingVisibility(false)
+                    val intent = Intent(this@CreatePostActivity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra("PUBLISH_DIARY_SUCCESSFUL", "true")
+                    startActivity(intent)
+                }
+            }
+        }
+    }
+
+    private fun observeAddPost() {
         viewModel.addPost.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
@@ -145,7 +196,7 @@ class CreatePostActivity : AppCompatActivity() {
                     loadingVisibility(false)
                     val intent = Intent(this@CreatePostActivity, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.putExtra("PUBLISH_SUCCESSFUL", "true")
+                    intent.putExtra("PUBLISH_POST_SUCCESSFUL", "true")
                     startActivity(intent)
                 }
             }
@@ -161,6 +212,22 @@ class CreatePostActivity : AppCompatActivity() {
             .createIntent { intent ->
                 startForPostImageResult.launch(intent)
             }
+    }
+
+    private fun addDiaryData(imageUrl: String?) {
+        viewModel.addDiary(
+            DiaryData(
+                diaryId = "",
+                createdBy = currentUserData().userId,
+                createdAt = Date(),
+                caption = binding.etCaption.text.toString(),
+                image = imageUrl,
+                type = postType,
+                modifiedAt = Date(),
+                moodTitle = selectedMood!!.name,
+                moodImage = selectedMood!!.image
+            )
+        )
     }
 
     private fun addPostData(imageUrl: String?) {
@@ -197,12 +264,14 @@ class CreatePostActivity : AppCompatActivity() {
                     }
                     is UiState.Success -> {
                         loadingVisibility(false)
-                        addPostData(state.data.toString())
+                        if (postType == "Diary") addDiaryData(state.data.toString())
+                        else addPostData(state.data.toString())
                     }
                 }
             }
         }else{
-            addPostData(null)
+            if (postType == "Diary") addDiaryData(null)
+            else addPostData(null)
         }
     }
 
@@ -228,6 +297,11 @@ class CreatePostActivity : AppCompatActivity() {
 
     private fun inputValidation(): Boolean {
         var isValid = true
+
+        if (postType == "Diary" && selectedMood == null) {
+            isValid = false
+            Snackbar.make(binding.root, "You haven't chosen any mood yet", Snackbar.LENGTH_SHORT).show()
+        }
 
         if (binding.etCaption.text.toString().isEmpty()) {
             isValid = false

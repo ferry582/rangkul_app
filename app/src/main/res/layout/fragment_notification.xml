@@ -31,4 +31,57 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/emptyNotificationMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notificationToolbar">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivEmptyNotification"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginHorizontal="56dp"
+            android:adjustViewBounds="true"
+            android:clipToOutline="true"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/il_empty_notification"
+            tools:targetApi="s" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvMessageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:includeFontPadding="false"
+            android:text="@string/title_empty_notification"
+            android:textAlignment="center"
+            android:textColor="@color/textBlack"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvMessageDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
+            android:text="@string/description_empty_notification"
+            android:textAlignment="center"
+            android:textColor="@color/textGrey"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

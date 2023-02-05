@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_mood"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="20dp"
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/selector_mood_background">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivImageMood"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:adjustViewBounds="true"
+        android:clipToOutline="true"
+        android:scaleType="fitXY"
+        android:visibility="visible"
+        app:srcCompat="@drawable/emoticon_happy"
+        tools:targetApi="s" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvMood"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppins_medium"
+        android:singleLine="true"
+        android:includeFontPadding="false"
+        android:text="Happy"
+        android:textColor="@color/textBlack"
+        android:textSize="12sp" />
+
+</LinearLayout>

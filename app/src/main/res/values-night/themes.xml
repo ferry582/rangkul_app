@@ -36,6 +36,10 @@
     <style name="AppModalStyle"
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/shape_bottomsheet_background</item>
+        <item name="behavior_skipCollapsed">true</item>
+        <item name="behavior_fitToContents">true</item>
+        <item name="behavior_peekHeight">1000dp</item> <!-- helped to skip collapsed state at initial-->
+        <!-- https://stackoverflow.com/a/64410061/14466868 -->
     </style>
 
 </resources>

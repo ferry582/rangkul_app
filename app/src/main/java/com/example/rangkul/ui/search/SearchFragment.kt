@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.rangkul.R
-import com.example.rangkul.data.model.CategoryListData
+import com.example.rangkul.data.model.ImageListData
 import com.example.rangkul.databinding.FragmentSearchBinding
 
 class SearchFragment : Fragment() {
 
     lateinit var binding: FragmentSearchBinding
-    lateinit var categoryList: ArrayList<CategoryListData>
+    lateinit var categoryList: ArrayList<ImageListData>
     lateinit var categoryListAdapter: CategoryListAdapter
 
     override fun onCreateView(
@@ -51,25 +51,25 @@ class SearchFragment : Fragment() {
     }
 
     private fun addCategoryListData() {
-        categoryList.add(CategoryListData(R.drawable.il_category_mentalhealth, "Mental Health"))
-        categoryList.add(CategoryListData(R.drawable.il_category_relationship, "Relationship"))
-        categoryList.add(CategoryListData(R.drawable.il_category_family, "Family"))
-        categoryList.add(CategoryListData(R.drawable.il_category_health, "Health"))
-        categoryList.add(CategoryListData(R.drawable.il_category_abuse, "Abuse"))
-        categoryList.add(CategoryListData(R.drawable.il_cateogry_bullying, "Bullying"))
-        categoryList.add(CategoryListData(R.drawable.il_category_sara, "Sara"))
-        categoryList.add(CategoryListData(R.drawable.il_category_depression, "Depression"))
-        categoryList.add(CategoryListData(R.drawable.il_category_harassment, "Harassment"))
-        categoryList.add(CategoryListData(R.drawable.il_category_addictioin, "Addiction"))
-        categoryList.add(CategoryListData(R.drawable.il_category_work, "Work"))
-        categoryList.add(CategoryListData(R.drawable.il_category_education, "Education"))
-        categoryList.add(CategoryListData(R.drawable.il_category_personality, "Personality"))
-        categoryList.add(CategoryListData(R.drawable.il_category_bodyshaming, "Body Shaming"))
-        categoryList.add(CategoryListData(R.drawable.il_category_anxiety, "Anxiety"))
-        categoryList.add(CategoryListData(R.drawable.il_category_friends, "Friends"))
-        categoryList.add(CategoryListData(R.drawable.il_category_traumatic, "Traumatic"))
-        categoryList.add(CategoryListData(R.drawable.il_category_financial, "Financial"))
-        categoryList.add(CategoryListData(R.drawable.il_category_selfharm, "Self-harm"))
-        categoryList.add(CategoryListData(R.drawable.il_category_discrimination, "Discrimination"))
+        categoryList.add(ImageListData(R.drawable.il_category_mentalhealth, "Mental Health"))
+        categoryList.add(ImageListData(R.drawable.il_category_relationship, "Relationship"))
+        categoryList.add(ImageListData(R.drawable.il_category_family, "Family"))
+        categoryList.add(ImageListData(R.drawable.il_category_health, "Health"))
+        categoryList.add(ImageListData(R.drawable.il_category_abuse, "Abuse"))
+        categoryList.add(ImageListData(R.drawable.il_cateogry_bullying, "Bullying"))
+        categoryList.add(ImageListData(R.drawable.il_category_sara, "Sara"))
+        categoryList.add(ImageListData(R.drawable.il_category_depression, "Depression"))
+        categoryList.add(ImageListData(R.drawable.il_category_harassment, "Harassment"))
+        categoryList.add(ImageListData(R.drawable.il_category_addictioin, "Addiction"))
+        categoryList.add(ImageListData(R.drawable.il_category_work, "Work"))
+        categoryList.add(ImageListData(R.drawable.il_category_education, "Education"))
+        categoryList.add(ImageListData(R.drawable.il_category_personality, "Personality"))
+        categoryList.add(ImageListData(R.drawable.il_category_bodyshaming, "Body Shaming"))
+        categoryList.add(ImageListData(R.drawable.il_category_anxiety, "Anxiety"))
+        categoryList.add(ImageListData(R.drawable.il_category_friends, "Friends"))
+        categoryList.add(ImageListData(R.drawable.il_category_traumatic, "Traumatic"))
+        categoryList.add(ImageListData(R.drawable.il_category_financial, "Financial"))
+        categoryList.add(ImageListData(R.drawable.il_category_selfharm, "Self-harm"))
+        categoryList.add(ImageListData(R.drawable.il_category_discrimination, "Discrimination"))
     }
 }

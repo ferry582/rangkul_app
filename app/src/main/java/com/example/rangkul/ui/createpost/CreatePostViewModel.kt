@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rangkul.data.model.DiaryData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.data.repository.PostRepository
@@ -24,6 +25,17 @@ class CreatePostViewModel @Inject constructor(private val repository: PostReposi
         _addPost.value = UiState.Loading
         repository.addPost(post) {
             _addPost.value = it
+        }
+    }
+
+    private val _addDiary = MutableLiveData<UiState<String>>()
+    val addDiary: LiveData<UiState<String>>
+        get() = _addDiary
+
+    fun addDiary(diary: DiaryData){
+        _addDiary.value = UiState.Loading
+        repository.addDiary(diary) {
+            _addDiary.value = it
         }
     }
 
