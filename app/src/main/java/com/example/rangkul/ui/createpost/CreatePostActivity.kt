@@ -34,6 +34,7 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
     private val viewModel: CreatePostViewModel by viewModels()
     private var imageLocalUri: Uri? = null
     private var selectedMood: ImageListData? = null
+    private var isSubmitted: Boolean = false // To prevent data from being uploaded multiple times, when the button is clicked multiple times
 
     private val startForPostImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         val resultCode = result.resultCode
@@ -146,10 +147,15 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
 
         // publish post
         binding.btPublish.setOnClickListener {
+
             hideKeyboard()
-            if (inputValidation()) {
-                isPostImageExist()
+            if (!isSubmitted) {
+                if (inputValidation()) {
+                    isSubmitted = true
+                    isPostImageExist()
+                }
             }
+
         }
 
         observeAddPost()
@@ -165,6 +171,7 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                 }
 
                 is UiState.Failure -> {
+                    isSubmitted = false
                     loadingVisibility(false)
                     toast(state.error)
                 }
@@ -188,6 +195,7 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                 }
 
                 is UiState.Failure -> {
+                    isSubmitted = false
                     loadingVisibility(false)
                     toast(state.error)
                 }
@@ -316,9 +324,11 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
             binding.clPublicAnonymous.hide()
             binding.clDiary.show()
             binding.tvTitleToolbar.text = getString(R.string.title_create_post_diary)
+            binding.ivLockIcon.show()
         } else {
             binding.clPublicAnonymous.show()
             binding.clDiary.hide()
+            binding.ivLockIcon.hide()
             if (type == "Public") binding.tvTitleToolbar.text = getString(R.string.title_create_post_public)
             else binding.tvTitleToolbar.text = getString(R.string.title_create_post_anonymous)
         }

@@ -18,6 +18,7 @@ import com.example.rangkul.ui.comment.CommentActivity
 import com.example.rangkul.ui.post.PostAdapter
 import com.example.rangkul.ui.post.PostOptionsBottomSheetFragment
 import com.example.rangkul.ui.post.PostViewModel
+import com.example.rangkul.ui.profile.VisitedProfileActivity
 import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -55,6 +56,15 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
             },
             onBadgeClicked = { pos, item ->
 
+            },
+            onProfileClicked = { pos, item ->
+                if (item == currentUserData().userId) {
+                    // navigate to profile fragment
+                } else {
+                    val intent = Intent(requireContext(), VisitedProfileActivity::class.java)
+                    intent.putExtra("USER_ID", item)
+                    startActivity(intent)
+                }
             },
             context = requireContext()
         )

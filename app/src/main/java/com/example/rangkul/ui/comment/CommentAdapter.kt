@@ -14,7 +14,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CommentAdapter (
-    val onOptionsCommentClicked: (Int, CommentData) -> Unit
+    val onOptionsCommentClicked: (Int, CommentData) -> Unit,
+    val onProfileClicked: (Int, String) -> Unit,
 ): RecyclerView.Adapter<CommentAdapter.PostViewHolder>(){
 
     private var list: MutableList<CommentData> = arrayListOf()
@@ -27,6 +28,7 @@ class CommentAdapter (
             // Set User name
             binding.tvUserNameComment.apply {
                 text = if (objectPost.type == "Anonymous" && objectPost.createdBy == item.commentedBy) {
+                    // Set name to anonymous when the anonymous post owner is commenting
                     "Anonymous (Post Owner)"
                 } else {
                     if (item.userName.length > 20) {
@@ -62,16 +64,22 @@ class CommentAdapter (
                     }
                     show()
                 }
-
             }
 
             binding.ivCommentOptions.setOnClickListener {
                 onOptionsCommentClicked.invoke(adapterPosition, item)
             }
 
+            binding.civProfilePictureComment.setOnClickListener {
+                // Can't open profile when comment owner is anonymous
+                if (!(objectPost.type  == "Anonymous" && objectPost.createdBy == item.commentedBy))
+                    onProfileClicked.invoke(adapterPosition, item.commentedBy)
+            }
+
             // Set Profile Picture
             binding.civProfilePictureComment.apply {
                 if (objectPost.type == "Anonymous" && objectPost.createdBy == item.commentedBy) {
+                    // Set profile picture to anonymous when the anonymous post owner is commenting
                     setImageResource(R.drawable.ic_profile_picture_anonymous)
                 } else {
                     if (item.profilePicture.isNullOrEmpty()) setImageResource(R.drawable.ic_profile_picture_default)

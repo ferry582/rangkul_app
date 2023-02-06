@@ -59,12 +59,23 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideProfileRepository(
+    fun provideEditProfileRepository(
         database: FirebaseFirestore,
         appPreferences: SharedPreferences,
         gson: Gson,
         storageReference: FirebaseStorage
     ): EditProfileRepository {
         return EditProfileRepositoryImp(database, appPreferences, gson, storageReference)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(
+        database: FirebaseFirestore,
+        appPreferences: SharedPreferences,
+        gson: Gson,
+        storageReference: FirebaseStorage
+    ): ProfileRepository {
+        return ProfileRepositoryImp(database, appPreferences, gson, storageReference)
     }
 }

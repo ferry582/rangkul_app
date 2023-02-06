@@ -30,7 +30,7 @@ class CommentOptionsBottomSheetFragment(private val deleteStatusListener: Delete
     private val binding get() = _binding!!
     private lateinit var objectComment: CommentData
     private var commentPosition: Int? = null
-    private lateinit var postId: String
+    private lateinit var postType: String
     private val viewModel: CommentOptionsViewModel by viewModels()
 
     override fun onCreateView(
@@ -39,7 +39,7 @@ class CommentOptionsBottomSheetFragment(private val deleteStatusListener: Delete
     ): View {
         objectComment = arguments?.getParcelable("OBJECT_COMMENT")!!
         commentPosition = arguments?.getInt("COMMENT_POSITION")!!
-        postId = arguments?.getString("POST_ID")!!
+        postType = arguments?.getString("POST_TYPE")!!
         _binding = DialogBottomCommentOptionsBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -141,6 +141,11 @@ class CommentOptionsBottomSheetFragment(private val deleteStatusListener: Delete
             binding.tvSeeAccount.hide()
             binding.tvReportComment.hide()
             binding.tvDeleteComment.show()
+        } else if (postType == "Anonymous") {
+            binding.tvFollow.hide()
+            binding.tvSeeAccount.hide()
+            binding.tvReportComment.show()
+            binding.tvDeleteComment.hide()
         } else {
             binding.tvFollow.show()
             binding.tvSeeAccount.show()

@@ -1,6 +1,7 @@
 package com.example.rangkul.ui.comment
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -12,6 +13,7 @@ import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.ActivityPostCommentBinding
+import com.example.rangkul.ui.profile.VisitedProfileActivity
 import com.example.rangkul.utils.UiState
 import com.example.rangkul.utils.hide
 import com.example.rangkul.utils.show
@@ -36,13 +38,22 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
                 val bundle = Bundle()
                 bundle.putParcelable("OBJECT_COMMENT", item)
                 bundle.putInt("COMMENT_POSITION", pos)
-                bundle.putString("POST_ID", objectPost?.postId)
+                bundle.putString("POST_TYPE", objectPost?.type)
                 commentOptionsBottomDialogFragment.arguments = bundle
 
                 commentOptionsBottomDialogFragment.show(
                     supportFragmentManager,
                     "CommentOptionsBottomSheetFragment"
                 )
+            },
+            onProfileClicked = { pos, item ->
+                if (item == currentUserData().userId) {
+                    // navigate to profile fragment
+                } else {
+                    val intent = Intent(this, VisitedProfileActivity::class.java)
+                    intent.putExtra("USER_ID", item)
+                    startActivity(intent)
+                }
             }
         )
     }

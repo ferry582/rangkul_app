@@ -14,9 +14,11 @@
         android:theme="@style/Theme.Rangkul"
         tools:targetApi="tiramisu">
         <activity
+            android:name=".ui.profile.VisitedProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.profile.EditProfileActivity"
-            android:exported="false"
-            />
+            android:exported="false" />
         <activity
             android:name=".ui.search.CategoryContentActivity"
             android:exported="false" />

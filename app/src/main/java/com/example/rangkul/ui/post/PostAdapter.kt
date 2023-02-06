@@ -19,6 +19,7 @@ class PostAdapter (
     val onLikeClicked: (Int, PostData) -> Unit,
     val onCommentClicked: (Int, PostData) -> Unit,
     val onBadgeClicked: (Int, PostData) -> Unit,
+    val onProfileClicked: (Int, String) -> Unit,
     val context: Context
 ): RecyclerView.Adapter<PostAdapter.PostViewHolder>(){
 
@@ -129,6 +130,9 @@ class PostAdapter (
             }
             binding.ivUserBadgePost.setOnClickListener {
                 onBadgeClicked.invoke(adapterPosition, item)
+            }
+            binding.civProfilePicturePost.setOnClickListener {
+                if (item.type  != "Anonymous") onProfileClicked.invoke(adapterPosition, item.createdBy)
             }
         }
     }

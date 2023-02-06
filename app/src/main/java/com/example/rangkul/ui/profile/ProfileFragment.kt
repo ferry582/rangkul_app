@@ -65,6 +65,15 @@ class ProfileFragment : Fragment(),
             onBadgeClicked = { pos, item ->
 
             },
+            onProfileClicked = { pos, item ->
+                if (item == currentUserData().userId) {
+                    // navigate to profile fragment
+                } else {
+                    val intent = Intent(requireContext(), VisitedProfileActivity::class.java)
+                    intent.putExtra("USER_ID", item)
+                    startActivity(intent)
+                }
+            },
             context = requireContext()
         )
     }
