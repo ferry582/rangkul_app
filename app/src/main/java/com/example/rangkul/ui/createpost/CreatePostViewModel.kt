@@ -21,16 +21,16 @@ class CreatePostViewModel @Inject constructor(private val repository: PostReposi
     val addPost: LiveData<UiState<String>>
         get() = _addPost
 
+    private val _addDiary = MutableLiveData<UiState<String>>()
+    val addDiary: LiveData<UiState<String>>
+        get() = _addDiary
+
     fun addPost(post: PostData){
         _addPost.value = UiState.Loading
         repository.addPost(post) {
             _addPost.value = it
         }
     }
-
-    private val _addDiary = MutableLiveData<UiState<String>>()
-    val addDiary: LiveData<UiState<String>>
-        get() = _addDiary
 
     fun addDiary(diary: DiaryData){
         _addDiary.value = UiState.Loading

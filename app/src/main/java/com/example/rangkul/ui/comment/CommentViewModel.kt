@@ -17,16 +17,16 @@ class CommentViewModel @Inject constructor(private val repository: PostRepositor
     val getComments: LiveData<UiState<List<CommentData>>>
         get() = _getComments
 
+    private val _addComment = MutableLiveData<UiState<String>>()
+    val addComment: LiveData<UiState<String>>
+        get() = _addComment
+
     fun getComments(postId: String){
         _getComments.value = UiState.Loading
         repository.getComments(postId) {
             _getComments.value = it
         }
     }
-
-    private val _addComment = MutableLiveData<UiState<String>>()
-    val addComment: LiveData<UiState<String>>
-        get() = _addComment
 
     fun addComment(comment: CommentData){
         _addComment.value = UiState.Loading

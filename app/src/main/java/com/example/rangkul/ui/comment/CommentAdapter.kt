@@ -76,6 +76,11 @@ class CommentAdapter (
                     onProfileClicked.invoke(adapterPosition, item.commentedBy)
             }
 
+            binding.tvUserNameComment.setOnClickListener {
+                if (!(objectPost.type  == "Anonymous" && objectPost.createdBy == item.commentedBy))
+                    onProfileClicked.invoke(adapterPosition, item.commentedBy)
+            }
+
             // Set Profile Picture
             binding.civProfilePictureComment.apply {
                 if (objectPost.type == "Anonymous" && objectPost.createdBy == item.commentedBy) {

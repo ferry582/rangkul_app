@@ -139,6 +139,10 @@ class EditProfileRepositoryImp(
                     UiState.Failure(it.localizedMessage)
                 )
             }
+        /*
+            Note : It would be better to use callable cloud function
+                   to update the entire comments document
+         */
     }
 
     private fun updateAllUserPostsData(newUserData: UserData, result: (UiState<String>) -> Unit){
@@ -171,6 +175,10 @@ class EditProfileRepositoryImp(
                     UiState.Failure(it.localizedMessage)
                 )
             }
+        /*
+            Note : It would be better to use callable cloud function
+                   to update the entire posts document
+         */
     }
 
     private fun updateSessionData(newUserData: UserData) {

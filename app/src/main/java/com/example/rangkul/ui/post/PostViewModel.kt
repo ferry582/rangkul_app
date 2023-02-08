@@ -19,6 +19,26 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
     val getPosts: LiveData<UiState<List<PostData>>>
         get() = _posts
 
+    private val _getUserPosts = MutableLiveData<UiState<List<PostData>>>()
+    val getUserPosts: LiveData<UiState<List<PostData>>>
+        get() = _getUserPosts
+
+    private val _getPostsWithCategory = MutableLiveData<UiState<List<PostData>>>()
+    val getPostsWithCategory: LiveData<UiState<List<PostData>>>
+        get() = _getPostsWithCategory
+
+    private val _getUserDiaries = MutableLiveData<UiState<List<DiaryData>>>()
+    val getUserDiaries: LiveData<UiState<List<DiaryData>>>
+        get() = _getUserDiaries
+
+    private val _addLike = MutableLiveData<UiState<String>>()
+    val addLike: LiveData<UiState<String>>
+        get() = _addLike
+
+    private val _getUserLikeData = MutableLiveData<UiState<List<LikeData>>>()
+    val getUserLikeData: LiveData<UiState<List<LikeData>>>
+        get() = _getUserLikeData
+
     fun getPosts(type: String){
         _posts.value = UiState.Loading
         repository.getPosts(type) {
@@ -26,20 +46,12 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
         }
     }
 
-    private val _getCurrentUserPosts = MutableLiveData<UiState<List<PostData>>>()
-    val getCurrentUserPosts: LiveData<UiState<List<PostData>>>
-        get() = _getCurrentUserPosts
-
-    fun getCurrentUserPosts(type: String, uid: String,){
-        _getCurrentUserPosts.value = UiState.Loading
-        repository.getCurrentUserPosts(type, uid) {
-            _getCurrentUserPosts.value = it
+    fun getUserPosts(type: String, uid: String,){
+        _getUserPosts.value = UiState.Loading
+        repository.getUserPosts(type, uid) {
+            _getUserPosts.value = it
         }
     }
-
-    private val _getPostsWithCategory = MutableLiveData<UiState<List<PostData>>>()
-    val getPostsWithCategory: LiveData<UiState<List<PostData>>>
-        get() = _getPostsWithCategory
 
     fun getPostsWithCategory(category: String){
         _getPostsWithCategory.value = UiState.Loading
@@ -48,10 +60,6 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
         }
     }
 
-    private val _getUserDiaries = MutableLiveData<UiState<List<DiaryData>>>()
-    val getUserDiaries: LiveData<UiState<List<DiaryData>>>
-        get() = _getUserDiaries
-
     fun getUserDiaries(uid: String,){
         _getUserDiaries.value = UiState.Loading
         repository.getUserDiaries(uid) {
@@ -59,20 +67,12 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
         }
     }
 
-    private val _addLike = MutableLiveData<UiState<String>>()
-    val addLike: LiveData<UiState<String>>
-        get() = _addLike
-
     fun addLike(like: LikeData, postId: String, currentUserId: String){
         _addLike.value = UiState.Loading
         repository.addLike(like, postId, currentUserId) {
             _addLike.value = it
         }
     }
-
-    private val _getUserLikeData = MutableLiveData<UiState<List<LikeData>>>()
-    val getUserLikeData: LiveData<UiState<List<LikeData>>>
-        get() = _getUserLikeData
 
     fun getUserLikeData(currentUserId: String){
         _getUserLikeData.value = UiState.Loading

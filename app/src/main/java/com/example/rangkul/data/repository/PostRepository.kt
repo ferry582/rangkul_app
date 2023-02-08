@@ -6,7 +6,7 @@ import com.example.rangkul.utils.UiState
 
 interface PostRepository {
     fun getPosts(type: String, result: (UiState<List<PostData>>) -> Unit)
-    fun getCurrentUserPosts(type: String, uid: String, result: (UiState<List<PostData>>) -> Unit)
+    fun getUserPosts(type: String, uid: String, result: (UiState<List<PostData>>) -> Unit)
     fun getPostsWithCategory(category: String, result: (UiState<List<PostData>>) -> Unit)
     fun getUserDiaries(uid: String, result: (UiState<List<DiaryData>>) -> Unit)
     fun addPost(post: PostData, result: (UiState<String>) -> Unit)

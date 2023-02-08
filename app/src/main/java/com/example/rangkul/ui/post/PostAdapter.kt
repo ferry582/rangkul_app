@@ -134,6 +134,9 @@ class PostAdapter (
             binding.civProfilePicturePost.setOnClickListener {
                 if (item.type  != "Anonymous") onProfileClicked.invoke(adapterPosition, item.createdBy)
             }
+            binding.tvUserNamePost.setOnClickListener {
+                if (item.type  != "Anonymous") onProfileClicked.invoke(adapterPosition, item.createdBy)
+            }
         }
     }
 

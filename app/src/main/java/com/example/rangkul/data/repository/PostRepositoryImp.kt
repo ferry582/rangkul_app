@@ -51,7 +51,7 @@ class PostRepositoryImp(
             }
     }
 
-    override fun getCurrentUserPosts(type: String, uid: String, result: (UiState<List<PostData>>) -> Unit) {
+    override fun getUserPosts(type: String, uid: String, result: (UiState<List<PostData>>) -> Unit) {
         // Only take posts that belongs to current user
         database.collection(FirestoreCollection.POST)
             .whereEqualTo(FirestoreDocumentField.POST_CREATED_BY, uid)

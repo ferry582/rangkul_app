@@ -100,7 +100,7 @@ class ProfileFragment : Fragment(),
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
-            viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
+            viewModelPost.getUserPosts(selectedType,  currentUserData().userId)
         } else if (result.resultCode == 100) {
             // Restart fragment if user just edit the profile to get newest data from shared preference
             val fragmentId = findNavController().currentDestination?.id
@@ -123,7 +123,7 @@ class ProfileFragment : Fragment(),
 
         binding.srlProfileFragment.setOnRefreshListener {
             if (selectedType == "Diary")  viewModelPost.getUserDiaries(currentUserData().userId)
-            else viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
+            else viewModelPost.getUserPosts(selectedType,  currentUserData().userId)
         }
 
         setUserProfileData()
@@ -150,13 +150,13 @@ class ProfileFragment : Fragment(),
             when (group.checkedChipId) {
                 R.id.chipPublic -> {
                     selectedType = "Public"
-                    viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
+                    viewModelPost.getUserPosts(selectedType, currentUserData().userId)
                     binding.rvPost.adapter = adapterPost
                 }
 
                 R.id.chipAnonymous -> {
                     selectedType = "Anonymous"
-                    viewModelPost.getCurrentUserPosts(selectedType, currentUserData().userId)
+                    viewModelPost.getUserPosts(selectedType, currentUserData().userId)
                     binding.rvPost.adapter = adapterPost
                 }
 
@@ -172,8 +172,8 @@ class ProfileFragment : Fragment(),
         isPostLiked()
 
         // Get post list based on the selected category
-        viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
-        observeGetCurrentUserPosts()
+        viewModelPost.getUserPosts(selectedType,  currentUserData().userId)
+        observeGetUserPosts()
         observeGetUserDiaries()
 
     }
@@ -200,8 +200,8 @@ class ProfileFragment : Fragment(),
         }
     }
 
-    private fun observeGetCurrentUserPosts() {
-        viewModelPost.getCurrentUserPosts.observe(viewLifecycleOwner) {state ->
+    private fun observeGetUserPosts() {
+        viewModelPost.getUserPosts.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -334,7 +334,7 @@ class ProfileFragment : Fragment(),
                 }
 
                 is UiState.Success -> {
-                    viewModelPost.getCurrentUserPosts(selectedType,  currentUserData().userId)
+                    viewModelPost.getUserPosts(selectedType,  currentUserData().userId)
                 }
             }
         }
