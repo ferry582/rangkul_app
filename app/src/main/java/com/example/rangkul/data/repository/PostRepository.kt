@@ -17,4 +17,5 @@ interface PostRepository {
     fun getUserLikeData(currentUserId: String, result: (UiState<List<LikeData>>) -> Unit)
     fun getSessionData(result: (UserData?) -> Unit)
     suspend fun uploadPostImage(fileUri: Uri, onResult: (UiState<Uri>) -> Unit)
+    suspend fun getProfanityCheck(caption: String, result: (UiState<String>) -> Unit)
 }

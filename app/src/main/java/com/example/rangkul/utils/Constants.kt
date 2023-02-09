@@ -36,3 +36,7 @@ object FirebaseStorageConstants {
     const val POST_IMAGE = "posts"
     const val USER_IMAGE = "users"
 }
+
+object RetrofitConstants {
+    const val PROFANITY_CHECK_URL = "https://www.purgomalum.com/"
+}

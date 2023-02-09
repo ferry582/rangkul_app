@@ -57,6 +57,12 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
             }
         )
     }
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (isPostNeedReload) setResult(Activity.RESULT_OK)
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -252,13 +258,6 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
         if (isPostNeedReload) setResult(Activity.RESULT_OK)
         finish()
         return true
-    }
-
-    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            if (isPostNeedReload) setResult(Activity.RESULT_OK)
-            finish()
-        }
     }
 
     override fun deleteStatus(status: Boolean?, position: Int?) {

@@ -40,7 +40,6 @@ class EditProfileActivity : AppCompatActivity() {
     private var isProfilePhotoChange: Boolean = false
     private var isUserDataUpdated: Boolean = false
     private var imageLocalUri: Uri? = null
-
     private val startForPostImageResult = registerForActivityResult(ActivityResultContracts
         .StartActivityForResult()) { result: ActivityResult ->
         val resultCode = result.resultCode
@@ -58,6 +57,12 @@ class EditProfileActivity : AppCompatActivity() {
             else -> {
                 Log.e("CreatePostActivity","Task Cancelled")
             }
+        }
+    }
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (isUserDataUpdated) setResult(100)
+            finish()
         }
     }
 
@@ -308,8 +313,8 @@ class EditProfileActivity : AppCompatActivity() {
 
         val datePickerDialog = DatePickerDialog(
             this,
-            { _, year, monthOfYear, dayOfMonth ->
-                val selectedDateStr = "$dayOfMonth/${monthOfYear + 1}/$year"
+            { _, selectedYear, selectedMonthOfYear, selectedDayOfMonth ->
+                val selectedDateStr = "$selectedDayOfMonth/${selectedMonthOfYear + 1}/$selectedYear"
 
                 val sdfParse = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
                 val date = sdfParse.parse(selectedDateStr)
@@ -363,10 +368,4 @@ class EditProfileActivity : AppCompatActivity() {
         return true
     }
 
-    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            if (isUserDataUpdated) setResult(100)
-            finish()
-        }
-    }
 }

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
 import androidx.core.content.res.ResourcesCompat
@@ -13,11 +14,19 @@ import com.example.rangkul.databinding.ActivityLoginOptionsBinding
 class LoginOptionsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginOptionsBinding
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            // Navigate to parent activity, instead of finish() when onBackPressed
+            NavUtils.navigateUpFromSameTask(this@LoginOptionsActivity)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginOptionsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         setToolbar()
         setStatusBarColor()
@@ -51,8 +60,4 @@ class LoginOptionsActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = 0 //Change icon color in status bar
     }
 
-    // Navigate to parent activity, instead of finish() when onBackPressed
-    override fun onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this)
-    }
 }

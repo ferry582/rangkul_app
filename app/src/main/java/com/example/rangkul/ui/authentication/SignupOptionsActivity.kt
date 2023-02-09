@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.NavUtils
 import androidx.core.content.res.ResourcesCompat
 import com.example.rangkul.R
@@ -13,11 +14,18 @@ import com.example.rangkul.databinding.ActivitySignupOptionsBinding
 class SignupOptionsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupOptionsBinding
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            NavUtils.navigateUpFromSameTask(this@SignupOptionsActivity)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupOptionsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         setToolbar()
         setStatusBarColor()
@@ -51,7 +59,4 @@ class SignupOptionsActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = 0 //Change icon color in status bar
     }
 
-    override fun onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this)
-    }
 }

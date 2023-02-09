@@ -3,6 +3,7 @@ package com.example.rangkul.data.repository
 import android.content.SharedPreferences
 import android.net.Uri
 import com.example.rangkul.data.model.*
+import com.example.rangkul.data.retrofit.ApiInterface
 import com.example.rangkul.utils.*
 import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,7 +19,8 @@ class PostRepositoryImp(
     private val database: FirebaseFirestore,
     private val appPreferences: SharedPreferences,
     private val gson: Gson,
-    private val storageReference: FirebaseStorage
+    private val storageReference: FirebaseStorage,
+    private val retrofitInstance: ApiInterface
 ): PostRepository {
 
     override fun getPosts(type: String, result: (UiState<List<PostData>>) -> Unit) {
@@ -361,6 +363,23 @@ class PostRepositoryImp(
         } catch (e: Exception) {
             onResult.invoke(
                 UiState.Failure(e.message)
+            )
+        }
+    }
+
+    override suspend fun getProfanityCheck(
+        caption: String,
+        result: (UiState<String>) -> Unit
+    ){
+        val response = retrofitInstance.getProfanityCheck(caption)
+
+        if (response.isSuccessful) {
+            result.invoke(
+                UiState.Success(response.body().toString())
+            )
+        } else {
+            UiState.Failure(
+                response.errorBody().toString()
             )
         }
     }

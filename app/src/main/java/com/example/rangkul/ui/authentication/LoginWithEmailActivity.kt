@@ -2,6 +2,7 @@ package com.example.rangkul.ui.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
@@ -19,17 +20,25 @@ class LoginWithEmailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginWithEmailBinding
     private val viewModel: AuthViewModel by viewModels()
+    private val onBackPressedCallback: OnBackPressedCallback =
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                NavUtils.navigateUpFromSameTask(this@LoginWithEmailActivity)
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginWithEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
         setToolbar()
 
         observer()
 
-        binding.btLogIn.setOnClickListener{
+        binding.btLogIn.setOnClickListener {
             val email: String = binding.etEmail.text.toString().trim()
             val pass: String = binding.etPassword.text.toString()
 
@@ -47,11 +56,12 @@ class LoginWithEmailActivity : AppCompatActivity() {
     }
 
     private fun observer() {
-        viewModel.login.observe(this) {state ->
+        viewModel.login.observe(this) { state ->
             when (state) {
                 is UiState.Failure -> {
                     loadingVisibility(false)
-                    Snackbar.make(binding.root, state.error.toString(), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, state.error.toString(), Snackbar.LENGTH_SHORT)
+                        .show()
                 }
                 UiState.Loading -> {
                     loadingVisibility(true)
@@ -78,12 +88,10 @@ class LoginWithEmailActivity : AppCompatActivity() {
     }
 
     private fun loginValidation(email: String, pass: String): Boolean {
-        binding.tilPassword.isPasswordVisibilityToggleEnabled = true
         return if (email.isEmpty()) {
             binding.etEmail.error = "Please enter email"
             false
         } else if (pass.isEmpty()) {
-            binding.tilPassword.isPasswordVisibilityToggleEnabled = false
             binding.etPassword.error = "Please enter password"
             false
         } else {
@@ -98,7 +106,4 @@ class LoginWithEmailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    override fun onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this)
-    }
 }

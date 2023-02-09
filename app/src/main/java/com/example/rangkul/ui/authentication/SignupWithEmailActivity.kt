@@ -2,6 +2,7 @@ package com.example.rangkul.ui.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
@@ -18,17 +19,25 @@ class SignupWithEmailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupWithEmailBinding
     private val viewModel: AuthViewModel by viewModels()
+    private val onBackPressedCallback: OnBackPressedCallback =
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                NavUtils.navigateUpFromSameTask(this@SignupWithEmailActivity)
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupWithEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
         setToolbar()
 
         observer()
 
-        binding.btSignUp.setOnClickListener{
+        binding.btSignUp.setOnClickListener {
             val email: String = binding.etEmail.text.toString().trim()
             val pass: String = binding.etPassword.text.toString()
             val name: String = binding.etName.text.toString().trim()
@@ -46,11 +55,12 @@ class SignupWithEmailActivity : AppCompatActivity() {
     }
 
     private fun observer() {
-        viewModel.register.observe(this) {state ->
+        viewModel.register.observe(this) { state ->
             when (state) {
                 is UiState.Failure -> {
                     loadingVisibility(false)
-                    Snackbar.make(binding.root, state.error.toString(), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, state.error.toString(), Snackbar.LENGTH_SHORT)
+                        .show()
                 }
                 UiState.Loading -> {
                     loadingVisibility(true)
@@ -81,26 +91,22 @@ class SignupWithEmailActivity : AppCompatActivity() {
     }
 
     private fun signupValidation(email: String, pass: String, name: String): Boolean {
-        binding.tilPassword.isPasswordVisibilityToggleEnabled = true
         return if (email.isEmpty()) {
             binding.etEmail.error = "Please enter email"
             false
-        } else if (name.isEmpty()){
+        } else if (name.isEmpty()) {
             binding.etName.error = "Please enter your name"
             false
         } else if (pass.isEmpty()) {
-            binding.tilPassword.isPasswordVisibilityToggleEnabled = false
             binding.etPassword.error = "Please enter password"
             false
         } else if (!isOnlyLettersAndSpace(name)) {
             binding.etName.error = "Name should be contain alphabet only"
             false
-        }
-        else {
+        } else {
             if (isValidPassword(pass)) {
                 true
             } else {
-                binding.tilPassword.isPasswordVisibilityToggleEnabled = false
                 binding.etPassword.error = "must be longer than 8 characters, contain numbers, " +
                         "special character and uppercase letter"
                 false
@@ -120,7 +126,7 @@ class SignupWithEmailActivity : AppCompatActivity() {
 
     private fun isOnlyLettersAndSpace(name: String): Boolean {
         var x = true
-        for(i in name) {
+        for (i in name) {
             if (!i.isLetter() && !i.isWhitespace()) {
                 x = false
                 break
@@ -146,7 +152,4 @@ class SignupWithEmailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    override fun onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this)
-    }
 }

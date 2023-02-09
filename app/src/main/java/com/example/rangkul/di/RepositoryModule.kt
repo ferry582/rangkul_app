@@ -2,6 +2,7 @@ package com.example.rangkul.di
 
 import android.content.SharedPreferences
 import com.example.rangkul.data.repository.*
+import com.example.rangkul.data.retrofit.ApiInterface
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -22,9 +23,10 @@ object RepositoryModule {
         database: FirebaseFirestore,
         appPreferences: SharedPreferences,
         gson: Gson,
-        storageReference: FirebaseStorage
+        storageReference: FirebaseStorage,
+        retrofitInstance: ApiInterface
     ): PostRepository {
-        return PostRepositoryImp(database, appPreferences, gson, storageReference)
+        return PostRepositoryImp(database, appPreferences, gson, storageReference, retrofitInstance)
     }
 
     @Provides

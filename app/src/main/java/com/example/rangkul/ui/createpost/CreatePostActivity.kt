@@ -1,11 +1,16 @@
 package com.example.rangkul.ui.createpost
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
+import android.widget.ImageView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -34,7 +39,7 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
     private val viewModel: CreatePostViewModel by viewModels()
     private var imageLocalUri: Uri? = null
     private var selectedMood: ImageListData? = null
-    private var isSubmitted: Boolean = false // To prevent data from being uploaded multiple times, when the button is clicked multiple times
+    private var isSubmitted: Boolean = false // To prevent data from being uploaded multiple times, E.g: when the button is clicked multiple times
 
     private val startForPostImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         val resultCode = result.resultCode
@@ -147,20 +152,50 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
 
         // publish post
         binding.btPublish.setOnClickListener {
-
             hideKeyboard()
-            if (!isSubmitted) {
-                if (inputValidation()) {
-                    isSubmitted = true
-                    isPostImageExist()
-                }
+            if (inputValidation()) {
+                isCaptionContainProfanity()
             }
-
         }
 
         observeAddPost()
 
         observeAddDiary()
+    }
+
+    private fun isCaptionContainProfanity() {
+        viewModel.getProfanityCheck(binding.etCaption.text.toString())
+        viewModel.getProfanityCheck.observe(this) { state ->
+            when(state) {
+                is UiState.Loading -> {
+                    loadingVisibility(true)
+                }
+
+                is UiState.Failure -> {
+                    loadingVisibility(false)
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    loadingVisibility(false)
+                    if (state.data.toBoolean()) {
+                        showProfanityDialog()
+                    } else isPostImageExist()
+                }
+            }
+        }
+    }
+
+    private fun showProfanityDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.dialog_profanity_detected)
+        dialog.show()
+
+        dialog.findViewById<ImageView>(R.id.ivCloseDialog).setOnClickListener {
+            dialog.dismiss()
+        }
     }
 
     private fun observeAddDiary() {
@@ -236,6 +271,7 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                 moodImage = selectedMood!!.image
             )
         )
+        isSubmitted = true
     }
 
     private fun addPostData(imageUrl: String?) {
@@ -258,6 +294,7 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                 commentVisibility = true
             )
         )
+        isSubmitted = true
     }
     private fun isPostImageExist() {
         if (imageLocalUri != null){
@@ -273,13 +310,17 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                     is UiState.Success -> {
                         loadingVisibility(false)
                         if (postType == "Diary") addDiaryData(state.data.toString())
-                        else addPostData(state.data.toString())
+                        else {
+                            if (!isSubmitted) addPostData(state.data.toString())
+                        }
                     }
                 }
             }
         }else{
             if (postType == "Diary") addDiaryData(null)
-            else addPostData(null)
+            else {
+                if (!isSubmitted) addPostData(null)
+            }
         }
     }
 
@@ -311,7 +352,7 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
             Snackbar.make(binding.root, "You haven't chosen any mood yet", Snackbar.LENGTH_SHORT).show()
         }
 
-        if (binding.etCaption.text.toString().isEmpty()) {
+        if (binding.etCaption.text.toString().trim().isEmpty()) {
             isValid = false
             binding.etCaption.error = "Caption can't be empty!"
         }
