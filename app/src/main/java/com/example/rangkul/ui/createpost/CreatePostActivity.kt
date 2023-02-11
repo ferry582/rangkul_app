@@ -25,7 +25,6 @@ import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.ActivityCreatePostBinding
 import com.example.rangkul.ui.MainActivity
 import com.example.rangkul.utils.*
-import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
@@ -39,7 +38,6 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
     private val viewModel: CreatePostViewModel by viewModels()
     private var imageLocalUri: Uri? = null
     private var selectedMood: ImageListData? = null
-    private var isSubmitted: Boolean = false // To prevent data from being uploaded multiple times, E.g: when the button is clicked multiple times
 
     private val startForPostImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         val resultCode = result.resultCode
@@ -110,26 +108,20 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
         }
 
         binding.chipGroupPostType.setOnCheckedStateChangeListener { group, _ ->
-            val ids = group.checkedChipIds
-            for (id in ids) {
-                val chip: Chip = group.findViewById(id)
-                postType = chip.text.toString()
+            when (group.checkedChipId) {
+                R.id.chipPublic -> {
+                    updateUI("Public")
+                    postType = "Public"
+                }
 
-                when (chip.text) {
-                    "Public" -> {
-                        updateUI(chip.text.toString())
-                        postType = chip.text.toString()
-                    }
+                R.id.chipAnonymous -> {
+                    updateUI("Anonymous")
+                    postType = "Anonymous"
+                }
 
-                    "Anonymous" -> {
-                        updateUI(chip.text.toString())
-                        postType = chip.text.toString()
-                    }
-
-                    else -> {
-                       updateUI(chip.text.toString())
-                        postType = chip.text.toString()
-                    }
+                else -> {
+                    updateUI("Diary")
+                    postType = "Diary"
                 }
             }
         }
@@ -152,6 +144,7 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
 
         // publish post
         binding.btPublish.setOnClickListener {
+            binding.btPublish.isClickable = false // To prevent multiple clicks when the task has started
             hideKeyboard()
             if (inputValidation()) {
                 isCaptionContainProfanity()
@@ -164,8 +157,8 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
     }
 
     private fun isCaptionContainProfanity() {
-        viewModel.getProfanityCheck(binding.etCaption.text.toString())
-        viewModel.getProfanityCheck.observe(this) { state ->
+        loadingVisibility(true)
+        viewModel.getProfanityCheck(binding.etCaption.text.toString()) { state ->
             when(state) {
                 is UiState.Loading -> {
                     loadingVisibility(true)
@@ -174,12 +167,14 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                 is UiState.Failure -> {
                     loadingVisibility(false)
                     toast(state.error)
+                    binding.btPublish.isClickable = true
                 }
 
                 is UiState.Success -> {
                     loadingVisibility(false)
                     if (state.data.toBoolean()) {
                         showProfanityDialog()
+                        binding.btPublish.isClickable = true
                     } else isPostImageExist()
                 }
             }
@@ -206,9 +201,9 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                 }
 
                 is UiState.Failure -> {
-                    isSubmitted = false
                     loadingVisibility(false)
                     toast(state.error)
+                    binding.btPublish.isClickable = true
                 }
 
                 is UiState.Success -> {
@@ -230,9 +225,9 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                 }
 
                 is UiState.Failure -> {
-                    isSubmitted = false
                     loadingVisibility(false)
                     toast(state.error)
+                    binding.btPublish.isClickable = true
                 }
 
                 is UiState.Success -> {
@@ -271,7 +266,6 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                 moodImage = selectedMood!!.image
             )
         )
-        isSubmitted = true
     }
 
     private fun addPostData(imageUrl: String?) {
@@ -294,7 +288,6 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                 commentVisibility = true
             )
         )
-        isSubmitted = true
     }
     private fun isPostImageExist() {
         if (imageLocalUri != null){
@@ -306,20 +299,25 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
                     is UiState.Failure -> {
                         loadingVisibility(false)
                         toast(state.error)
+                        binding.btPublish.isClickable = true
                     }
                     is UiState.Success -> {
                         loadingVisibility(false)
-                        if (postType == "Diary") addDiaryData(state.data.toString())
+                        if (postType == "Diary") {
+                            addDiaryData(state.data.toString())
+                        }
                         else {
-                            if (!isSubmitted) addPostData(state.data.toString())
+                            addPostData(state.data.toString())
                         }
                     }
                 }
             }
         }else{
-            if (postType == "Diary") addDiaryData(null)
+            if (postType == "Diary") {
+                addDiaryData(null)
+            }
             else {
-                if (!isSubmitted) addPostData(null)
+                addPostData(null)
             }
         }
     }
@@ -338,7 +336,9 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
         if (isLoading) {
             binding.tvPublish.hide()
             binding.progressBar.show()
+            if (postType == "Diary") binding.ivLockIcon.hide()
         } else {
+            if (postType == "Diary") binding.ivLockIcon.show()
             binding.tvPublish.show()
             binding.progressBar.hide()
         }
@@ -350,11 +350,13 @@ class CreatePostActivity : AppCompatActivity(), SelectMoodBottomSheetFragment.Se
         if (postType == "Diary" && selectedMood == null) {
             isValid = false
             Snackbar.make(binding.root, "You haven't chosen any mood yet", Snackbar.LENGTH_SHORT).show()
+            binding.btPublish.isClickable = true
         }
 
         if (binding.etCaption.text.toString().trim().isEmpty()) {
             isValid = false
             binding.etCaption.error = "Caption can't be empty!"
+            binding.btPublish.isClickable = true
         }
 
         return isValid

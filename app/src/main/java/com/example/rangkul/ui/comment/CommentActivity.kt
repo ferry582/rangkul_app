@@ -1,8 +1,13 @@
 package com.example.rangkul.ui.comment
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Window
+import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +19,7 @@ import com.example.rangkul.data.model.PostData
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.ActivityPostCommentBinding
 import com.example.rangkul.ui.profile.VisitedProfileActivity
-import com.example.rangkul.utils.UiState
-import com.example.rangkul.utils.hide
-import com.example.rangkul.utils.show
-import com.example.rangkul.utils.toast
+import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
@@ -93,24 +95,68 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
 
         // Add Comment
         binding.tvCommentPost.setOnClickListener {
+            binding.tvCommentPost.isClickable = false // To prevent multiple click until task is completed
+            hideKeyboard()
             if (inputValidation()) {
-                viewModel.addComment(
-                    CommentData(
-                        commentId = "",
-                        commentedBy = currentUserData().userId,
-                        commentedAt = Date(),
-                        comment = binding.etComment.text.toString(),
-                        userName = currentUserData().userName,
-                        profilePicture = currentUserData().profilePicture,
-                        userBadge = currentUserData().badge,
-                        postId = objectPost!!.postId
-                    )
-                )
+                isCommentContainProfanity()
             }
-            binding.etComment.text?.clear()
         }
 
         observeAddComment()
+    }
+
+    private fun isCommentContainProfanity() {
+        binding.progressBar.show()
+        viewModel.getProfanityCheck(binding.etComment.text.toString()) { state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    toast(state.error)
+                    binding.tvCommentPost.isClickable = true
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    if (state.data.toBoolean()) {
+                        showProfanityDialog()
+                        binding.tvCommentPost.isClickable = true
+                    } else {
+                        addCommentData()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun addCommentData() {
+        viewModel.addComment(
+            CommentData(
+                commentId = "",
+                commentedBy = currentUserData().userId,
+                commentedAt = Date(),
+                comment = binding.etComment.text.toString(),
+                userName = currentUserData().userName,
+                profilePicture = currentUserData().profilePicture,
+                userBadge = currentUserData().badge,
+                postId = objectPost!!.postId
+            )
+        )
+    }
+
+    private fun showProfanityDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.dialog_profanity_detected)
+        dialog.show()
+
+        dialog.findViewById<ImageView>(R.id.ivCloseDialog).setOnClickListener {
+            dialog.dismiss()
+        }
     }
 
     private fun observeGetComments() {
@@ -153,12 +199,15 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
                 is UiState.Failure -> {
                     binding.progressBar.hide()
                     toast(state.error)
+                    binding.tvCommentPost.isClickable = true
                 }
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
                     isPostNeedReload = true
                     viewModel.getComments(objectPost!!.postId)
+                    binding.etComment.text?.clear()
+                    binding.tvCommentPost.isClickable = true
                 }
             }
         }
@@ -177,9 +226,10 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
     private fun inputValidation(): Boolean {
         var isValid = true
 
-        if (binding.etComment.text.toString().isEmpty()) {
+        if (binding.etComment.text.toString().trim().isEmpty()) {
             isValid = false
-            binding.etComment.error = "Caption can't be empty!"
+            binding.etComment.error = "Comment can't be empty!"
+            binding.tvCommentPost.isClickable = true
         }
 
         return isValid

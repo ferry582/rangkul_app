@@ -25,11 +25,6 @@ class CreatePostViewModel @Inject constructor(private val repository: PostReposi
     val addDiary: LiveData<UiState<String>>
         get() = _addDiary
 
-    private val _getProfanityCheck = MutableLiveData<UiState<String>>()
-    val getProfanityCheck: LiveData<UiState<String>>
-        get() = _getProfanityCheck
-
-
     fun addPost(post: PostData){
         _addPost.value = UiState.Loading
         repository.addPost(post) {
@@ -55,12 +50,10 @@ class CreatePostViewModel @Inject constructor(private val repository: PostReposi
         }
     }
 
-    fun getProfanityCheck(caption: String) {
-        _getProfanityCheck.value = UiState.Loading
+    // getProfanityCheck doesn't need to be observable
+    fun getProfanityCheck(caption: String, result: (UiState<String>) -> Unit) {
         viewModelScope.launch {
-            repository.getProfanityCheck(caption) {
-                _getProfanityCheck.value = it
-            }
+            repository.getProfanityCheck(caption, result)
         }
     }
 

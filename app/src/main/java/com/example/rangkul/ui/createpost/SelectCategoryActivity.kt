@@ -25,12 +25,8 @@ class SelectCategoryActivity : AppCompatActivity() {
         setupChip()
 
         binding.chipGroupCategory.setOnCheckedStateChangeListener { group, _ ->
-            val ids = group.checkedChipIds
-            for (id in ids) {
-                val chip: Chip = group.findViewById(id!!)
-                selectedCategory = chip.text.toString()
-            }
-
+            val selectedChip = group.findViewById<Chip>(group.checkedChipId)
+            selectedCategory = selectedChip.text.toString()
             binding.btNext.isEnabled = true // Enable the next button after select the category
         }
 
