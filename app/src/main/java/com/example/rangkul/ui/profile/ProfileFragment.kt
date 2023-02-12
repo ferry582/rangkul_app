@@ -35,13 +35,14 @@ class ProfileFragment : Fragment(),
     DiaryOptionsBottomSheetFragment.DeleteDiaryStatusListener {
 
     lateinit var binding: FragmentProfileBinding
-    private val viewModelPost: PostViewModel by viewModels()
+    private val postViewModel: PostViewModel by viewModels()
+    private val profileViewModel: VisitedProfileViewModel by viewModels()
     private var selectedType = "Public"
     private var postList: MutableList<PostData> = arrayListOf()
     private var diaryList: MutableList<DiaryData> = arrayListOf()
     private val adapterPost by lazy {
         PostAdapter(
-            onCommentClicked = { pos, item ->
+            onCommentClicked = { _, item ->
                 val intent = Intent(requireContext(), CommentActivity::class.java)
                 intent.putExtra("OBJECT_POST", item)
                 resultLauncher.launch(intent)
@@ -65,14 +66,8 @@ class ProfileFragment : Fragment(),
             onBadgeClicked = { pos, item ->
 
             },
-            onProfileClicked = { pos, item ->
-                if (item == currentUserData().userId) {
-                    // navigate to profile fragment
-                } else {
-                    val intent = Intent(requireContext(), VisitedProfileActivity::class.java)
-                    intent.putExtra("USER_ID", item)
-                    startActivity(intent)
-                }
+            onProfileClicked = { _, _ ->
+                // Unable to click profile on any post from fragment profile
             },
             context = requireContext()
         )
@@ -100,7 +95,7 @@ class ProfileFragment : Fragment(),
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
-            viewModelPost.getUserPosts(selectedType,  currentUserData().userId)
+            postViewModel.getUserPosts(selectedType,  currentUserData().userId)
         } else if (result.resultCode == 100) {
             // Restart fragment if user just edit the profile to get newest data from shared preference
             val fragmentId = findNavController().currentDestination?.id
@@ -122,11 +117,15 @@ class ProfileFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
 
         binding.srlProfileFragment.setOnRefreshListener {
-            if (selectedType == "Diary")  viewModelPost.getUserDiaries(currentUserData().userId)
-            else viewModelPost.getUserPosts(selectedType,  currentUserData().userId)
+            if (selectedType == "Diary")  postViewModel.getUserDiaries(currentUserData().userId)
+            else postViewModel.getUserPosts(selectedType,  currentUserData().userId)
+            profileViewModel.getProfileCountData(currentUserData().userId, selectedType)
         }
 
         setUserProfileData()
+
+        profileViewModel.getProfileCountData(currentUserData().userId, selectedType)
+        observeGetUserCountData()
 
         binding.btSettings.setOnClickListener {
             val intent = Intent(requireContext(), SettingsActivity::class.java)
@@ -150,20 +149,23 @@ class ProfileFragment : Fragment(),
             when (group.checkedChipId) {
                 R.id.chipPublic -> {
                     selectedType = "Public"
-                    viewModelPost.getUserPosts(selectedType, currentUserData().userId)
+                    postViewModel.getUserPosts(selectedType, currentUserData().userId)
                     binding.rvPost.adapter = adapterPost
+                    profileViewModel.getProfileCountData(currentUserData().userId, selectedType)
                 }
 
                 R.id.chipAnonymous -> {
                     selectedType = "Anonymous"
-                    viewModelPost.getUserPosts(selectedType, currentUserData().userId)
+                    postViewModel.getUserPosts(selectedType, currentUserData().userId)
                     binding.rvPost.adapter = adapterPost
+                    profileViewModel.getProfileCountData(currentUserData().userId, selectedType)
                 }
 
                 else -> {
                     selectedType = "Diary"
-                    viewModelPost.getUserDiaries(currentUserData().userId)
+                    postViewModel.getUserDiaries(currentUserData().userId)
                     binding.rvPost.adapter = adapterDiary
+                    profileViewModel.getProfileCountData(currentUserData().userId, selectedType)
                 }
             }
         }
@@ -172,14 +174,36 @@ class ProfileFragment : Fragment(),
         isPostLiked()
 
         // Get post list based on the selected category
-        viewModelPost.getUserPosts(selectedType,  currentUserData().userId)
+        postViewModel.getUserPosts(selectedType,  currentUserData().userId)
         observeGetUserPosts()
         observeGetUserDiaries()
 
     }
 
+    private fun observeGetUserCountData() {
+        profileViewModel.getProfileCountData.observe(viewLifecycleOwner) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    binding.tvPostCount.text = state.data.post.toString()
+                    binding.tvFollowingsCount.text = state.data.followings.toString()
+                    binding.tvFollowersCount.text = state.data.followers.toString()
+                }
+            }
+        }
+    }
+
     private fun observeGetUserDiaries() {
-        viewModelPost.getUserDiaries.observe(viewLifecycleOwner) {state ->
+        postViewModel.getUserDiaries.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -201,7 +225,7 @@ class ProfileFragment : Fragment(),
     }
 
     private fun observeGetUserPosts() {
-        viewModelPost.getUserPosts.observe(viewLifecycleOwner) {state ->
+        postViewModel.getUserPosts.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -258,8 +282,8 @@ class ProfileFragment : Fragment(),
 
     private fun isPostLiked() {
         //Get Like data list at users collection
-        viewModelPost.getUserLikeData(currentUserData().userId)
-        viewModelPost.getUserLikeData.observe(viewLifecycleOwner) {state ->
+        postViewModel.getUserLikeData(currentUserData().userId)
+        postViewModel.getUserLikeData.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -317,14 +341,14 @@ class ProfileFragment : Fragment(),
 
     private fun addLike(item: PostData) {
         // Add Like
-        viewModelPost.addLike(
+        postViewModel.addLike(
             LikeData(
                 likeId = "",
                 likedAt = Date(),
             ), item.postId, currentUserData().userId
         )
 
-        viewModelPost.addLike.observe(this) {state ->
+        postViewModel.addLike.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
                 }
@@ -334,7 +358,7 @@ class ProfileFragment : Fragment(),
                 }
 
                 is UiState.Success -> {
-                    viewModelPost.getUserPosts(selectedType,  currentUserData().userId)
+                    postViewModel.getUserPosts(selectedType,  currentUserData().userId)
                 }
             }
         }
@@ -342,7 +366,7 @@ class ProfileFragment : Fragment(),
 
     private fun currentUserData(): UserData {
         var user = UserData()
-        viewModelPost.getSessionData {
+        postViewModel.getSessionData {
             if (it != null) {
                 user = it
             }
@@ -356,6 +380,7 @@ class ProfileFragment : Fragment(),
             position?.let { postList.removeAt(it) }
             adapterPost.updateList(postList)
             position?.let { adapterPost.notifyItemChanged(it) }
+            profileViewModel.getProfileCountData(currentUserData().userId, selectedType) // update post count
         }
     }
 
@@ -364,6 +389,7 @@ class ProfileFragment : Fragment(),
             position?.let { diaryList.removeAt(it) }
             adapterDiary.updateList(diaryList)
             position?.let { adapterDiary.notifyItemChanged(it) }
+            profileViewModel.getProfileCountData(currentUserData().userId, selectedType) // update post count
         }
     }
 

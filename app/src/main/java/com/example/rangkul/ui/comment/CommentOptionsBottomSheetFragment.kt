@@ -101,10 +101,12 @@ class CommentOptionsBottomSheetFragment(private val deleteStatusListener: Delete
 
         tvMessageTitle.text = getString(R.string.delete_comment_title)
         tvMessageDescription.text = getString(R.string.delete_comment_description)
+
         tvCancel.setOnClickListener {
             dialog.dismiss()
         }
         tvDelete.setOnClickListener {
+            tvDelete.isClickable = false // Prevent multiple touch
             viewModel.deleteComment(objectComment)
 
             viewModel.deleteComment.observe(viewLifecycleOwner) {state ->

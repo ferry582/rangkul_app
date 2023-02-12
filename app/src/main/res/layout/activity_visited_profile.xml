@@ -96,7 +96,7 @@
                             android:layout_gravity="center_horizontal"
                             android:fontFamily="@font/poppins_semibold"
                             android:includeFontPadding="false"
-                            android:text="3"
+                            android:text="0"
                             android:textColor="@color/textBlack"
                             android:textSize="18sp"
                             app:layout_constraintEnd_toEndOf="@+id/tvPostTitle"
@@ -116,18 +116,18 @@
                             app:layout_constraintTop_toBottomOf="@+id/tvPostCount" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tvFollowingCount"
+                            android:id="@+id/tvFollowersCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:fontFamily="@font/poppins_semibold"
                             android:includeFontPadding="false"
-                            android:text="53"
+                            android:text="0"
                             android:textColor="@color/textBlack"
                             android:textSize="18sp"
                             app:layout_constraintEnd_toEndOf="@+id/tvFollowingTitle"
                             app:layout_constraintStart_toStartOf="@+id/tvFollowingTitle"
-                            app:layout_constraintTop_toTopOf="@+id/tvFollowersCount" />
+                            app:layout_constraintTop_toTopOf="@+id/tvFollowingsCount" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tvFollowingTitle"
@@ -143,13 +143,13 @@
                             app:layout_constraintStart_toEndOf="@+id/tvPostTitle" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tvFollowersCount"
+                            android:id="@+id/tvFollowingsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:fontFamily="@font/poppins_semibold"
                             android:includeFontPadding="false"
-                            android:text="84"
+                            android:text="0"
                             android:textColor="@color/textBlack"
                             android:textSize="18sp"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -177,7 +177,7 @@
                         android:layout_marginTop="15dp"
                         android:fontFamily="@font/poppins_semibold"
                         android:includeFontPadding="false"
-                        android:text="Della Delila"
+                        android:text="Name"
                         android:textColor="@color/textBlack"
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -199,7 +199,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_regular"
                         android:includeFontPadding="false"
-                        android:text="A true lover of animals, photography, travel, restaurants and clubs!"
+                        android:text=""
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

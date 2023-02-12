@@ -7,6 +7,8 @@ object FirestoreCollection {
     const val LIKE = "likes"
     const val USER = "users"
     const val CATEGORY_CONTENT = "contents"
+    const val FOLLOWERS = "followers"
+    const val FOLLOWINGS = "followings"
 }
 
 object FirestoreDocumentField {

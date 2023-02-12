@@ -17,20 +17,12 @@ object RetrofitModule {
     @Provides
     @Singleton
     fun provideRetrofitInstance(): ApiInterface {
-
-        val retrofit by lazy {
-            Retrofit.Builder()
+        return Retrofit.Builder()
                 .baseUrl(RetrofitConstants.PROFANITY_CHECK_URL)
                 .addConverterFactory(ScalarsConverterFactory.create())
 //            .addConverterFactory(GsonConverterFactory.create())
                 .build()
-        }
-
-        val api: ApiInterface by lazy {
-            retrofit.create(ApiInterface::class.java)
-        }
-
-        return api
+                .create(ApiInterface::class.java)
     }
 
 }

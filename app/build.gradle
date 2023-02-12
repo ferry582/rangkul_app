@@ -5,6 +5,9 @@ plugins {
     id 'kotlin-parcelize'
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
+
+    // Performance Monitoring Gradle plugin
+    id 'com.google.firebase.firebase-perf'
 }
 
 android {
@@ -61,9 +64,13 @@ dependencies {
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
 
     // Firebase
+    implementation platform('com.google.firebase:firebase-bom:31.2.0')
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.2'
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
     implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
+    implementation 'com.google.firebase:firebase-perf-ktx'
+
+    // Coroutine
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
 
     // LifeCycle

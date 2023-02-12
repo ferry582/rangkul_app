@@ -29,13 +29,13 @@ class VisitedProfileActivity : AppCompatActivity(),
     PostOptionsBottomSheetFragment.DeletePostStatusListener {
 
     private lateinit var binding: ActivityVisitedProfileBinding
-    private lateinit var userId: String
+    private lateinit var visitedUserId: String
     private var postList: MutableList<PostData> = arrayListOf()
-    private val viewModelPost: PostViewModel by viewModels()
+    private val postViewModel: PostViewModel by viewModels()
     private val profileViewModel: VisitedProfileViewModel by viewModels()
     private val adapterPost by lazy {
         PostAdapter(
-            onCommentClicked = { pos, item ->
+            onCommentClicked = { _, item ->
                 val intent = Intent(this, CommentActivity::class.java)
                 intent.putExtra("OBJECT_POST", item)
                 resultLauncher.launch(intent)
@@ -69,7 +69,7 @@ class VisitedProfileActivity : AppCompatActivity(),
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
         if (result.resultCode == Activity.RESULT_OK) {
-            viewModelPost.getUserPosts("Public",  userId)
+            postViewModel.getUserPosts("Public",  visitedUserId)
         }
     }
 
@@ -78,15 +78,21 @@ class VisitedProfileActivity : AppCompatActivity(),
         binding = ActivityVisitedProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        userId = intent.getStringExtra("USER_ID").toString()
+        visitedUserId = intent.getStringExtra("USER_ID").toString()
 
         setToolbar()
 
-        profileViewModel.getVisitedUserData(userId)
+        profileViewModel.getUserData(visitedUserId) // Get visited user data
         observeGetVisitedUserData()
 
+        profileViewModel.getProfileCountData(visitedUserId, "Public")
+        observeGetUserCountData()
+
+        isUserBeingFollowed()
+
         binding.srlVisitedProfileActivity.setOnRefreshListener {
-            viewModelPost.getUserPosts("Public",  userId)
+            postViewModel.getUserPosts("Public",  visitedUserId)
+            profileViewModel.getProfileCountData(visitedUserId, "Public")
         }
 
         // Configure Post RecyclerView
@@ -98,12 +104,94 @@ class VisitedProfileActivity : AppCompatActivity(),
         // Get user's like list
         isPostLiked()
 
-        viewModelPost.getUserPosts("Public",  userId)
+        postViewModel.getUserPosts("Public",  visitedUserId)
         observeGetUserPosts()
+
+        binding.btFollow.setOnClickListener {
+            binding.btFollow.isClickable = false
+            profileViewModel.addFollowData(currentUserData().userId, visitedUserId)
+        }
+        observeAddFollowData()
+
+        binding.btUnfollow.setOnClickListener {
+            binding.btUnfollow.isClickable = false
+            profileViewModel.removeFollowData(currentUserData().userId, visitedUserId)
+        }
+        observeRemoveFollowData()
+
+        binding.btMessage.setOnClickListener {
+            toast("Under development")
+        }
+    }
+
+    private fun observeGetUserCountData() {
+        profileViewModel.getProfileCountData.observe(this) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    binding.tvPostCount.text = state.data.post.toString()
+                    binding.tvFollowingsCount.text = state.data.followings.toString()
+                    binding.tvFollowersCount.text = state.data.followers.toString()
+                }
+            }
+        }
+    }
+
+    private fun observeRemoveFollowData() {
+        profileViewModel.removeFollowData.observe(this) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    binding.btUnfollow.isClickable = true
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    binding.btUnfollow.isClickable = true
+                    profileViewModel.getProfileCountData(visitedUserId, "Public")
+                }
+            }
+        }
+    }
+
+    private fun observeAddFollowData() {
+        profileViewModel.addFollowData.observe(this) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    binding.btFollow.isClickable = true
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    binding.btFollow.isClickable = true
+                    profileViewModel.getProfileCountData(visitedUserId, "Public") // Reload profile count data
+                }
+            }
+        }
     }
 
     private fun observeGetUserPosts() {
-        viewModelPost.getUserPosts.observe(this) {state ->
+        postViewModel.getUserPosts.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -136,7 +224,7 @@ class VisitedProfileActivity : AppCompatActivity(),
     }
 
     private fun observeGetVisitedUserData() {
-        profileViewModel.getVisitedUserData.observe(this) {state ->
+        profileViewModel.getUserData.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -157,14 +245,14 @@ class VisitedProfileActivity : AppCompatActivity(),
 
     private fun addLike(item: PostData) {
         // Add Like
-        viewModelPost.addLike(
+        postViewModel.addLike(
             LikeData(
                 likeId = "",
                 likedAt = Date(),
             ), item.postId, currentUserData().userId
         )
 
-        viewModelPost.addLike.observe(this) {state ->
+        postViewModel.addLike.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
                 }
@@ -174,7 +262,7 @@ class VisitedProfileActivity : AppCompatActivity(),
                 }
 
                 is UiState.Success -> {
-                    viewModelPost.getUserPosts("Public",  userId)
+                    postViewModel.getUserPosts("Public",  visitedUserId)
                 }
             }
         }
@@ -182,8 +270,8 @@ class VisitedProfileActivity : AppCompatActivity(),
 
     private fun isPostLiked() {
         //Get Like data list at users collection
-        viewModelPost.getUserLikeData(currentUserData().userId)
-        viewModelPost.getUserLikeData.observe(this) {state ->
+        postViewModel.getUserLikeData(currentUserData().userId)
+        postViewModel.getUserLikeData.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -204,7 +292,7 @@ class VisitedProfileActivity : AppCompatActivity(),
 
     private fun currentUserData(): UserData {
         var user = UserData()
-        viewModelPost.getSessionData {
+        postViewModel.getSessionData {
             if (it != null) {
                 user = it
             }
@@ -245,6 +333,33 @@ class VisitedProfileActivity : AppCompatActivity(),
             else {
                 show()
                 text = visitedUserData?.bio
+            }
+        }
+    }
+
+    private fun isUserBeingFollowed() {
+        profileViewModel.getUserFollowingsData(currentUserData().userId)
+        profileViewModel.getUserFollowingsData.observe(this) { state ->
+            when(state) {
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                }
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    if (state.data.any {it.userId == visitedUserId}) {
+                        binding.btFollow.hide()
+                        binding.btUnfollow.show()
+                    } else {
+                        binding.btFollow.show()
+                        binding.btUnfollow.hide()
+                    }
+                }
             }
         }
     }

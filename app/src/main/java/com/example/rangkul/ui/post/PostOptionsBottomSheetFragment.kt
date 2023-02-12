@@ -107,6 +107,7 @@ class PostOptionsBottomSheetFragment(private val deletePostStatusListener: Delet
             dialog.dismiss()
         }
         tvDelete.setOnClickListener {
+            tvDelete.isClickable = false // Prevent multiple touch
             viewModel.deletePost(objectPost)
 
             viewModel.deletePost.observe(viewLifecycleOwner) {state ->

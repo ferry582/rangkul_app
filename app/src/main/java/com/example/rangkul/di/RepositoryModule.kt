@@ -75,9 +75,8 @@ object RepositoryModule {
     fun provideProfileRepository(
         database: FirebaseFirestore,
         appPreferences: SharedPreferences,
-        gson: Gson,
-        storageReference: FirebaseStorage
+        gson: Gson
     ): ProfileRepository {
-        return ProfileRepositoryImp(database, appPreferences, gson, storageReference)
+        return ProfileRepositoryImp(database, appPreferences, gson)
     }
 }
