@@ -30,9 +30,13 @@ class VisitedProfileViewModel @Inject constructor(private val repository: Profil
     val removeFollowData: LiveData<UiState<String>>
         get() = _removeFollowData
 
-    private val _getUserFollowingsData = MutableLiveData<UiState<List<FollowData>>>()
-    val getUserFollowingsData: LiveData<UiState<List<FollowData>>>
-        get() = _getUserFollowingsData
+    private val _getUserFollowingData = MutableLiveData<UiState<List<FollowData>>>()
+    val getUserFollowingData: LiveData<UiState<List<FollowData>>>
+        get() = _getUserFollowingData
+
+    private val _getUserDataList = MutableLiveData<UiState<List<UserData>>>()
+    val getUserDataList: LiveData<UiState<List<UserData>>>
+        get() = _getUserDataList
 
     fun getUserData(uid: String) {
         _getUserData.value = UiState.Loading
@@ -62,10 +66,17 @@ class VisitedProfileViewModel @Inject constructor(private val repository: Profil
         }
     }
 
-    fun getUserFollowingsData(currentUserId: String){
-        _getUserFollowingsData.value = UiState.Loading
-        repository.getUserFollowingsData(currentUserId) {
-            _getUserFollowingsData.value = it
+    fun getUserFollowingData(currentUserId: String){
+        _getUserFollowingData.value = UiState.Loading
+        repository.getUserFollowingData(currentUserId) {
+            _getUserFollowingData.value = it
+        }
+    }
+
+    fun getUserDataList(uid: String, type: String){
+        _getUserDataList.value = UiState.Loading
+        repository.getUserDataList(uid, type) {
+            _getUserDataList.value = it
         }
     }
 

@@ -251,14 +251,16 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         viewModelPost.addLike.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
+                    binding.progressBar.show()
                 }
 
                 is UiState.Failure -> {
+                    binding.progressBar.hide()
                     toast(state.error)
                 }
 
                 is UiState.Success -> {
-                    viewModelPost.getPostsWithCategory(selectedCategory)
+                    binding.progressBar.hide()
                 }
             }
         }

@@ -33,4 +33,6 @@
     <string name="description_no_diary_message">You haven\'t published any diary yet</string>
     <string name="title_profanity_detected">Profanity detected!</string>
     <string name="description_profanity_detected">We found inappropriate words in your post,\n please check it again.</string>
+    <string name="title_no_followers">No Followers!</string>
+    <string name="title_no_following">No Following!</string>
 </resources>

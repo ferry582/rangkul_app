@@ -17,10 +17,7 @@ import com.example.rangkul.ui.comment.CommentActivity
 import com.example.rangkul.ui.post.PostAdapter
 import com.example.rangkul.ui.post.PostOptionsBottomSheetFragment
 import com.example.rangkul.ui.post.PostViewModel
-import com.example.rangkul.utils.UiState
-import com.example.rangkul.utils.hide
-import com.example.rangkul.utils.show
-import com.example.rangkul.utils.toast
+import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -30,6 +27,7 @@ class VisitedProfileActivity : AppCompatActivity(),
 
     private lateinit var binding: ActivityVisitedProfileBinding
     private lateinit var visitedUserId: String
+    private lateinit var visitedUserName: String
     private var postList: MutableList<PostData> = arrayListOf()
     private val postViewModel: PostViewModel by viewModels()
     private val profileViewModel: VisitedProfileViewModel by viewModels()
@@ -122,6 +120,22 @@ class VisitedProfileActivity : AppCompatActivity(),
         binding.btMessage.setOnClickListener {
             toast("Under development")
         }
+
+        binding.linearFollowingCount.setOnClickListener {
+            val intent = Intent(this, FollowListActivity::class.java)
+            intent.putExtra("USER_ID", visitedUserId)
+            intent.putExtra("FOLLOW_TYPE", "Following")
+            intent.putExtra("USER_NAME", visitedUserName)
+            startActivity(intent)
+        }
+
+        binding.linearFollowersCount.setOnClickListener {
+            val intent = Intent(this, FollowListActivity::class.java)
+            intent.putExtra("USER_ID", visitedUserId)
+            intent.putExtra("FOLLOW_TYPE", "Followers")
+            intent.putExtra("USER_NAME", visitedUserName)
+            startActivity(intent)
+        }
     }
 
     private fun observeGetUserCountData() {
@@ -139,7 +153,7 @@ class VisitedProfileActivity : AppCompatActivity(),
                 is UiState.Success -> {
                     binding.progressBar.hide()
                     binding.tvPostCount.text = state.data.post.toString()
-                    binding.tvFollowingsCount.text = state.data.followings.toString()
+                    binding.tvFollowingCount.text = state.data.following.toString()
                     binding.tvFollowersCount.text = state.data.followers.toString()
                 }
             }
@@ -255,14 +269,16 @@ class VisitedProfileActivity : AppCompatActivity(),
         postViewModel.addLike.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
+                    binding.progressBar.show()
                 }
 
                 is UiState.Failure -> {
+                    binding.progressBar.hide()
                     toast(state.error)
                 }
 
                 is UiState.Success -> {
-                    postViewModel.getUserPosts("Public",  visitedUserId)
+                    binding.progressBar.hide()
                 }
             }
         }
@@ -301,9 +317,15 @@ class VisitedProfileActivity : AppCompatActivity(),
     }
 
     private fun setVisitedProfileData(visitedUserData: UserData?) {
-        binding.tvUserName.text = visitedUserData?.userName
+        visitedUserName = visitedUserData?.userName!! // Will be passed to FollowListActivity
+
+        // Set no post message textview
+        binding.tvMessageDescription.text =
+            visitedUserData.userName.getFirstWord().limitTextLength() + " hasn't posted anything yet"
+
+        binding.tvUserName.text = visitedUserData.userName
         binding.ivUserBadgePost.apply {
-            when (visitedUserData?.badge) {
+            when (visitedUserData.badge) {
                 "Trusted" -> {
                     setImageResource(R.drawable.ic_badge_trusted)
                 }
@@ -316,30 +338,30 @@ class VisitedProfileActivity : AppCompatActivity(),
             }
         }
         binding.civProfilePicture.apply {
-            if (visitedUserData?.profilePicture.isNullOrEmpty()) setImageResource(R.drawable.ic_profile_picture_default)
+            if (visitedUserData.profilePicture.isNullOrEmpty()) setImageResource(R.drawable.ic_profile_picture_default)
             else {
                 Glide
                     .with(context)
-                    .load(visitedUserData?.profilePicture)
+                    .load(visitedUserData.profilePicture)
                     .placeholder(R.drawable.ic_profile_picture_default)
                     .error(R.drawable.ic_baseline_error_24)
                     .into(binding.civProfilePicture)
             }
         }
         binding.tvProfileBio.apply {
-            if (visitedUserData?.bio.isNullOrEmpty()) {
+            if (visitedUserData.bio.isNullOrEmpty()) {
                 hide()
             }
             else {
                 show()
-                text = visitedUserData?.bio
+                text = visitedUserData.bio
             }
         }
     }
 
     private fun isUserBeingFollowed() {
-        profileViewModel.getUserFollowingsData(currentUserData().userId)
-        profileViewModel.getUserFollowingsData.observe(this) { state ->
+        profileViewModel.getUserFollowingData(currentUserData().userId)
+        profileViewModel.getUserFollowingData.observe(this) { state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()

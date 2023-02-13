@@ -10,6 +10,7 @@ import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ItemPostBinding
 import com.example.rangkul.utils.hide
+import com.example.rangkul.utils.limitTextLength
 import com.example.rangkul.utils.show
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,11 +45,7 @@ class PostAdapter (
                     }
 
                 } else {
-                    if (item.userName.length > 20) {
-                        "${item.userName.substring(0,20)}..."
-                    } else {
-                        item.userName
-                    }
+                    item.userName.limitTextLength()
                 }
             }
             // Set User Badge
@@ -161,6 +158,7 @@ class PostAdapter (
 
     fun updateUserLikeDataList(list: MutableList<LikeData>) {
         this.userLikeDataList = list
+        notifyDataSetChanged()
     }
 
     fun updateCurrentUser(userId: String) {

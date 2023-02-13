@@ -9,6 +9,7 @@ import com.example.rangkul.data.model.CommentData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ItemCommentBinding
 import com.example.rangkul.utils.hide
+import com.example.rangkul.utils.limitTextLength
 import com.example.rangkul.utils.show
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,11 +32,7 @@ class CommentAdapter (
                     // Set name to anonymous when the anonymous post owner is commenting
                     "Anonymous (Post Owner)"
                 } else {
-                    if (item.userName.length > 20) {
-                        "${item.userName.substring(0,20)}..."
-                    } else {
-                        item.userName
-                    }
+                    item.userName.limitTextLength()
                 }
             }
 

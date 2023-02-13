@@ -8,7 +8,7 @@ object FirestoreCollection {
     const val USER = "users"
     const val CATEGORY_CONTENT = "contents"
     const val FOLLOWERS = "followers"
-    const val FOLLOWINGS = "followings"
+    const val FOLLOWING = "following"
 }
 
 object FirestoreDocumentField {

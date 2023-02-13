@@ -137,6 +137,22 @@ class ProfileFragment : Fragment(),
             resultLauncher.launch(intent)
         }
 
+        binding.linearFollowingCount.setOnClickListener {
+            val intent = Intent(requireContext(), FollowListActivity::class.java)
+            intent.putExtra("USER_ID", currentUserData().userId)
+            intent.putExtra("FOLLOW_TYPE", "Following")
+            intent.putExtra("USER_NAME", currentUserData().userName)
+            startActivity(intent)
+        }
+
+        binding.linearFollowersCount.setOnClickListener {
+            val intent = Intent(requireContext(), FollowListActivity::class.java)
+            intent.putExtra("USER_ID", currentUserData().userId)
+            intent.putExtra("FOLLOW_TYPE", "Followers")
+            intent.putExtra("USER_NAME", currentUserData().userName)
+            startActivity(intent)
+        }
+
         // Configure Post RecyclerView
         binding.rvPost.adapter = adapterPost
         binding.rvPost.layoutManager = LinearLayoutManager(requireContext())
@@ -195,7 +211,7 @@ class ProfileFragment : Fragment(),
                 is UiState.Success -> {
                     binding.progressBar.hide()
                     binding.tvPostCount.text = state.data.post.toString()
-                    binding.tvFollowingsCount.text = state.data.followings.toString()
+                    binding.tvFollowingCount.text = state.data.following.toString()
                     binding.tvFollowersCount.text = state.data.followers.toString()
                 }
             }
@@ -351,14 +367,16 @@ class ProfileFragment : Fragment(),
         postViewModel.addLike.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
+                    binding.progressBar.show()
                 }
 
                 is UiState.Failure -> {
+                    binding.progressBar.hide()
                     toast(state.error)
                 }
 
                 is UiState.Success -> {
-                    postViewModel.getUserPosts(selectedType,  currentUserData().userId)
+                    binding.progressBar.hide()
                 }
             }
         }

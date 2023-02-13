@@ -246,11 +246,7 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
                     "Anonymous"
                 }
             } else {
-                if (objectPost?.userName?.length!! > 20) {
-                    "${objectPost?.userName?.substring(0,20)}..."
-                } else {
-                    objectPost?.userName
-                }
+                objectPost?.userName?.limitTextLength()
             }
         }
 

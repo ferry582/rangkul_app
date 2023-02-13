@@ -89,84 +89,104 @@
                         app:layout_constraintStart_toEndOf="@+id/civProfilePicture"
                         app:layout_constraintTop_toTopOf="@+id/civProfilePicture">
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tvPostCount"
+                        <LinearLayout
+                            android:id="@+id/linearPostCount"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:text="0"
-                            android:textColor="@color/textBlack"
-                            android:textSize="18sp"
-                            android:includeFontPadding="false"
-                            app:layout_constraintEnd_toEndOf="@+id/tvPostTitle"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tvPostTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Posts"
-                            android:textAlignment="center"
-                            android:textSize="12sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/tvPostCount" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tvFollowersCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:text="0"
-                            android:textColor="@color/textBlack"
-                            android:textSize="18sp"
-                            android:includeFontPadding="false"
-                            app:layout_constraintEnd_toEndOf="@+id/tvFollowingTitle"
-                            app:layout_constraintStart_toStartOf="@+id/tvFollowingTitle"
-                            app:layout_constraintTop_toTopOf="@+id/tvFollowingsCount" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tvFollowingTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Followers"
-                            android:textAlignment="center"
-                            android:textSize="12sp"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/tvFollowersTitle"
-                            app:layout_constraintStart_toEndOf="@+id/tvPostTitle" />
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tvFollowingsCount"
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvPostCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:includeFontPadding="false"
+                                android:text="0"
+                                android:textColor="@color/textBlack"
+                                android:textSize="18sp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvPostTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Posts"
+                                android:textAlignment="center"
+                                android:textSize="12sp"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearFollowersCount"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:text="0"
-                            android:textColor="@color/textBlack"
-                            android:textSize="18sp"
-                            android:includeFontPadding="false"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/linearFollowingCount"
+                            app:layout_constraintStart_toEndOf="@+id/linearPostCount"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvFollowersCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:includeFontPadding="false"
+                                android:text="0"
+                                android:textColor="@color/textBlack"
+                                android:textSize="18sp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvFollowingTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Followers"
+                                android:textAlignment="center"
+                                android:textSize="12sp"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearFollowingCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="@+id/tvFollowersTitle"
-                            app:layout_constraintTop_toTopOf="parent" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tvFollowersTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Following"
-                            android:textAlignment="center"
-                            android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvFollowingCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:includeFontPadding="false"
+                                android:text="0"
+                                android:textColor="@color/textBlack"
+                                android:textSize="18sp"
+                                />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvFollowersTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Following"
+                                android:textAlignment="center"
+                                android:textSize="12sp"/>
+
+                        </LinearLayout>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

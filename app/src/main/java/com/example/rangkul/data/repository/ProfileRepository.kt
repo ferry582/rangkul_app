@@ -11,5 +11,6 @@ interface ProfileRepository {
     fun getProfileCountData(uid: String, postType: String, result: (UiState<ProfileCountData>) -> Unit)
     fun addFollowData(currentUId: String, followedUId: String, result: (UiState<String>) -> Unit)
     fun removeFollowData(currentUId: String, followedUId: String, result: (UiState<String>) -> Unit)
-    fun getUserFollowingsData(uid: String, result: (UiState<List<FollowData>>) -> Unit)
+    fun getUserFollowingData(uid: String, result: (UiState<List<FollowData>>) -> Unit)
+    fun getUserDataList(uid: String, collection: String, result: (UiState<List<UserData>>) -> Unit)
 }

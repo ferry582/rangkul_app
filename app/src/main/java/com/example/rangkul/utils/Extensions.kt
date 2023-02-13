@@ -42,3 +42,21 @@ fun String.capitalizeWords(): String = split(" ").joinToString(" ") { it.replace
         Locale.getDefault()
     ) else str.toString()
 } }
+
+fun String.getFirstWord(): String =
+    if(this.contains(" ")) {
+        val firstSpace: Int = this.indexOf(" ") // detect the first space character
+        this.substring(0,firstSpace)
+    } else {
+        this
+    }
+
+fun String.limitTextLength(): String =
+    if (this.length > 20) {
+        "${this.substring(0,20)}..."
+    } else {
+        this
+    }
+
+
+

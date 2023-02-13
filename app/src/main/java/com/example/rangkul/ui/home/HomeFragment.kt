@@ -92,6 +92,14 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
             viewModel.getPosts(selectedType)
         }
 
+        binding.btYouLiked.setOnClickListener {
+            toast("Under Development")
+        }
+
+        binding.btMessage.setOnClickListener {
+            toast("Under Development")
+        }
+
         setMessage()
 
         // Get posts based on type
@@ -156,15 +164,16 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
         viewModel.addLike.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
+                    binding.progressBar.show()
                 }
 
                 is UiState.Failure -> {
+                    binding.progressBar.hide()
                     toast(state.error)
                 }
 
                 is UiState.Success -> {
-                    // Need to update this code, because it recall entire post everytime user addLike
-                    viewModel.getPosts(selectedType)
+                    binding.progressBar.hide()
                 }
             }
         }
@@ -206,21 +215,7 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
         }
 
         // Get the first Name
-        binding.tvUserName.apply {
-            val firstName: String = if(currentUserData().userName.contains(" ")) {
-                val firstSpace: Int = currentUserData().userName.indexOf(" ") // detect the first space character
-                currentUserData().userName.substring(0,firstSpace) // get everything unto the first space character
-            } else {
-                currentUserData().userName
-            }
-
-            text =
-                if (firstName.length > 20) {
-                    "${firstName.substring(0,20)}...!"
-                } else {
-                    "${firstName}!"
-                }
-        }
+        binding.tvUserName.text = currentUserData().userName.getFirstWord().limitTextLength() + "!"
 
         binding.civProfilePicture.apply {
             if (currentUserData().profilePicture.isNullOrEmpty()) setImageResource(R.drawable.ic_profile_picture_default)
