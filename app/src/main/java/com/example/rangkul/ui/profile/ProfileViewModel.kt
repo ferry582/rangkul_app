@@ -3,7 +3,6 @@ package com.example.rangkul.ui.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.rangkul.data.model.FollowData
 import com.example.rangkul.data.model.ProfileCountData
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.data.repository.ProfileRepository
@@ -12,7 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class VisitedProfileViewModel @Inject constructor(private val repository: ProfileRepository): ViewModel() {
+class ProfileViewModel @Inject constructor(private val repository: ProfileRepository): ViewModel() {
 
     private val _getUserData = MutableLiveData<UiState<UserData?>>()
     val getUserData: LiveData<UiState<UserData?>>
@@ -21,18 +20,6 @@ class VisitedProfileViewModel @Inject constructor(private val repository: Profil
     private val _getProfileCountData = MutableLiveData<UiState<ProfileCountData>>()
     val getProfileCountData: LiveData<UiState<ProfileCountData>>
         get() = _getProfileCountData
-
-    private val _addFollowData = MutableLiveData<UiState<String>>()
-    val addFollowData: LiveData<UiState<String>>
-        get() = _addFollowData
-
-    private val _removeFollowData = MutableLiveData<UiState<String>>()
-    val removeFollowData: LiveData<UiState<String>>
-        get() = _removeFollowData
-
-    private val _getUserFollowingData = MutableLiveData<UiState<List<FollowData>>>()
-    val getUserFollowingData: LiveData<UiState<List<FollowData>>>
-        get() = _getUserFollowingData
 
     private val _getUserDataList = MutableLiveData<UiState<List<UserData>>>()
     val getUserDataList: LiveData<UiState<List<UserData>>>
@@ -52,24 +39,15 @@ class VisitedProfileViewModel @Inject constructor(private val repository: Profil
         }
     }
 
-    fun addFollowData(currentUId: String, followedUId: String) {
-        _addFollowData.value = UiState.Loading
+    fun addFollowData(currentUId: String, followedUId: String, result: (UiState<String>) -> Unit) {
         repository.addFollowData(currentUId, followedUId) {
-            _addFollowData.value = it
+            result.invoke(it)
         }
     }
 
-    fun removeFollowData(currentUId: String, followedUId: String) {
-        _removeFollowData.value = UiState.Loading
+    fun removeFollowData(currentUId: String, followedUId: String, result: (UiState<String>) -> Unit) {
         repository.removeFollowData(currentUId, followedUId) {
-            _removeFollowData.value = it
-        }
-    }
-
-    fun getUserFollowingData(currentUserId: String){
-        _getUserFollowingData.value = UiState.Loading
-        repository.getUserFollowingData(currentUserId) {
-            _getUserFollowingData.value = it
+            result.invoke(it)
         }
     }
 
@@ -77,6 +55,12 @@ class VisitedProfileViewModel @Inject constructor(private val repository: Profil
         _getUserDataList.value = UiState.Loading
         repository.getUserDataList(uid, type) {
             _getUserDataList.value = it
+        }
+    }
+
+    fun isUserBeingFollowed(currentUId: String, targetUId: String, result: (Boolean) -> Unit){
+        repository.isUserBeingFollowed(currentUId, targetUId) {
+            result.invoke(it)
         }
     }
 

@@ -29,30 +29,35 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragment.DeletePostStatusListener {
+class CategoryContentActivity :
+    AppCompatActivity(),
+    PostOptionsBottomSheetFragment.DeletePostStatusListener,
+    PostAdapter.PostAdapterInterface {
 
     private lateinit var binding: ActivityCategoryContentBinding
     private var selectedCategory = ""
     private var selectedChip = ""
     private var postList: MutableList<PostData> = arrayListOf()
-    private val viewModelPost: PostViewModel by viewModels()
+    private var currentItemPosition = -1
+    private val postViewModel: PostViewModel by viewModels()
     private val viewModelCategoryContent: CategoryContentViewModel by viewModels()
-    private val adapterPost by lazy {
+    private val postAdapter by lazy {
         PostAdapter(
             onCommentClicked = { pos, item ->
                 val intent = Intent(this, CommentActivity::class.java)
                 intent.putExtra("OBJECT_POST", item)
+                currentItemPosition = pos
                 resultLauncher.launch(intent)
             },
             onLikeClicked = { pos, item ->
-                addLike(item)
+                addLike(item, pos)
             },
             onOptionClicked = { pos, item ->
                 val postOptionsBottomDialogFragment = PostOptionsBottomSheetFragment(this)
 
                 val bundle = Bundle()
                 bundle.putParcelable("OBJECT_POST", item)
-                bundle.putInt("POST_POSITION", pos)
+                currentItemPosition = pos
                 postOptionsBottomDialogFragment.arguments = bundle
 
                 postOptionsBottomDialogFragment.show(
@@ -63,7 +68,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
             onBadgeClicked = { pos, item ->
 
             },
-            onProfileClicked = { pos, item ->
+            onProfileClicked = { _, item ->
                 if (item == currentUserData().userId) {
                     // navigate to profile fragment
                 } else {
@@ -72,13 +77,16 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
                     startActivity(intent)
                 }
             },
+            postAdapterInterface = this,
             context = this
         )
     }
     // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            viewModelPost.getPostsWithCategory(selectedCategory)
+            // Update the comment count at selected post position
+            val commentAddedAmount = result.data?.getIntExtra("COMMENT_ADDED", 0)
+            commentAddedAmount?.let { updateCommentCount(it) }
         }
     }
     private val articleAdapter by lazy {
@@ -109,7 +117,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
 
         binding.srlCategoryContent.setOnRefreshListener {
             when (selectedChip) {
-                "Post" -> viewModelPost.getPostsWithCategory(selectedCategory)
+                "Post" -> postViewModel.getPostsWithCategory(selectedCategory)
                 "Article" -> viewModelCategoryContent.getContents(selectedCategory, "Article")
                 else -> viewModelCategoryContent.getContents(selectedCategory, "Video")
             }
@@ -126,9 +134,9 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         val param = binding.rvContents.layoutParams as ViewGroup.MarginLayoutParams
         binding.chipPost.setOnClickListener {
             selectedChip = "Post"
-            binding.rvContents.adapter = adapterPost
+            binding.rvContents.adapter = postAdapter
             binding.rvContents.layoutManager = LinearLayoutManager(this)
-            viewModelPost.getPostsWithCategory(selectedCategory)
+            postViewModel.getPostsWithCategory(selectedCategory)
             param.setMargins(getPixelValue(16),getPixelValue(15),getPixelValue(16),0)
         }
         binding.chipArticle.setOnClickListener {
@@ -147,20 +155,21 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         }
 
         // Configure Post RecyclerView
-        binding.rvContents.adapter = adapterPost
+        binding.rvContents.adapter = postAdapter
         binding.rvContents.layoutManager = LinearLayoutManager(this)
         binding.rvContents.setHasFixedSize(true)
         binding.rvContents.isNestedScrollingEnabled = false
 
-        // Get user's like list
-        isPostLiked()
-
         // Get post list based on the selected category
-        viewModelPost.getPostsWithCategory(selectedCategory)
+        postViewModel.getPostsWithCategory(selectedCategory)
         observeGetPostsWithCategory()
 
         // Get Article list based on the selected category
         observeGetContent()
+    }
+
+    private fun updateCommentCount(amount: Int) {
+        postAdapter.updateCommentCount(currentItemPosition, amount)
     }
 
     private fun observeGetContent() {
@@ -186,7 +195,7 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
     }
 
     private fun observeGetPostsWithCategory() {
-        viewModelPost.getPostsWithCategory.observe(this) {state ->
+        postViewModel.getPostsWithCategory.observe(this) {state ->
             when(state) {
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -201,8 +210,36 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
                     binding.progressBar.hide()
                     binding.srlCategoryContent.isRefreshing = false // hide swipe refresh loading
                     postList = state.data.toMutableList()
-                    adapterPost.updateList(postList)
-                    adapterPost.updateCurrentUser(currentUserData().userId)
+                    postAdapter.clearData()
+                    postAdapter.updateList(postList)
+                    postAdapter.updateCurrentUser(currentUserData().userId)
+                }
+            }
+        }
+    }
+
+    private fun addLike(item: String, position: Int) {
+        // Add Like
+        binding.progressBar.show()
+        postViewModel.addLike(
+            LikeData(
+                likeId = "",
+                likedAt = Date(),
+            ), item, currentUserData().userId
+        ) { state ->
+            when(state) {
+                is UiState.Loading -> {}
+
+                is UiState.Failure -> {
+                    binding.progressBar.hide()
+                    toast(state.error)
+                }
+
+                is UiState.Success -> {
+                    binding.progressBar.hide()
+                    postAdapter.dataUpdated(position)
+                    if (state.data == "Liked") postAdapter.updateLikeCount(position, 1)
+                    else postAdapter.updateLikeCount(position, -1)
                 }
             }
         }
@@ -217,58 +254,9 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
         ).toInt()
     }
 
-    private fun isPostLiked() {
-        //Get Like data list at users collection
-        viewModelPost.getUserLikeData(currentUserData().userId)
-        viewModelPost.getUserLikeData.observe(this) {state ->
-            when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
-
-                is UiState.Failure -> {
-                    binding.progressBar.hide()
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    binding.progressBar.hide()
-                    adapterPost.updateUserLikeDataList(state.data.toMutableList())
-                }
-            }
-        }
-    }
-
-    private fun addLike(item: PostData) {
-        // Add Like
-        viewModelPost.addLike(
-            LikeData(
-                likeId = "",
-                likedAt = Date(),
-            ), item.postId, currentUserData().userId
-        )
-
-        viewModelPost.addLike.observe(this) {state ->
-            when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
-
-                is UiState.Failure -> {
-                    binding.progressBar.hide()
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    binding.progressBar.hide()
-                }
-            }
-        }
-    }
-
     private fun currentUserData(): UserData {
         var user = UserData()
-        viewModelPost.getSessionData {
+        postViewModel.getSessionData {
             if (it != null) {
                 user = it
             }
@@ -289,11 +277,17 @@ class CategoryContentActivity : AppCompatActivity(), PostOptionsBottomSheetFragm
     }
 
     // if post deleted, then notify the adapter
-    override fun deletePostStatus(status: Boolean?, position: Int?) {
+    override fun deletePostStatus(status: Boolean?) {
         if (status == true) {
-            position?.let { postList.removeAt(it) }
-            adapterPost.updateList(postList)
-            position?.let { adapterPost.notifyItemChanged(it) }
+            postList.removeAt(currentItemPosition)
+            postAdapter.updateList(postList)
+            postAdapter.notifyItemChanged(currentItemPosition)
+        }
+    }
+
+    override fun isLiked(item: String, position: Int, callback: (Boolean) -> Unit) {
+        postViewModel.isPostBeingLiked(currentUserData().userId, item) {
+            callback.invoke(it)
         }
     }
 }

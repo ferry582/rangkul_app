@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.rangkul.R
-import com.example.rangkul.data.model.FollowData
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.databinding.ItemFollowListBinding
 import com.example.rangkul.utils.hide
@@ -15,12 +14,13 @@ import com.example.rangkul.utils.show
 class FollowListAdapter (
     val onItemClicked: (Int, String) -> Unit,
     val onFollowClicked: (Int, String) -> Unit,
-    val onUnfollowClicked: (Int, String) -> Unit
+    val onUnfollowClicked: (Int, String) -> Unit,
+    private val isBeingFollowed: IsBeingFollowed
 ): RecyclerView.Adapter<FollowListAdapter.PostViewHolder>(){
 
     private var list: MutableList<UserData> = arrayListOf()
-    private var followingList: MutableList<FollowData> = arrayListOf()
     private lateinit var currentUserId: String
+    private val taskPerformedSet = mutableSetOf<Int>() // To make sure the task is only performed once for each item
 
     inner class PostViewHolder (val binding: ItemFollowListBinding): RecyclerView.ViewHolder(binding.root) {
 
@@ -57,16 +57,22 @@ class FollowListAdapter (
             }
 
             // Set Follow button
-            if (currentUserId == item.userId) {
-                binding.btFollow.hide()
-                binding.btUnfollow.hide()
-            } else if (followingList.any {it.userId == item.userId}) {
-                binding.btFollow.hide()
-                binding.btUnfollow.show()
-            } else {
-                binding.btFollow.show()
-                binding.btUnfollow.hide()
+            if (!taskPerformedSet.contains(adapterPosition)) {
+                isBeingFollowed.isFollowed(item.userId, adapterPosition) {
+                    if (currentUserId == item.userId) {
+                        binding.btFollow.hide()
+                        binding.btUnfollow.hide()
+                    } else if (it) {
+                        binding.btFollow.hide()
+                        binding.btUnfollow.show()
+                    } else {
+                        binding.btFollow.show()
+                        binding.btUnfollow.hide()
+                    }
+                }
+                taskPerformedSet.add(adapterPosition)
             }
+
 
             binding.clItemFollowList.setOnClickListener {
                 onItemClicked.invoke(adapterPosition, item.userId)
@@ -102,13 +108,19 @@ class FollowListAdapter (
         notifyDataSetChanged()
     }
 
-    fun updateFollowingList(list: MutableList<FollowData>) {
-        this.followingList = list
-        notifyDataSetChanged()
-    }
-
     fun updateCurrentUser(userId: String) {
         this.currentUserId = userId
     }
+
+    fun dataUpdated(position: Int) {
+        // Reset the taskPerformedSet for the new data
+        taskPerformedSet.remove(position)
+        notifyItemChanged(position)
+    }
+
+    interface IsBeingFollowed {
+        fun isFollowed(item: String, position: Int, callback: (Boolean) -> Unit)
+    }
+
 
 }

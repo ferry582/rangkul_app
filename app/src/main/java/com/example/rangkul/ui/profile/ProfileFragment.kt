@@ -32,30 +32,33 @@ import java.util.*
 @AndroidEntryPoint
 class ProfileFragment : Fragment(),
     PostOptionsBottomSheetFragment.DeletePostStatusListener,
-    DiaryOptionsBottomSheetFragment.DeleteDiaryStatusListener {
+    DiaryOptionsBottomSheetFragment.DeleteDiaryStatusListener,
+    PostAdapter.PostAdapterInterface {
 
     lateinit var binding: FragmentProfileBinding
     private val postViewModel: PostViewModel by viewModels()
-    private val profileViewModel: VisitedProfileViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
     private var selectedType = "Public"
     private var postList: MutableList<PostData> = arrayListOf()
     private var diaryList: MutableList<DiaryData> = arrayListOf()
-    private val adapterPost by lazy {
+    private var currentItemPosition = -1
+    private val postAdapter by lazy {
         PostAdapter(
-            onCommentClicked = { _, item ->
+            onCommentClicked = { pos, item ->
                 val intent = Intent(requireContext(), CommentActivity::class.java)
                 intent.putExtra("OBJECT_POST", item)
+                currentItemPosition = pos
                 resultLauncher.launch(intent)
             },
             onLikeClicked = { pos, item ->
-                addLike(item)
+                addLike(item, pos)
             },
             onOptionClicked = { pos, item ->
                 val postOptionsBottomDialogFragment = PostOptionsBottomSheetFragment(this)
 
                 val bundle = Bundle()
                 bundle.putParcelable("OBJECT_POST", item)
-                bundle.putInt("POST_POSITION", pos)
+                currentItemPosition = pos
                 postOptionsBottomDialogFragment.arguments = bundle
 
                 postOptionsBottomDialogFragment.show(
@@ -69,6 +72,7 @@ class ProfileFragment : Fragment(),
             onProfileClicked = { _, _ ->
                 // Unable to click profile on any post from fragment profile
             },
+            postAdapterInterface = this,
             context = requireContext()
         )
     }
@@ -80,7 +84,7 @@ class ProfileFragment : Fragment(),
 
                 val bundle = Bundle()
                 bundle.putParcelable("OBJECT_DIARY", item)
-                bundle.putInt("DIARY_POSITION", pos)
+                currentItemPosition = pos
                 diaryOptionsBottomSheetFragment.arguments = bundle
 
                 diaryOptionsBottomSheetFragment.show(
@@ -94,8 +98,9 @@ class ProfileFragment : Fragment(),
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
-            postViewModel.getUserPosts(selectedType,  currentUserData().userId)
+            // Update the comment count at selected post position
+            val commentAddedAmount = result.data?.getIntExtra("COMMENT_ADDED", 0)
+            commentAddedAmount?.let { updateCommentCount(it) }
         } else if (result.resultCode == 100) {
             // Restart fragment if user just edit the profile to get newest data from shared preference
             val fragmentId = findNavController().currentDestination?.id
@@ -154,7 +159,7 @@ class ProfileFragment : Fragment(),
         }
 
         // Configure Post RecyclerView
-        binding.rvPost.adapter = adapterPost
+        binding.rvPost.adapter = postAdapter
         binding.rvPost.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPost.setHasFixedSize(true)
         binding.rvPost.isNestedScrollingEnabled = false
@@ -166,14 +171,14 @@ class ProfileFragment : Fragment(),
                 R.id.chipPublic -> {
                     selectedType = "Public"
                     postViewModel.getUserPosts(selectedType, currentUserData().userId)
-                    binding.rvPost.adapter = adapterPost
+                    binding.rvPost.adapter = postAdapter
                     profileViewModel.getProfileCountData(currentUserData().userId, selectedType)
                 }
 
                 R.id.chipAnonymous -> {
                     selectedType = "Anonymous"
                     postViewModel.getUserPosts(selectedType, currentUserData().userId)
-                    binding.rvPost.adapter = adapterPost
+                    binding.rvPost.adapter = postAdapter
                     profileViewModel.getProfileCountData(currentUserData().userId, selectedType)
                 }
 
@@ -186,14 +191,15 @@ class ProfileFragment : Fragment(),
             }
         }
 
-        // Get user's like list
-        isPostLiked()
-
         // Get post list based on the selected category
         postViewModel.getUserPosts(selectedType,  currentUserData().userId)
         observeGetUserPosts()
         observeGetUserDiaries()
 
+    }
+
+    private fun updateCommentCount(amount: Int) {
+        postAdapter.updateCommentCount(currentItemPosition, amount)
     }
 
     private fun observeGetUserCountData() {
@@ -256,6 +262,7 @@ class ProfileFragment : Fragment(),
                     binding.progressBar.hide()
                     binding.srlProfileFragment.isRefreshing = false
                     postList = state.data.toMutableList()
+                    postAdapter.clearData()
                     isDataEmpty(postList)
                 }
             }
@@ -289,21 +296,24 @@ class ProfileFragment : Fragment(),
             } else {
                 binding.rvPost.show()
                 binding.linearNoPostMessage.hide()
-                adapterPost.updateList(postList)
-                adapterPost.updateCurrentUser(currentUserData().userId)
+                postAdapter.updateList(postList)
+                postAdapter.updateCurrentUser(currentUserData().userId)
             }
 
         }
     }
 
-    private fun isPostLiked() {
-        //Get Like data list at users collection
-        postViewModel.getUserLikeData(currentUserData().userId)
-        postViewModel.getUserLikeData.observe(viewLifecycleOwner) {state ->
+    private fun addLike(item: String, position: Int) {
+        // Add Like
+        binding.progressBar.show()
+        postViewModel.addLike(
+            LikeData(
+                likeId = "",
+                likedAt = Date(),
+            ), item, currentUserData().userId
+        ) { state ->
             when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
+                is UiState.Loading -> {}
 
                 is UiState.Failure -> {
                     binding.progressBar.hide()
@@ -312,7 +322,9 @@ class ProfileFragment : Fragment(),
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-                    adapterPost.updateUserLikeDataList(state.data.toMutableList())
+                    postAdapter.dataUpdated(position)
+                    if (state.data == "Liked") postAdapter.updateLikeCount(position, 1)
+                    else postAdapter.updateLikeCount(position, -1)
                 }
             }
         }
@@ -355,33 +367,6 @@ class ProfileFragment : Fragment(),
         }
     }
 
-    private fun addLike(item: PostData) {
-        // Add Like
-        postViewModel.addLike(
-            LikeData(
-                likeId = "",
-                likedAt = Date(),
-            ), item.postId, currentUserData().userId
-        )
-
-        postViewModel.addLike.observe(this) {state ->
-            when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
-
-                is UiState.Failure -> {
-                    binding.progressBar.hide()
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    binding.progressBar.hide()
-                }
-            }
-        }
-    }
-
     private fun currentUserData(): UserData {
         var user = UserData()
         postViewModel.getSessionData {
@@ -393,22 +378,27 @@ class ProfileFragment : Fragment(),
     }
 
     // if post deleted, then notify the adapter
-    override fun deletePostStatus(status: Boolean?, position: Int?) {
+    override fun deletePostStatus(status: Boolean?) {
         if (status == true) {
-            position?.let { postList.removeAt(it) }
-            adapterPost.updateList(postList)
-            position?.let { adapterPost.notifyItemChanged(it) }
+            postList.removeAt(currentItemPosition)
+            postAdapter.updateList(postList)
+            postAdapter.notifyItemChanged(currentItemPosition)
             profileViewModel.getProfileCountData(currentUserData().userId, selectedType) // update post count
         }
     }
 
-    override fun deleteDiaryStatus(status: Boolean?, position: Int?) {
+    override fun deleteDiaryStatus(status: Boolean?) {
         if (status == true) {
-            position?.let { diaryList.removeAt(it) }
+            diaryList.removeAt(currentItemPosition)
             adapterDiary.updateList(diaryList)
-            position?.let { adapterDiary.notifyItemChanged(it) }
+            adapterDiary.notifyItemChanged(currentItemPosition)
             profileViewModel.getProfileCountData(currentUserData().userId, selectedType) // update post count
         }
     }
 
+    override fun isLiked(item: String, position: Int, callback: (Boolean) -> Unit) {
+        postViewModel.isPostBeingLiked(currentUserData().userId, item) {
+            callback.invoke(it)
+        }
+    }
 }

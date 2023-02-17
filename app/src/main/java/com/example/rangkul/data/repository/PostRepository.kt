@@ -14,7 +14,7 @@ interface PostRepository {
     fun getComments(postId: String, result: (UiState<List<CommentData>>) -> Unit)
     fun addComment(comment: CommentData, result: (UiState<String>) -> Unit)
     fun addLike(like: LikeData, postId: String, currentUserId: String, result: (UiState<String>) -> Unit)
-    fun getUserLikeData(currentUserId: String, result: (UiState<List<LikeData>>) -> Unit)
+    fun isPostBeingLiked(currentUId: String, postId: String, result: (Boolean) -> Unit)
     fun getSessionData(result: (UserData?) -> Unit)
     suspend fun uploadPostImage(fileUri: Uri, onResult: (UiState<Uri>) -> Unit)
     suspend fun getProfanityCheck(caption: String, result: (UiState<String>) -> Unit)

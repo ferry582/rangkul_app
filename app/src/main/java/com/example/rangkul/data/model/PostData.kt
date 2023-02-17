@@ -21,8 +21,8 @@ data class PostData (
     var userName: String = "",
     var profilePicture: String? = null,
     val userBadge: String = "",
-    val commentsCount: Int = 0,
-    val likesCount: Int = 0,
+    var commentsCount: Int = 0,
+    var likesCount: Int = 0,
     val likeVisibility: Boolean = true,
     val commentVisibility: Boolean = true
 ): Parcelable

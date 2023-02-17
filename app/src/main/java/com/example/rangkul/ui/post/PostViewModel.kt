@@ -31,14 +31,6 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
     val getUserDiaries: LiveData<UiState<List<DiaryData>>>
         get() = _getUserDiaries
 
-    private val _addLike = MutableLiveData<UiState<String>>()
-    val addLike: LiveData<UiState<String>>
-        get() = _addLike
-
-    private val _getUserLikeData = MutableLiveData<UiState<List<LikeData>>>()
-    val getUserLikeData: LiveData<UiState<List<LikeData>>>
-        get() = _getUserLikeData
-
     fun getPosts(type: String){
         _posts.value = UiState.Loading
         repository.getPosts(type) {
@@ -67,17 +59,19 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
         }
     }
 
-    fun addLike(like: LikeData, postId: String, currentUserId: String){
-        _addLike.value = UiState.Loading
+    fun addLike(
+        like: LikeData,
+        postId: String,
+        currentUserId: String,
+        result: (UiState<String>) -> Unit){
         repository.addLike(like, postId, currentUserId) {
-            _addLike.value = it
+           result.invoke(it)
         }
     }
 
-    fun getUserLikeData(currentUserId: String){
-        _getUserLikeData.value = UiState.Loading
-        repository.getUserLikeData(currentUserId) {
-            _getUserLikeData.value = it
+    fun isPostBeingLiked(currentUserId: String, postId: String, result: (Boolean) -> Unit){
+        repository.isPostBeingLiked(currentUserId, postId) {
+            result.invoke(it)
         }
     }
 

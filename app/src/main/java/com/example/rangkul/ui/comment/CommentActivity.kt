@@ -31,7 +31,7 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
     private val viewModel: CommentViewModel by viewModels()
     private var objectPost: PostData? = null
     private var commentList: MutableList<CommentData> = arrayListOf()
-    private var isPostNeedReload = false
+    private var commentAddedAmount = 0 // Update comment count at post when user get back
     private val adapter by lazy {
         CommentAdapter(
             onOptionsCommentClicked = { pos, item ->
@@ -48,7 +48,7 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
                     "CommentOptionsBottomSheetFragment"
                 )
             },
-            onProfileClicked = { pos, item ->
+            onProfileClicked = { _, item ->
                 if (item == currentUserData().userId) {
                     // navigate to profile fragment
                 } else {
@@ -61,7 +61,7 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
     }
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (isPostNeedReload) setResult(Activity.RESULT_OK)
+            setResultData()
             finish()
         }
     }
@@ -80,7 +80,6 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
 
         binding.srlPostCommentActivity.setOnRefreshListener {
             viewModel.getComments(objectPost!!.postId)
-            isPostNeedReload = true
         }
 
         // Configure Comment RecyclerView
@@ -204,7 +203,7 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-                    isPostNeedReload = true
+                    commentAddedAmount += 1
                     viewModel.getComments(objectPost!!.postId)
                     binding.etComment.text?.clear()
                     binding.tvCommentPost.isClickable = true
@@ -299,9 +298,17 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
+    private fun setResultData() {
+        if (commentAddedAmount != 0) {
+            val intent = Intent()
+            intent.putExtra("COMMENT_ADDED", commentAddedAmount)
+            setResult(Activity.RESULT_OK, intent)
+        }
+    }
+
     // Handle back button at toolbar
     override fun onSupportNavigateUp(): Boolean {
-        if (isPostNeedReload) setResult(Activity.RESULT_OK)
+        setResultData()
         finish()
         return true
     }
@@ -311,7 +318,7 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
             position?.let { commentList.removeAt(it) }
             adapter.updateList(commentList)
             position?.let { adapter.notifyItemChanged(it) }
-            isPostNeedReload = true
+            commentAddedAmount -= 1
         }
     }
 }

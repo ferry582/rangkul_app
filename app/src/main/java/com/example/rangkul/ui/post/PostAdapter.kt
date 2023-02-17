@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.rangkul.R
-import com.example.rangkul.data.model.LikeData
 import com.example.rangkul.data.model.PostData
 import com.example.rangkul.databinding.ItemPostBinding
 import com.example.rangkul.utils.hide
@@ -17,17 +16,18 @@ import java.util.*
 
 class PostAdapter (
     val onOptionClicked: (Int, PostData) -> Unit,
-    val onLikeClicked: (Int, PostData) -> Unit,
+    val onLikeClicked: (Int, String) -> Unit,
     val onCommentClicked: (Int, PostData) -> Unit,
     val onBadgeClicked: (Int, PostData) -> Unit,
     val onProfileClicked: (Int, String) -> Unit,
+    private val postAdapterInterface: PostAdapterInterface,
     val context: Context
 ): RecyclerView.Adapter<PostAdapter.PostViewHolder>(){
 
     private var list: MutableList<PostData> = arrayListOf()
-    private var userLikeDataList: MutableList<LikeData> = arrayListOf()
     private lateinit var currentUserId: String
-    val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
+    private val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
+    private val taskPerformedSet = mutableSetOf<Int>() // To make sure the task is only performed once for each item
 
     inner class PostViewHolder (val binding: ItemPostBinding): RecyclerView.ViewHolder(binding.root) {
 
@@ -105,19 +105,25 @@ class PostAdapter (
                     .error(R.drawable.ic_baseline_error_24)
                     .into(binding.ivImagePost)
             }
-            // If list of like data in users collection contain current postId,
-            // means this post was liked by current user
-            if (userLikeDataList.any {it.likeId == item.postId}) {
-                binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_solid)
-            } else {
-                binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_light)
+
+            // Set like button
+            if (!taskPerformedSet.contains(adapterPosition)) {
+                postAdapterInterface.isLiked(item.postId, adapterPosition) {
+                    if (it) {
+                        binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_solid)
+                    }
+                    else {
+                        binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_light)
+                    }
+                }
+                taskPerformedSet.add(adapterPosition)
             }
 
             /*
                 ** Handle onClick **
              */
             binding.ivLikeButtonPost.setOnClickListener {
-                onLikeClicked.invoke(adapterPosition, item)
+                onLikeClicked.invoke(adapterPosition, item.postId)
             }
             binding.ivCommentButtonPost.setOnClickListener {
                 onCommentClicked.invoke(adapterPosition, item)
@@ -156,13 +162,32 @@ class PostAdapter (
         notifyDataSetChanged()
     }
 
-    fun updateUserLikeDataList(list: MutableList<LikeData>) {
-        this.userLikeDataList = list
-        notifyDataSetChanged()
-    }
-
     fun updateCurrentUser(userId: String) {
         this.currentUserId = userId
+    }
+
+    fun dataUpdated(position: Int) {
+        // Reset the taskPerformedSet for the new data
+        taskPerformedSet.remove(position)
+        notifyItemChanged(position)
+    }
+
+    fun updateLikeCount(position: Int, value: Int) {
+        list[position].likesCount = list[position].likesCount + value
+        notifyItemChanged(position, list[position])
+    }
+
+    fun updateCommentCount(position: Int, value: Int) {
+        list[position].commentsCount = list[position].commentsCount + value
+        notifyItemChanged(position, list[position])
+    }
+
+    fun clearData() {
+        taskPerformedSet.clear()
+    }
+
+    interface PostAdapterInterface {
+        fun isLiked(item: String, position: Int, callback: (Boolean) -> Unit)
     }
 
 }

@@ -27,7 +27,6 @@ class DiaryOptionsBottomSheetFragment(private val deleteDiaryStatusListener: Del
     private var _binding: DialogBottomDiaryOptionsBinding? = null
     private val binding get() = _binding!!
     private lateinit var objectDiary: DiaryData
-    private var diaryPosition: Int? = null
     private val viewModel: DiaryOptionsViewModel by viewModels()
 
     override fun onCreateView(
@@ -35,7 +34,6 @@ class DiaryOptionsBottomSheetFragment(private val deleteDiaryStatusListener: Del
         savedInstanceState: Bundle?
     ): View {
         objectDiary = arguments?.getParcelable("OBJECT_DIARY")!!
-        diaryPosition = arguments?.getInt("DIARY_POSITION")!!
         _binding = DialogBottomDiaryOptionsBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -85,7 +83,7 @@ class DiaryOptionsBottomSheetFragment(private val deleteDiaryStatusListener: Del
                     is UiState.Success -> {
                         progressBar.hide()
                         toast(state.data)
-                        deleteDiaryStatusListener.deleteDiaryStatus(true, diaryPosition)
+                        deleteDiaryStatusListener.deleteDiaryStatus(true)
                         dialog.dismiss()
                         dismiss()
                     }
@@ -103,7 +101,7 @@ class DiaryOptionsBottomSheetFragment(private val deleteDiaryStatusListener: Del
     }
 
     interface DeleteDiaryStatusListener {
-        fun deleteDiaryStatus(status: Boolean?, position: Int?)
+        fun deleteDiaryStatus(status: Boolean?)
     }
 
 }

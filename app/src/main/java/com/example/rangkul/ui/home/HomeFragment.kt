@@ -24,28 +24,33 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatusListener {
+class HomeFragment :
+    Fragment(),
+    PostOptionsBottomSheetFragment.DeletePostStatusListener,
+    PostAdapter.PostAdapterInterface {
 
     lateinit var binding: FragmentHomeBinding
     private val viewModel: PostViewModel by viewModels()
     private var selectedType = "All"
     private var postList: MutableList<PostData> = arrayListOf()
+    private var currentItemPosition = -1
     private val adapter by lazy {
         PostAdapter(
             onCommentClicked = { pos, item ->
                 val intent = Intent(requireContext(), CommentActivity::class.java)
                 intent.putExtra("OBJECT_POST", item)
+                currentItemPosition = pos
                 resultLauncher.launch(intent)
             },
             onLikeClicked = { pos, item ->
-                addLike(item)
+                addLike(item, pos)
             },
             onOptionClicked = { pos, item ->
                 val postOptionsBottomDialogFragment = PostOptionsBottomSheetFragment(this)
 
                 val bundle = Bundle()
                 bundle.putParcelable("OBJECT_POST", item)
-                bundle.putInt("POST_POSITION", pos)
+                currentItemPosition = pos
                 postOptionsBottomDialogFragment.arguments = bundle
 
                 postOptionsBottomDialogFragment.show(
@@ -57,7 +62,7 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
             onBadgeClicked = { pos, item ->
 
             },
-            onProfileClicked = { pos, item ->
+            onProfileClicked = { _, item ->
                 if (item == currentUserData().userId) {
                     // navigate to profile fragment
                 } else {
@@ -66,13 +71,16 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
                     startActivity(intent)
                 }
             },
+            postAdapterInterface = this,
             context = requireContext()
         )
     }
     // If the user just back from CommentActivity, then reload/call the getPosts method to refresh the comment count
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            viewModel.getPosts(selectedType)
+            // Update the comment count at selected post position
+            val commentAddedAmount = result.data?.getIntExtra("COMMENT_ADDED", 0)
+            commentAddedAmount?.let { updateCommentCount(it) }
         }
     }
 
@@ -121,12 +129,13 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
         binding.rvPost.setHasFixedSize(true)
         binding.rvPost.isNestedScrollingEnabled = false
 
-        // Get user's like list
-        isPostLiked()
-
         // Get post list
         viewModel.getPosts(selectedType)
         observeGetPosts()
+    }
+
+    private fun updateCommentCount(amount: Int) {
+        adapter.updateCommentCount(currentItemPosition, amount)
     }
 
     private fun observeGetPosts() {
@@ -145,6 +154,7 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
                     binding.progressBar.hide()
                     binding.srlHomeFragment.isRefreshing = false // hide swipe refresh loading
                     postList = state.data.toMutableList()
+                    adapter.clearData()
                     adapter.updateList(postList)
                     adapter.updateCurrentUser(currentUserData().userId)
                 }
@@ -152,20 +162,17 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
         }
     }
 
-    private fun addLike(item: PostData) {
+    private fun addLike(item: String, position: Int) {
         // Add Like
+        binding.progressBar.show()
         viewModel.addLike(
             LikeData(
                 likeId = "",
                 likedAt = Date(),
-            ), item.postId, currentUserData().userId
-        )
-
-        viewModel.addLike.observe(this) {state ->
+            ), item, currentUserData().userId
+        ) { state ->
             when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
+                is UiState.Loading -> {}
 
                 is UiState.Failure -> {
                     binding.progressBar.hide()
@@ -174,28 +181,9 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-                }
-            }
-        }
-    }
-
-    private fun isPostLiked() {
-        //Get Like data list at users collection
-        viewModel.getUserLikeData(currentUserData().userId)
-        viewModel.getUserLikeData.observe(viewLifecycleOwner) {state ->
-            when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
-
-                is UiState.Failure -> {
-                    binding.progressBar.hide()
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    binding.progressBar.hide()
-                    adapter.updateUserLikeDataList(state.data.toMutableList())
+                    adapter.dataUpdated(position)
+                    if (state.data == "Liked") adapter.updateLikeCount(position, 1)
+                    else adapter.updateLikeCount(position, -1)
                 }
             }
         }
@@ -241,11 +229,17 @@ class HomeFragment : Fragment(), PostOptionsBottomSheetFragment.DeletePostStatus
     }
 
     // if post deleted, then notify the adapter
-    override fun deletePostStatus(status: Boolean?, position: Int?) {
+    override fun deletePostStatus(status: Boolean?) {
         if (status == true) {
-            position?.let { postList.removeAt(it) }
+            postList.removeAt(currentItemPosition)
             adapter.updateList(postList)
-            position?.let { adapter.notifyItemChanged(it) }
+            adapter.notifyItemChanged(currentItemPosition)
+        }
+    }
+
+    override fun isLiked(item: String, position: Int, callback: (Boolean) -> Unit) {
+        viewModel.isPostBeingLiked(currentUserData().userId, item) {
+            callback.invoke(it)
         }
     }
 

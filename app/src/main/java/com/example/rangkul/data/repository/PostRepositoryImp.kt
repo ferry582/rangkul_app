@@ -2,6 +2,7 @@ package com.example.rangkul.data.repository
 
 import android.content.SharedPreferences
 import android.net.Uri
+import android.util.Log
 import com.example.rangkul.data.model.*
 import com.example.rangkul.data.retrofit.ApiInterface
 import com.example.rangkul.utils.*
@@ -22,6 +23,8 @@ class PostRepositoryImp(
     private val storageReference: FirebaseStorage,
     private val retrofitInstance: ApiInterface
 ): PostRepository {
+
+    private val TAG = "PostRepositoryImp"
 
     override fun getPosts(type: String, result: (UiState<List<PostData>>) -> Unit) {
         val postRef = database.collection(FirestoreCollection.POST)
@@ -218,44 +221,29 @@ class PostRepositoryImp(
         documentLike.get().addOnSuccessListener {
             // Add userId as documentId in Like collection if user haven't liked the post, else delete the document
             if (!it.exists()) {
-                addLikeDataToUser(like, postId, currentUserId) {state ->
-                    when(state) {
-                        is UiState.Success -> {
-                            val likesAmount = getPost.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().plus(1)
-                            documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
-                            documentLike.set(like)
-                            result.invoke(
-                                UiState.Success("Post Liked")
-                            )
+                addLikeDataToUser(like, postId, currentUserId).apply {
+                    val likesAmount = getPost.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().plus(1)
+                    documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
+                    documentLike.set(like)
+                        .addOnSuccessListener {
+                            result.invoke(UiState.Success("Liked"))
+                        }
+                        .addOnFailureListener { error ->
+                            result.invoke(UiState.Failure(error.localizedMessage))
                         }
 
-                        is UiState.Failure -> {
-                            result.invoke(
-                                UiState.Failure(state.error)
-                            )
-                        }
-                        UiState.Loading -> {}
-                    }
                 }
             } else {
-                deleteLikeDataAtUser(postId, currentUserId) {state ->
-                    when(state) {
-                        is UiState.Success -> {
-                            val likesAmount = getPost.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().minus(1)
-                            documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
-                            documentLike.delete()
-                            result.invoke(
-                                UiState.Success("Post Unliked")
-                            )
+                deleteLikeDataAtUser(postId, currentUserId).apply {
+                    val likesAmount = getPost.result.get(FirestoreDocumentField.LIKES_COUNT).toString().toLong().minus(1)
+                    documentPost.update(FirestoreDocumentField.LIKES_COUNT, likesAmount)
+                    documentLike.delete()
+                        .addOnSuccessListener {
+                            result.invoke(UiState.Success("Unliked"))
                         }
-
-                        is UiState.Failure -> {
-                            result.invoke(
-                                UiState.Failure(state.error)
-                            )
+                        .addOnFailureListener { error ->
+                            result.invoke(UiState.Failure(error.localizedMessage))
                         }
-                        UiState.Loading -> {}
-                    }
                 }
             }
         }.addOnFailureListener {
@@ -269,66 +257,42 @@ class PostRepositoryImp(
         like: LikeData,
         postId: String,
         currentUserId: String,
-        result: (UiState<String>) -> Unit
     ) {
         database.collection(FirestoreCollection.USER).document(currentUserId)
             .collection(FirestoreCollection.LIKE).document(postId).set(like)
             .addOnSuccessListener {
-                result.invoke(
-                    UiState.Success("Like data has been added in user document")
-                )
+                Log.w(TAG, "Like data has been added in user document")
             }
             .addOnFailureListener {
-                result.invoke(
-                    UiState.Failure(
-                        it.localizedMessage
-                    )
-                )
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
     private fun deleteLikeDataAtUser(
         postId: String,
         currentUserId: String,
-        result: (UiState<String>) -> Unit
     ) {
         database.collection(FirestoreCollection.USER).document(currentUserId)
             .collection(FirestoreCollection.LIKE).document(postId).delete()
             .addOnSuccessListener {
-                result.invoke(
-                    UiState.Success("Like data has been removed from user document")
-                )
+                Log.w(TAG, "Like data has been removed from user document")
             }
             .addOnFailureListener {
-                result.invoke(
-                    UiState.Failure(
-                        it.localizedMessage
-                    )
-                )
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
-    override fun getUserLikeData(currentUserId: String, result: (UiState<List<LikeData>>) -> Unit) {
-        database.collection(FirestoreCollection.USER).document(currentUserId)
-            .collection(FirestoreCollection.LIKE)
-            .addSnapshotListener { value, error ->
-                error?.let {
-                    result.invoke(
-                        UiState.Failure(it.localizedMessage)
-                    )
-                }
-
-                value?.let {
-                    val likes = arrayListOf<LikeData>()
-                    for (document in it) {
-                        val like = document.toObject(LikeData::class.java)
-                        likes.add(like)
-                    }
-                    result.invoke(
-                        UiState.Success(likes)
-                    )
-                }
+    override fun isPostBeingLiked(currentUId: String, postId: String, result: (Boolean) -> Unit) {
+        database.collection(FirestoreCollection.POST).document(postId)
+            .collection(FirestoreCollection.LIKE).document(currentUId)
+            .get()
+            .addOnSuccessListener {
+                result.invoke(it.exists())
             }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
+            }
+        Log.w(TAG, "isPostBeingLiked")
     }
 
     override fun getSessionData(result: (UserData?) -> Unit) {

@@ -29,7 +29,6 @@ class PostOptionsBottomSheetFragment(private val deletePostStatusListener: Delet
     private var _binding: DialogBottomPostOptionsBinding? = null
     private val binding get() = _binding!!
     private lateinit var objectPost: PostData
-    private var postPosition: Int? = null
     private val viewModel: PostOptionsViewModel by viewModels()
 
     override fun onCreateView(
@@ -37,7 +36,6 @@ class PostOptionsBottomSheetFragment(private val deletePostStatusListener: Delet
         savedInstanceState: Bundle?
     ): View {
         objectPost = arguments?.getParcelable("OBJECT_POST")!!
-        postPosition = arguments?.getInt("POST_POSITION")!!
         _binding = DialogBottomPostOptionsBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -126,7 +124,7 @@ class PostOptionsBottomSheetFragment(private val deletePostStatusListener: Delet
                     is UiState.Success -> {
                         progressBar.hide()
                         toast(state.data)
-                        deletePostStatusListener.deletePostStatus(true, postPosition)
+                        deletePostStatusListener.deletePostStatus(true)
                         dialog.dismiss()
                         dismiss()
                     }
@@ -180,7 +178,7 @@ class PostOptionsBottomSheetFragment(private val deletePostStatusListener: Delet
     }
 
     interface DeletePostStatusListener {
-        fun deletePostStatus(status: Boolean?, position: Int?)
+        fun deletePostStatus(status: Boolean?)
     }
 
 

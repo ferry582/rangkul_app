@@ -1,8 +1,10 @@
 package com.example.rangkul.ui.profile
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rangkul.R
@@ -12,14 +14,15 @@ import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FollowListActivity : AppCompatActivity() {
+class FollowListActivity : AppCompatActivity(), FollowListAdapter.IsBeingFollowed {
 
     private lateinit var binding: ActivityFollowListBinding
-    private val profileViewModel: VisitedProfileViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
     private var userDataList: MutableList<UserData> = arrayListOf()
     private lateinit var targetUserId: String
     private lateinit var targetUserName: String
     private lateinit var followType: String // Following or Followers
+    private var currentItemPos = -1
     private val adapter by lazy {
         FollowListAdapter (
             onItemClicked = { pos, uid ->
@@ -28,16 +31,25 @@ class FollowListActivity : AppCompatActivity() {
                 } else {
                     val intent = Intent(this, VisitedProfileActivity::class.java)
                     intent.putExtra("USER_ID", uid)
-                    startActivity(intent)
+                    currentItemPos = pos
+                    resultLauncher.launch(intent)
                 }
             },
             onFollowClicked = { pos, uid ->
-                profileViewModel.addFollowData(currentUserData().userId, uid)
+                addFollowData(pos, uid)
             },
             onUnfollowClicked = { pos, uid ->
-                profileViewModel.removeFollowData(currentUserData().userId, uid)
-            }
+                removeFollowData(pos, uid)
+            },
+            this
         )
+    }
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // Update data in adapter if doing add/remove follow in VisitedProfileActivity
+            updateDataAtPosition(currentItemPos)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,20 +72,18 @@ class FollowListActivity : AppCompatActivity() {
         profileViewModel.getUserDataList(targetUserId, followType)
         observeGetUserDataList()
 
-        getFollowingData()
-
-        observeAddFollowData()
-
-        observeRemoveFollowData()
-
     }
 
-    private fun observeRemoveFollowData() {
-        profileViewModel.removeFollowData.observe(this) {state ->
+    private fun updateDataAtPosition(pos: Int) {
+        adapter.dataUpdated(pos)
+    }
+
+    private fun removeFollowData(position: Int, uid: String) {
+        binding.progressBar.show()
+        // Avoid using observable, to prevent adapter.dataUpdated being performed multiple times
+        profileViewModel.removeFollowData(currentUserData().userId, uid) { state ->
             when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
+                is UiState.Loading -> {}
 
                 is UiState.Failure -> {
                     binding.progressBar.hide()
@@ -82,18 +92,19 @@ class FollowListActivity : AppCompatActivity() {
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-//                    adapter.notifyItemChanged(position)
+                    updateDataAtPosition(position)
                 }
             }
+
         }
     }
 
-    private fun observeAddFollowData() {
-        profileViewModel.addFollowData.observe(this) {state ->
+    private fun addFollowData(position: Int, uid: String) {
+        binding.progressBar.show()
+        // Avoid using observable, to prevent adapter.dataUpdated being performed multiple times
+        profileViewModel.addFollowData(currentUserData().userId, uid) { state ->
             when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
+                is UiState.Loading -> {}
 
                 is UiState.Failure -> {
                     binding.progressBar.hide()
@@ -102,28 +113,7 @@ class FollowListActivity : AppCompatActivity() {
 
                 is UiState.Success -> {
                     binding.progressBar.hide()
-//                    adapter.notifyItemChanged(position)
-                }
-            }
-        }
-    }
-
-    private fun getFollowingData() {
-        profileViewModel.getUserFollowingData(currentUserData().userId)
-        profileViewModel.getUserFollowingData.observe(this) { state ->
-            when(state) {
-                is UiState.Loading -> {
-                    binding.progressBar.show()
-                }
-
-                is UiState.Failure -> {
-                    binding.progressBar.hide()
-                    toast(state.error)
-                }
-
-                is UiState.Success -> {
-                    binding.progressBar.hide()
-                    adapter.updateFollowingList(state.data.toMutableList())
+                    updateDataAtPosition(position)
                 }
             }
         }
@@ -195,5 +185,11 @@ class FollowListActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
+    }
+
+    override fun isFollowed(item: String, position: Int, callback: (Boolean) -> Unit) {
+        profileViewModel.isUserBeingFollowed(currentUserData().userId, item) {
+            callback.invoke(it)
+        }
     }
 }

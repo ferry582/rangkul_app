@@ -11,7 +11,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class ProfileRepositoryImp(
@@ -19,6 +18,8 @@ class ProfileRepositoryImp(
     private val appPreferences: SharedPreferences,
     private val gson: Gson
 ): ProfileRepository {
+
+    val TAG = "ProfileRepositoryImp"
 
     override fun getUserData(uid: String, result: (UiState<UserData?>) -> Unit) {
         // Get user data
@@ -50,12 +51,13 @@ class ProfileRepositoryImp(
     }
 
     override fun addFollowData(currentUId: String, followedUId: String, result: (UiState<String>) -> Unit) {
-        addToFollowing(currentUId, followedUId)
-        addToFollowers(currentUId, followedUId)
-
-        result.invoke(
-            UiState.Success("Task is completed")
-        )
+        addToFollowing(currentUId, followedUId).apply {
+            addToFollowers(currentUId, followedUId).apply {
+                result.invoke(
+                    UiState.Success("Task is completed")
+                )
+            }
+        }
     }
 
     private fun addToFollowing(currentUId: String, followedUId: String) {
@@ -66,10 +68,10 @@ class ProfileRepositoryImp(
        database.collection(FirestoreCollection.USER).document(currentUId)
             .collection(FirestoreCollection.FOLLOWING).document(followedUId).set(followData)
             .addOnSuccessListener {
-                Log.w("addFollowData", "FollowData has been added at following collection")
+                Log.w(TAG, "FollowData has been added at following collection")
             }
             .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e("addFollowData", it1) }
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
@@ -81,20 +83,21 @@ class ProfileRepositoryImp(
         database.collection(FirestoreCollection.USER).document(followedUId)
             .collection(FirestoreCollection.FOLLOWERS).document(currentUId).set(followData)
             .addOnSuccessListener {
-                Log.w("addFollowData", "FollowData has been added at followers collection")
+                Log.w(TAG, "FollowData has been added at followers collection")
             }
             .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e("addFollowData", it1) }
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
     override fun removeFollowData(currentUId: String, followedUId: String, result: (UiState<String>) -> Unit) {
-        removeFromFollowing(currentUId, followedUId)
-        removeFromFollowers(currentUId, followedUId)
-
-        result.invoke(
-            UiState.Success("Task is completed")
-        )
+        removeFromFollowing(currentUId, followedUId).apply {
+            removeFromFollowers(currentUId, followedUId).apply {
+                result.invoke(
+                    UiState.Success("Task is completed")
+                )
+            }
+        }
     }
 
     private fun removeFromFollowing(currentUId: String, followedUId: String) {
@@ -102,10 +105,10 @@ class ProfileRepositoryImp(
             .collection(FirestoreCollection.FOLLOWING).document(followedUId)
             .delete()
             .addOnSuccessListener {
-                Log.w("removeFollowData", "FollowData has been removed at following collection")
+                Log.w(TAG, "FollowData has been removed at following collection")
             }
             .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e("addFollowData", it1) }
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
@@ -114,19 +117,22 @@ class ProfileRepositoryImp(
             .collection(FirestoreCollection.FOLLOWERS).document(currentUId)
             .delete()
             .addOnSuccessListener {
-                Log.w("addFollowData", "FollowData has been removed at followers collection")
+                Log.w(TAG, "FollowData has been removed at followers collection")
             }
             .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e("addFollowData", it1) }
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
-    override fun getUserFollowingData(uid: String, result: (UiState<List<FollowData>>) -> Unit) {
-        getFollowingList(uid) {
-            result.invoke(
-                UiState.Success (it)
-            )
-        }
+    override fun isUserBeingFollowed(currentUId: String, targetUId: String, result: (Boolean) -> Unit) {
+        database.collection(FirestoreCollection.USER).document(currentUId)
+            .collection(FirestoreCollection.FOLLOWING).document(targetUId).get()
+            .addOnSuccessListener {
+                result.invoke(it.exists())
+            }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
+            }
     }
 
     override fun getProfileCountData(uid: String, postType: String, result: (UiState<ProfileCountData>) -> Unit) {
@@ -164,7 +170,7 @@ class ProfileRepositoryImp(
                 result.invoke(it.count)
             }
             .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e("getProfileCount", it1) }
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
@@ -177,7 +183,7 @@ class ProfileRepositoryImp(
                 result.invoke(it.count)
             }
             .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e("getProfileCount", it1) }
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
@@ -190,7 +196,7 @@ class ProfileRepositoryImp(
                 result.invoke(it.count)
             }
             .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e("getProfileCount", it1) }
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
@@ -231,45 +237,41 @@ class ProfileRepositoryImp(
                 result.invoke(list)
             }
             .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e("getUserList", it1) }
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
     private fun getFollowingList (uid: String, result: (List<FollowData>) -> Unit) {
         database.collection(FirestoreCollection.USER).document(uid)
             .collection(FirestoreCollection.FOLLOWING)
-            .addSnapshotListener { value, error ->
-                error?.let {
-                    it.localizedMessage?.let { it1 -> Log.e("getFollowingList", it1) }
+            .get()
+            .addOnSuccessListener {
+                val following = arrayListOf<FollowData>()
+                for (document in it) {
+                    val data = document.toObject(FollowData::class.java)
+                    following.add(data)
                 }
-
-                value?.let {
-                    val following = arrayListOf<FollowData>()
-                    for (document in it) {
-                        val data = document.toObject(FollowData::class.java)
-                        following.add(data)
-                    }
-                    result.invoke(following)
-                }
+                result.invoke(following)
+            }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
     private fun getFollowersList (uid: String, result: (List<FollowData>) -> Unit) {
         database.collection(FirestoreCollection.USER).document(uid)
             .collection(FirestoreCollection.FOLLOWERS)
-            .addSnapshotListener { value, error ->
-                error?.let {
-                    it.localizedMessage?.let { it1 -> Log.e("getFollowersList", it1) }
+            .get()
+            .addOnSuccessListener {
+                val followers = arrayListOf<FollowData>()
+                for (document in it) {
+                    val data = document.toObject(FollowData::class.java)
+                    followers.add(data)
                 }
-
-                value?.let {
-                    val followers = arrayListOf<FollowData>()
-                    for (document in it) {
-                        val data = document.toObject(FollowData::class.java)
-                        followers.add(data)
-                    }
-                    result.invoke(followers)
-                }
+                result.invoke(followers)
+            }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 
