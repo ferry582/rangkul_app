@@ -24,7 +24,7 @@ import java.util.*
 @AndroidEntryPoint
 class VisitedProfileActivity : AppCompatActivity(),
     PostOptionsBottomSheetFragment.DeletePostStatusListener,
-    PostAdapter.PostAdapterInterface {
+    PostAdapter.PostStatusListener {
 
     private lateinit var binding: ActivityVisitedProfileBinding
     private lateinit var visitedUserId: String
@@ -64,7 +64,7 @@ class VisitedProfileActivity : AppCompatActivity(),
             onProfileClicked = { _, _ ->
                 // unable to click profile on any post from visited profile
             },
-            postAdapterInterface = this,
+            postStatusListener = this,
             context = this
         )
     }
@@ -229,7 +229,6 @@ class VisitedProfileActivity : AppCompatActivity(),
                     binding.progressBar.hide()
                     binding.srlVisitedProfileActivity.isRefreshing = false
                     postList = state.data.toMutableList()
-                    postAdapter.clearData()
                     isDataEmpty(postList)
                 }
             }
@@ -241,9 +240,10 @@ class VisitedProfileActivity : AppCompatActivity(),
             binding.rvPost.hide()
             binding.linearNoPostMessage.show()
         } else {
-                binding.rvPost.show()
-                binding.linearNoPostMessage.hide()
-                postAdapter.updateList(postList)
+            binding.rvPost.show()
+            binding.linearNoPostMessage.hide()
+            postAdapter.clearData()
+            postAdapter.updateList(postList)
         }
     }
 
@@ -373,7 +373,7 @@ class VisitedProfileActivity : AppCompatActivity(),
 
     override fun deletePostStatus(status: Boolean?) {}
 
-    override fun isLiked(item: String, position: Int, callback: (Boolean) -> Unit) {
+    override fun isPostBeingLiked(item: String, position: Int, callback: (Boolean) -> Unit) {
         postViewModel.isPostBeingLiked(currentUserData().userId, item) {
             callback.invoke(it)
         }

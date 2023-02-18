@@ -20,7 +20,7 @@ class PostAdapter (
     val onCommentClicked: (Int, PostData) -> Unit,
     val onBadgeClicked: (Int, PostData) -> Unit,
     val onProfileClicked: (Int, String) -> Unit,
-    private val postAdapterInterface: PostAdapterInterface,
+    private val postStatusListener: PostStatusListener,
     val context: Context
 ): RecyclerView.Adapter<PostAdapter.PostViewHolder>(){
 
@@ -108,7 +108,7 @@ class PostAdapter (
 
             // Set like button
             if (!taskPerformedSet.contains(adapterPosition)) {
-                postAdapterInterface.isLiked(item.postId, adapterPosition) {
+                postStatusListener.isPostBeingLiked(item.postId, adapterPosition) {
                     if (it) {
                         binding.ivLikeButtonPost.setImageResource(R.drawable.ic_like_solid)
                     }
@@ -186,8 +186,8 @@ class PostAdapter (
         taskPerformedSet.clear()
     }
 
-    interface PostAdapterInterface {
-        fun isLiked(item: String, position: Int, callback: (Boolean) -> Unit)
+    interface PostStatusListener {
+        fun isPostBeingLiked(item: String, position: Int, callback: (Boolean) -> Unit)
     }
 
 }

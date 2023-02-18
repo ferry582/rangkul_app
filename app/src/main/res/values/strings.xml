@@ -35,4 +35,8 @@
     <string name="description_profanity_detected">We found inappropriate words in your post,\n please check it again.</string>
     <string name="title_no_followers">No Followers!</string>
     <string name="title_no_following">No Following!</string>
+    <string name="title_no_following_posts">No Following Posts!</string>
+    <string name="description_no_following_posts">Posts from people you follow will\n appear here, try to follow more people.</string>
+    <string name="title_no_liked_post">You Haven’t liked any post yet!</string>
+    <string name="description_no_liked_post">Your liked post will be display here</string>
 </resources>

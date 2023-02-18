@@ -6,7 +6,10 @@ import android.util.Log
 import com.example.rangkul.data.model.*
 import com.example.rangkul.data.retrofit.ApiInterface
 import com.example.rangkul.utils.*
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseException
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -26,34 +29,24 @@ class PostRepositoryImp(
 
     private val TAG = "PostRepositoryImp"
 
-    override fun getPosts(type: String, result: (UiState<List<PostData>>) -> Unit) {
-        val postRef = database.collection(FirestoreCollection.POST)
-
-        val documentRef =
-            // Only take posts based on the post's type
-            if (type == "Anonymous") {
-                postRef.whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
-                    .orderBy("createdAt", Query.Direction.DESCENDING)
-            } else {
-                postRef.orderBy("createdAt", Query.Direction.DESCENDING)
+    override fun getPosts(type: String, uid: String, result: (UiState<List<PostData>>) -> Unit) {
+        if (type == "Following") {
+            getFollowingPosts(uid) {
+                when (it) {
+                    is UiState.Failure -> result.invoke(UiState.Failure(it.error))
+                    UiState.Loading -> {}
+                    is UiState.Success -> result.invoke(UiState.Success(it.data))
+                }
             }
-
-        documentRef.get()
-            .addOnSuccessListener {
-                val posts = arrayListOf<PostData>()
-                    for (document in it) {
-                        val post = document.toObject(PostData::class.java)
-                        posts.add(post)
-                    }
-                    result.invoke(
-                        UiState.Success(posts)
-                    )
+        } else {
+            getPublicOrAnonymousPost(type) {
+                when (it) {
+                    is UiState.Failure -> result.invoke(UiState.Failure(it.error))
+                    UiState.Loading -> {}
+                    is UiState.Success -> result.invoke(UiState.Success(it.data))
+                }
             }
-            .addOnFailureListener {
-                result.invoke(
-                    UiState.Failure(it.localizedMessage)
-                )
-            }
+        }
     }
 
     override fun getUserPosts(type: String, uid: String, result: (UiState<List<PostData>>) -> Unit) {
@@ -101,6 +94,38 @@ class PostRepositoryImp(
                     UiState.Failure(it.localizedMessage)
                 )
             }
+    }
+
+    override fun getLikedPosts(uid: String, result: (UiState<List<PostData>>) -> Unit) {
+        getLikedList(uid) { likedList ->
+            if (likedList.isEmpty()) {
+                result.invoke(
+                    UiState.Success(arrayListOf())
+                )
+            } else {
+                val tasks: MutableList<Task<DocumentSnapshot>> = ArrayList()
+
+                for (doc in likedList) {
+                    tasks.add(database.collection(FirestoreCollection.POST).document(doc).get())
+                }
+
+                Tasks.whenAllSuccess<DocumentSnapshot>(tasks)
+                    .addOnSuccessListener {
+                        val posts = arrayListOf<PostData>()
+                        for (document in it) {
+                            val post = document.toObject(PostData::class.java)
+                            post?.let { it1 -> posts.add(it1) }
+                        }
+                        result.invoke(
+                            UiState.Success(posts)
+                        )
+                    }
+                    .addOnFailureListener {
+                        it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
+                        result.invoke(UiState.Failure(it.localizedMessage))
+                    }
+            }
+        }
     }
 
     override fun getUserDiaries(uid: String, result: (UiState<List<DiaryData>>) -> Unit) {
@@ -253,35 +278,6 @@ class PostRepositoryImp(
         }
     }
 
-    private fun addLikeDataToUser(
-        like: LikeData,
-        postId: String,
-        currentUserId: String,
-    ) {
-        database.collection(FirestoreCollection.USER).document(currentUserId)
-            .collection(FirestoreCollection.LIKE).document(postId).set(like)
-            .addOnSuccessListener {
-                Log.w(TAG, "Like data has been added in user document")
-            }
-            .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
-            }
-    }
-
-    private fun deleteLikeDataAtUser(
-        postId: String,
-        currentUserId: String,
-    ) {
-        database.collection(FirestoreCollection.USER).document(currentUserId)
-            .collection(FirestoreCollection.LIKE).document(postId).delete()
-            .addOnSuccessListener {
-                Log.w(TAG, "Like data has been removed from user document")
-            }
-            .addOnFailureListener {
-                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
-            }
-    }
-
     override fun isPostBeingLiked(currentUId: String, postId: String, result: (Boolean) -> Unit) {
         database.collection(FirestoreCollection.POST).document(postId)
             .collection(FirestoreCollection.LIKE).document(currentUId)
@@ -292,7 +288,6 @@ class PostRepositoryImp(
             .addOnFailureListener {
                 it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
-        Log.w(TAG, "isPostBeingLiked")
     }
 
     override fun getSessionData(result: (UserData?) -> Unit) {
@@ -347,4 +342,126 @@ class PostRepositoryImp(
             )
         }
     }
+
+    private fun getPublicOrAnonymousPost(type: String, result: (UiState<List<PostData>>) -> Unit) {
+        val postRef = database.collection(FirestoreCollection.POST)
+        val documentRef =
+            // Only take posts based on the post's type
+            if (type == "Anonymous") {
+                postRef.whereEqualTo(FirestoreDocumentField.POST_TYPE, type)
+                    .orderBy("createdAt", Query.Direction.DESCENDING)
+            } else {
+                postRef.orderBy("createdAt", Query.Direction.DESCENDING)
+            }
+
+        documentRef.get()
+            .addOnSuccessListener {
+                val posts = arrayListOf<PostData>()
+                for (document in it) {
+                    val post = document.toObject(PostData::class.java)
+                    posts.add(post)
+                }
+                result.invoke(
+                    UiState.Success(posts)
+                )
+            }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
+                result.invoke(UiState.Failure(it.localizedMessage))
+            }
+    }
+
+    private fun getFollowingPosts(uid: String, result: (UiState<List<PostData>>) -> Unit) {
+        getFollowingList(uid) { followingList ->
+            if (followingList.isEmpty()) {
+                result.invoke(
+                    UiState.Success(arrayListOf())
+                )
+            } else {
+                database.collection(FirestoreCollection.POST)
+                    .whereIn(FirestoreDocumentField.POST_CREATED_BY, followingList)
+                    .whereEqualTo(FirestoreDocumentField.POST_TYPE, "Public")
+                    .orderBy("createdAt", Query.Direction.DESCENDING)
+                    .get()
+                    .addOnSuccessListener {
+                        val posts = arrayListOf<PostData>()
+                        for (document in it) {
+                            val post = document.toObject(PostData::class.java)
+                            posts.add(post)
+                        }
+                        result.invoke(
+                            UiState.Success(posts)
+                        )
+                    }
+                    .addOnFailureListener {
+                        it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
+                        result.invoke(UiState.Failure(it.localizedMessage))
+                    }
+            }
+        }
+    }
+
+    private fun getFollowingList(uid: String, result: (List<String>) -> Unit) {
+        database.collection(FirestoreCollection.USER).document(uid)
+            .collection(FirestoreCollection.FOLLOWING)
+            .get()
+            .addOnSuccessListener {
+                val following = arrayListOf<String>()
+                for (document in it) {
+                    val data = document.toObject(FollowData::class.java)
+                    following.add(data.userId) // Get the userId only
+                }
+                result.invoke(following)
+            }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
+            }
+    }
+
+    private fun addLikeDataToUser(
+        like: LikeData,
+        postId: String,
+        currentUserId: String,
+    ) {
+        database.collection(FirestoreCollection.USER).document(currentUserId)
+            .collection(FirestoreCollection.LIKE).document(postId).set(like)
+            .addOnSuccessListener {
+                Log.w(TAG, "Like data has been added in user document")
+            }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
+            }
+    }
+
+    private fun deleteLikeDataAtUser(
+        postId: String,
+        currentUserId: String,
+    ) {
+        database.collection(FirestoreCollection.USER).document(currentUserId)
+            .collection(FirestoreCollection.LIKE).document(postId).delete()
+            .addOnSuccessListener {
+                Log.w(TAG, "Like data has been removed from user document")
+            }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
+            }
+    }
+
+    private fun getLikedList(uid: String, result: (List<String>) -> Unit) {
+        database.collection(FirestoreCollection.USER).document(uid)
+            .collection(FirestoreCollection.LIKE).get()
+            .addOnSuccessListener {
+                val liked = arrayListOf<String>()
+                for (document in it) {
+                    val data = document.toObject(LikeData::class.java)
+                    liked.add(data.likeId) // Get the likeId as postId
+                    Log.w(TAG, data.likeId)
+                }
+                result.invoke(liked)
+            }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
+            }
+    }
+
 }

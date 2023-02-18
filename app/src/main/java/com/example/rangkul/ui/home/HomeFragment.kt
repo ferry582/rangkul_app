@@ -27,7 +27,7 @@ import java.util.*
 class HomeFragment :
     Fragment(),
     PostOptionsBottomSheetFragment.DeletePostStatusListener,
-    PostAdapter.PostAdapterInterface {
+    PostAdapter.PostStatusListener {
 
     lateinit var binding: FragmentHomeBinding
     private val viewModel: PostViewModel by viewModels()
@@ -71,7 +71,7 @@ class HomeFragment :
                     startActivity(intent)
                 }
             },
-            postAdapterInterface = this,
+            postStatusListener = this,
             context = requireContext()
         )
     }
@@ -81,6 +81,9 @@ class HomeFragment :
             // Update the comment count at selected post position
             val commentAddedAmount = result.data?.getIntExtra("COMMENT_ADDED", 0)
             commentAddedAmount?.let { updateCommentCount(it) }
+        } else if (result.resultCode == 101) {
+            // Update entire post after user make changes in UserLikedActivity
+            viewModel.getPosts(selectedType, currentUserData().userId)
         }
     }
 
@@ -97,11 +100,12 @@ class HomeFragment :
         super.onViewCreated(view, savedInstanceState)
 
         binding.srlHomeFragment.setOnRefreshListener {
-            viewModel.getPosts(selectedType)
+            viewModel.getPosts(selectedType, currentUserData().userId)
         }
 
         binding.btYouLiked.setOnClickListener {
-            toast("Under Development")
+            val intent = Intent(requireContext(), UserLikedActivity::class.java)
+            resultLauncher.launch(intent)
         }
 
         binding.btMessage.setOnClickListener {
@@ -113,14 +117,15 @@ class HomeFragment :
         // Get posts based on type
         binding.chipForYou.setOnClickListener {
             selectedType = "All"
-            viewModel.getPosts(selectedType)
+            viewModel.getPosts(selectedType, currentUserData().userId)
         }
         binding.chipFollowing.setOnClickListener {
-            // call view model to retrieve only following posts
+            selectedType = "Following"
+            viewModel.getPosts(selectedType, currentUserData().userId)
         }
         binding.chipSpeakUp.setOnClickListener {
             selectedType = "Anonymous"
-            viewModel.getPosts(selectedType)
+            viewModel.getPosts(selectedType, currentUserData().userId)
         }
 
         // Configure Post RecyclerView
@@ -130,7 +135,7 @@ class HomeFragment :
         binding.rvPost.isNestedScrollingEnabled = false
 
         // Get post list
-        viewModel.getPosts(selectedType)
+        viewModel.getPosts(selectedType, currentUserData().userId)
         observeGetPosts()
     }
 
@@ -154,11 +159,22 @@ class HomeFragment :
                     binding.progressBar.hide()
                     binding.srlHomeFragment.isRefreshing = false // hide swipe refresh loading
                     postList = state.data.toMutableList()
-                    adapter.clearData()
-                    adapter.updateList(postList)
-                    adapter.updateCurrentUser(currentUserData().userId)
+                    isDataEmpty(postList)
                 }
             }
+        }
+    }
+
+    private fun isDataEmpty(data: List<Any>) {
+        if (data.isEmpty()) {
+            binding.rvPost.hide()
+            binding.linearNoPostMessage.show()
+        } else {
+            binding.rvPost.show()
+            binding.linearNoPostMessage.hide()
+            adapter.clearData()
+            adapter.updateList(postList)
+            adapter.updateCurrentUser(currentUserData().userId)
         }
     }
 
@@ -237,7 +253,7 @@ class HomeFragment :
         }
     }
 
-    override fun isLiked(item: String, position: Int, callback: (Boolean) -> Unit) {
+    override fun isPostBeingLiked(item: String, position: Int, callback: (Boolean) -> Unit) {
         viewModel.isPostBeingLiked(currentUserData().userId, item) {
             callback.invoke(it)
         }

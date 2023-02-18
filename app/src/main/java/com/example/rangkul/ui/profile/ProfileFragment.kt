@@ -33,7 +33,7 @@ import java.util.*
 class ProfileFragment : Fragment(),
     PostOptionsBottomSheetFragment.DeletePostStatusListener,
     DiaryOptionsBottomSheetFragment.DeleteDiaryStatusListener,
-    PostAdapter.PostAdapterInterface {
+    PostAdapter.PostStatusListener {
 
     lateinit var binding: FragmentProfileBinding
     private val postViewModel: PostViewModel by viewModels()
@@ -72,7 +72,7 @@ class ProfileFragment : Fragment(),
             onProfileClicked = { _, _ ->
                 // Unable to click profile on any post from fragment profile
             },
-            postAdapterInterface = this,
+            postStatusListener = this,
             context = requireContext()
         )
     }
@@ -262,7 +262,6 @@ class ProfileFragment : Fragment(),
                     binding.progressBar.hide()
                     binding.srlProfileFragment.isRefreshing = false
                     postList = state.data.toMutableList()
-                    postAdapter.clearData()
                     isDataEmpty(postList)
                 }
             }
@@ -296,6 +295,7 @@ class ProfileFragment : Fragment(),
             } else {
                 binding.rvPost.show()
                 binding.linearNoPostMessage.hide()
+                postAdapter.clearData()
                 postAdapter.updateList(postList)
                 postAdapter.updateCurrentUser(currentUserData().userId)
             }
@@ -396,7 +396,7 @@ class ProfileFragment : Fragment(),
         }
     }
 
-    override fun isLiked(item: String, position: Int, callback: (Boolean) -> Unit) {
+    override fun isPostBeingLiked(item: String, position: Int, callback: (Boolean) -> Unit) {
         postViewModel.isPostBeingLiked(currentUserData().userId, item) {
             callback.invoke(it)
         }

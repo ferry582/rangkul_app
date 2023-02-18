@@ -14,7 +14,7 @@ import com.example.rangkul.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FollowListActivity : AppCompatActivity(), FollowListAdapter.IsBeingFollowed {
+class FollowListActivity : AppCompatActivity(), FollowListAdapter.FollowListStatusListener {
 
     private lateinit var binding: ActivityFollowListBinding
     private val profileViewModel: ProfileViewModel by viewModels()
@@ -41,7 +41,7 @@ class FollowListActivity : AppCompatActivity(), FollowListAdapter.IsBeingFollowe
             onUnfollowClicked = { pos, uid ->
                 removeFollowData(pos, uid)
             },
-            this
+            followListStatusListener = this
         )
     }
 
@@ -187,7 +187,7 @@ class FollowListActivity : AppCompatActivity(), FollowListAdapter.IsBeingFollowe
         return true
     }
 
-    override fun isFollowed(item: String, position: Int, callback: (Boolean) -> Unit) {
+    override fun isUserBeingFollowed(item: String, position: Int, callback: (Boolean) -> Unit) {
         profileViewModel.isUserBeingFollowed(currentUserData().userId, item) {
             callback.invoke(it)
         }

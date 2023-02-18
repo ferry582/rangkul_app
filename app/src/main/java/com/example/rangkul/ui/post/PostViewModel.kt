@@ -15,9 +15,9 @@ import javax.inject.Inject
 @HiltViewModel
 class PostViewModel @Inject constructor(private val repository: PostRepository): ViewModel() {
 
-    private val _posts = MutableLiveData<UiState<List<PostData>>>()
+    private val _getPosts = MutableLiveData<UiState<List<PostData>>>()
     val getPosts: LiveData<UiState<List<PostData>>>
-        get() = _posts
+        get() = _getPosts
 
     private val _getUserPosts = MutableLiveData<UiState<List<PostData>>>()
     val getUserPosts: LiveData<UiState<List<PostData>>>
@@ -27,14 +27,18 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
     val getPostsWithCategory: LiveData<UiState<List<PostData>>>
         get() = _getPostsWithCategory
 
+    private val _getLikedPosts = MutableLiveData<UiState<List<PostData>>>()
+    val getLikedPosts: LiveData<UiState<List<PostData>>>
+        get() = _getLikedPosts
+
     private val _getUserDiaries = MutableLiveData<UiState<List<DiaryData>>>()
     val getUserDiaries: LiveData<UiState<List<DiaryData>>>
         get() = _getUserDiaries
 
-    fun getPosts(type: String){
-        _posts.value = UiState.Loading
-        repository.getPosts(type) {
-            _posts.value = it
+    fun getPosts(type: String, uid: String){
+        _getPosts.value = UiState.Loading
+        repository.getPosts(type, uid) {
+            _getPosts.value = it
         }
     }
 
@@ -49,6 +53,13 @@ class PostViewModel @Inject constructor(private val repository: PostRepository):
         _getPostsWithCategory.value = UiState.Loading
         repository.getPostsWithCategory(category) {
             _getPostsWithCategory.value = it
+        }
+    }
+
+    fun getLikedPosts(category: String){
+        _getLikedPosts.value = UiState.Loading
+        repository.getLikedPosts(category) {
+            _getLikedPosts.value = it
         }
     }
 

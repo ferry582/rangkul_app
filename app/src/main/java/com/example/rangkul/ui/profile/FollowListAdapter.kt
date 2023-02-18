@@ -15,7 +15,7 @@ class FollowListAdapter (
     val onItemClicked: (Int, String) -> Unit,
     val onFollowClicked: (Int, String) -> Unit,
     val onUnfollowClicked: (Int, String) -> Unit,
-    private val isBeingFollowed: IsBeingFollowed
+    private val followListStatusListener: FollowListStatusListener
 ): RecyclerView.Adapter<FollowListAdapter.PostViewHolder>(){
 
     private var list: MutableList<UserData> = arrayListOf()
@@ -58,7 +58,7 @@ class FollowListAdapter (
 
             // Set Follow button
             if (!taskPerformedSet.contains(adapterPosition)) {
-                isBeingFollowed.isFollowed(item.userId, adapterPosition) {
+                followListStatusListener.isUserBeingFollowed(item.userId, adapterPosition) {
                     if (currentUserId == item.userId) {
                         binding.btFollow.hide()
                         binding.btUnfollow.hide()
@@ -118,8 +118,8 @@ class FollowListAdapter (
         notifyItemChanged(position)
     }
 
-    interface IsBeingFollowed {
-        fun isFollowed(item: String, position: Int, callback: (Boolean) -> Unit)
+    interface FollowListStatusListener {
+        fun isUserBeingFollowed(item: String, position: Int, callback: (Boolean) -> Unit)
     }
 
 

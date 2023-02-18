@@ -56,6 +56,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView4"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scrollbars="none"
@@ -74,11 +75,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/poppins_medium"
+                    android:includeFontPadding="false"
                     android:text="Good Afternoon"
                     android:textAlignment="center"
                     android:textColor="@color/textBlack"
                     android:textSize="26sp"
-                    android:includeFontPadding="false"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -87,11 +88,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
+                    android:includeFontPadding="false"
                     android:text="Della!"
                     android:textAlignment="center"
                     android:textColor="@color/textBlack"
                     android:textSize="26sp"
-                    android:includeFontPadding="false"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvMessage" />
 
@@ -100,41 +101,41 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    app:singleSelection="true"
-                    app:selectionRequired="true"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvUserName">
+                    app:layout_constraintTop_toBottomOf="@+id/tvUserName"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipForYou"
+                        style="@style/CustomChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="51dp"
-                        android:text="For You"
-                        android:fontFamily="@font/poppins_medium"
-                        android:textSize="14sp"
-                        app:chipCornerRadius="12dp"
                         android:checked="true"
-                        style="@style/CustomChipStyle"/>
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="For You"
+                        android:textSize="14sp"
+                        app:chipCornerRadius="12dp" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipFollowing"
+                        style="@style/CustomChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="51dp"
-                        android:text="Following"
                         android:fontFamily="@font/poppins_medium"
+                        android:text="Following"
                         android:textSize="14sp"
-                        app:chipCornerRadius="12dp"
-                        style="@style/CustomChipStyle"/>
+                        app:chipCornerRadius="12dp" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipSpeakUp"
+                        style="@style/CustomChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="51dp"
-                        android:text="Speak Up!"
                         android:fontFamily="@font/poppins_medium"
+                        android:text="Speak Up!"
                         android:textSize="14sp"
-                        app:chipCornerRadius="12dp"
-                        style="@style/CustomChipStyle"/>
+                        app:chipCornerRadius="12dp" />
                 </com.google.android.material.chip.ChipGroup>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -142,6 +143,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -161,6 +163,60 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="visible"/>
+
+        <LinearLayout
+            android:id="@+id/linearNoPostMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeToolbar">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivNoPostIllustration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="36dp"
+                android:adjustViewBounds="true"
+                android:clipToOutline="true"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/il_no_post_home"
+                tools:targetApi="s" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvMessageTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-20dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:includeFontPadding="false"
+                android:text="@string/title_no_following_posts"
+                android:textAlignment="center"
+                android:textColor="@color/textBlack"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvMessageDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/poppins_medium"
+                android:includeFontPadding="false"
+                android:text="@string/description_no_following_posts"
+                android:textAlignment="center"
+                android:textColor="@color/textGrey"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/civProfilePicturePost"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
