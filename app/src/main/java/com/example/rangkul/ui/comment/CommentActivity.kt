@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
-class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.DeleteStatusListener {
+class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.CommentOptionsStatusListener {
 
     private lateinit var binding: ActivityPostCommentBinding
     private val viewModel: CommentViewModel by viewModels()
@@ -40,7 +40,7 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
                 val bundle = Bundle()
                 bundle.putParcelable("OBJECT_COMMENT", item)
                 bundle.putInt("COMMENT_POSITION", pos)
-                bundle.putString("POST_TYPE", objectPost?.type)
+                bundle.putParcelable("OBJECT_POST", objectPost)
                 commentOptionsBottomDialogFragment.arguments = bundle
 
                 commentOptionsBottomDialogFragment.show(
@@ -179,6 +179,7 @@ class CommentActivity : AppCompatActivity(), CommentOptionsBottomSheetFragment.D
                         commentList = state.data.toMutableList()
                         adapter.updateList(commentList)
                         adapter.updatePostType(objectPost!!)
+                        adapter.updateCurrentUser(currentUserData().userId)
                     } else {
                         binding.rvComment.hide()
                         binding.linearNoCommentMessage.show()

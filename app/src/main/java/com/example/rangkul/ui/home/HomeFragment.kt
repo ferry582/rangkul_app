@@ -26,7 +26,7 @@ import java.util.*
 @AndroidEntryPoint
 class HomeFragment :
     Fragment(),
-    PostOptionsBottomSheetFragment.DeletePostStatusListener,
+    PostOptionsBottomSheetFragment.PostOptionsStatusListener,
     PostAdapter.PostStatusListener {
 
     lateinit var binding: FragmentHomeBinding

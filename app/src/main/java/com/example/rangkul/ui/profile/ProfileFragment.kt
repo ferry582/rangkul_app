@@ -31,7 +31,7 @@ import java.util.*
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment(),
-    PostOptionsBottomSheetFragment.DeletePostStatusListener,
+    PostOptionsBottomSheetFragment.PostOptionsStatusListener,
     DiaryOptionsBottomSheetFragment.DeleteDiaryStatusListener,
     PostAdapter.PostStatusListener {
 

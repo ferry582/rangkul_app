@@ -39,4 +39,23 @@
     <string name="description_no_following_posts">Posts from people you follow will\n appear here, try to follow more people.</string>
     <string name="title_no_liked_post">You Haven’t liked any post yet!</string>
     <string name="description_no_liked_post">Your liked post will be display here</string>
+    <string name="title_report_successful">Thanks for reporting</string>
+    <string name="description_report_successful">We will first review your report, to investigate whether\nit violates our rules. Thank you for helping us\nimprove the app.</string>
+
+    <!-- Report options array-->
+    <string-array name="title_report_options">
+        <item>Spam</item>
+        <item>Hate Speech</item>
+        <item>Scam or Fraud</item>
+        <item>Fake Account</item>
+        <item>Inappropriate Content</item>
+    </string-array>
+
+    <string-array name="desc_report_options">
+        <item>Repetitive , irrelevant , or malicious post/comment</item>
+        <item>Contains hateful/abuse speech, bullying, harassment, etc</item>
+        <item>Contains content that has deceptive tendencies</item>
+        <item>User is indicated as not using a real identity</item>
+        <item>Nudity or pornography, violence, dangerous activity, etc</item>
+    </string-array>
 </resources>

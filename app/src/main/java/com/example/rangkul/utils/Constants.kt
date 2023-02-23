@@ -9,6 +9,7 @@ object FirestoreCollection {
     const val CATEGORY_CONTENT = "contents"
     const val FOLLOWERS = "followers"
     const val FOLLOWING = "following"
+    const val REPORTS = "reports"
 }
 
 object FirestoreDocumentField {
@@ -26,6 +27,9 @@ object FirestoreDocumentField {
     const val POST_TYPE = "type"
     const val POST_CATEGORY = "category"
     const val POST_ID = "postId"
+    const val REPORTED_BY = "reportedBy"
+    const val REPORT_REASON = "reason"
+    const val REPORTED_ID = "reportedId"
 }
 
 object SharedPrefConstants {

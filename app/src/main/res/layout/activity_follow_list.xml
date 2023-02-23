@@ -62,8 +62,8 @@
                 android:gravity="center_vertical|start"
                 android:hint="Search"
                 android:maxLines="1"
-                android:paddingHorizontal="15dp"
-                android:paddingTop="15dp"
+                android:paddingHorizontal="@dimen/space_between"
+                android:paddingTop="@dimen/space_between"
                 android:paddingBottom="13dp"
                 android:textColor="@color/textBlack"
                 android:textColorHint="@color/textGrey"
@@ -73,7 +73,7 @@
                 android:id="@+id/rv_follow_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="@dimen/space_between"
                 android:visibility="visible"
                 tools:listitem="@layout/item_follow_list" />
 

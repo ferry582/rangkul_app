@@ -4,7 +4,6 @@
     android:id="@+id/bottomSheetPostOptions"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="@dimen/safe_margin"
     >
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -21,7 +20,9 @@
         android:id="@+id/tvSeeAccount"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginTop="15dp"
+        android:paddingHorizontal="16dp"
+        android:layout_marginTop="@dimen/space_between"
+        android:background="@color/bottom_sheet_options_bg_color"
         android:fontFamily="@font/poppins_regular"
         android:includeFontPadding="false"
         android:text="See Account"
@@ -29,7 +30,7 @@
         android:textSize="16sp"
         android:drawableStart="@drawable/ic_user_profile"
         android:gravity="center_vertical"
-        android:drawablePadding="15dp"
+        android:drawablePadding="@dimen/space_between"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivPullIcon"/>
@@ -38,8 +39,10 @@
         android:id="@+id/tvFollow"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:paddingHorizontal="16dp"
+        android:background="@color/bottom_sheet_options_bg_color"
         android:drawableStart="@drawable/ic_follow"
-        android:drawablePadding="15dp"
+        android:drawablePadding="@dimen/space_between"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
@@ -47,15 +50,18 @@
         android:textColor="@color/textBlack"
         android:textSize="16sp"
         android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvSeeAccount" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvReportPost"
+        android:id="@+id/tvReport"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:paddingHorizontal="16dp"
         android:drawableStart="@drawable/ic_report"
-        android:drawablePadding="15dp"
+        android:drawablePadding="@dimen/space_between"
+        android:background="@color/bottom_sheet_options_bg_color"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
@@ -67,11 +73,13 @@
         app:layout_constraintTop_toBottomOf="@+id/tvFollow" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvLikeCountOptions"
+        android:id="@+id/tvLikeCountVisibility"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:paddingHorizontal="16dp"
         android:drawableStart="@drawable/ic_like_hide"
-        android:drawablePadding="15dp"
+        android:drawablePadding="@dimen/space_between"
+        android:background="@color/bottom_sheet_options_bg_color"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
@@ -80,14 +88,16 @@
         android:textSize="16sp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvReportPost" />
+        app:layout_constraintTop_toBottomOf="@+id/tvReport" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvCommentOptions"
+        android:id="@+id/tvCommentVisibility"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:paddingHorizontal="16dp"
         android:drawableStart="@drawable/ic_comment_off"
-        android:drawablePadding="15dp"
+        android:drawablePadding="@dimen/space_between"
+        android:background="@color/bottom_sheet_options_bg_color"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
@@ -96,14 +106,16 @@
         android:textSize="16sp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvLikeCountOptions" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLikeCountVisibility" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvDeletePost"
+        android:id="@+id/tvDelete"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:paddingHorizontal="16dp"
         android:drawableStart="@drawable/ic_delete"
-        android:drawablePadding="15dp"
+        android:drawablePadding="@dimen/space_between"
+        android:background="@color/bottom_sheet_options_bg_color"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
@@ -112,6 +124,16 @@
         android:textSize="16sp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCommentOptions" />
+        app:layout_constraintTop_toBottomOf="@+id/tvCommentVisibility" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

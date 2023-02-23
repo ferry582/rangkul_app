@@ -31,7 +31,7 @@ import java.util.*
 @AndroidEntryPoint
 class CategoryContentActivity :
     AppCompatActivity(),
-    PostOptionsBottomSheetFragment.DeletePostStatusListener,
+    PostOptionsBottomSheetFragment.PostOptionsStatusListener,
     PostAdapter.PostStatusListener {
 
     private lateinit var binding: ActivityCategoryContentBinding

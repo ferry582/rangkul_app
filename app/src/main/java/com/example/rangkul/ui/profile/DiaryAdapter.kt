@@ -16,12 +16,12 @@ import java.util.*
 class DiaryAdapter (
     val onOptionClicked: (Int, DiaryData) -> Unit,
     val context: Context
-): RecyclerView.Adapter<DiaryAdapter.PostViewHolder>(){
+): RecyclerView.Adapter<DiaryAdapter.DiaryViewHolder>(){
 
     private var list: MutableList<DiaryData> = arrayListOf()
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
 
-    inner class PostViewHolder (val binding: ItemDiaryBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class DiaryViewHolder (val binding: ItemDiaryBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: DiaryData) {
             binding.tvMood.text = item.moodTitle
@@ -52,12 +52,12 @@ class DiaryAdapter (
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
         val itemView = ItemDiaryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(itemView)
+        return DiaryViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: DiaryViewHolder, position: Int) {
         val item = list[position]
         holder.bind(item)
     }

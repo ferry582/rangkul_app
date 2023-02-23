@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
-    android:layout_marginBottom="15dp"
+    android:layout_marginBottom="@dimen/space_between"
     android:background="@drawable/shape_card_background">
 
     <androidx.cardview.widget.CardView

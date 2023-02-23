@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.rangkul.data.model.CommentData
+import com.example.rangkul.data.model.ReportData
 import com.example.rangkul.data.model.UserData
 import com.example.rangkul.data.repository.OptionsRepository
 import com.example.rangkul.utils.UiState
@@ -21,6 +22,12 @@ class CommentOptionsViewModel @Inject constructor(private val repository: Option
         _deleteComment.value = UiState.Loading
         repository.deleteComment(comment) {
             _deleteComment.value = it
+        }
+    }
+
+    fun addReportData(report: ReportData, result: (UiState<Boolean>) -> Unit){
+        repository.addReportData(report) {
+            result.invoke(it)
         }
     }
 

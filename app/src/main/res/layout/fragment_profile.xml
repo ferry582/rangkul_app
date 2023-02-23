@@ -65,8 +65,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:padding="15dp"
+                    android:layout_marginBottom="@dimen/space_between"
+                    android:padding="@dimen/space_between"
                     android:background="@drawable/shape_card_background">
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -194,7 +194,7 @@
                         android:id="@+id/tvUserName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="@dimen/space_between"
                         android:fontFamily="@font/poppins_semibold"
                         android:includeFontPadding="false"
                         android:text="Della Delila"
@@ -230,7 +230,7 @@
                         android:id="@+id/btEditProfile"
                         android:layout_width="match_parent"
                         android:layout_height="34dp"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="@dimen/space_between"
                         android:background="@drawable/selector_button_main"
                         android:backgroundTint="#3390B1A0"
                         android:elevation="0dp"
@@ -251,8 +251,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:padding="15dp"
+                    android:layout_marginBottom="@dimen/space_between"
+                    android:padding="@dimen/space_between"
                     android:background="@drawable/shape_card_background"
                     >
 

@@ -16,13 +16,13 @@ class FollowListAdapter (
     val onFollowClicked: (Int, String) -> Unit,
     val onUnfollowClicked: (Int, String) -> Unit,
     private val followListStatusListener: FollowListStatusListener
-): RecyclerView.Adapter<FollowListAdapter.PostViewHolder>(){
+): RecyclerView.Adapter<FollowListAdapter.FollowListViewHolder>(){
 
     private var list: MutableList<UserData> = arrayListOf()
     private lateinit var currentUserId: String
     private val taskPerformedSet = mutableSetOf<Int>() // To make sure the task is only performed once for each item
 
-    inner class PostViewHolder (val binding: ItemFollowListBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class FollowListViewHolder (val binding: ItemFollowListBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: UserData) {
             // Set User name
@@ -89,12 +89,12 @@ class FollowListAdapter (
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowListViewHolder {
         val itemView = ItemFollowListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(itemView)
+        return FollowListViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FollowListViewHolder, position: Int) {
         val item = list[position]
         holder.bind(item)
     }

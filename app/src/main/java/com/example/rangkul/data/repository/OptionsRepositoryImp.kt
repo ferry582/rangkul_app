@@ -16,6 +16,8 @@ class OptionsRepositoryImp(
     private val storageReference: FirebaseStorage
 ): OptionsRepository {
 
+    private val TAG = "OptionsRepositoryImp"
+
     override fun deletePost( post: PostData, result: (UiState<String>) -> Unit) {
         deleteAllComments(post.postId) {
             when (it) {
@@ -193,6 +195,41 @@ class OptionsRepositoryImp(
             }
             .addOnFailureListener {
                 result.invoke(UiState.Failure(it.localizedMessage))
+            }
+    }
+
+    override fun addReportData(report: ReportData, result: (UiState<Boolean>) -> Unit) {
+        isUserAlreadyReport(report) {
+            if (it) {
+                result.invoke(UiState.Success(true))
+            } else {
+                val document = database.collection(FirestoreCollection.REPORTS).document()
+                report.reportId = document.id
+
+                document.set(report)
+                    .addOnSuccessListener {
+                        result.invoke(UiState.Success(false))
+                    }
+                    .addOnFailureListener { e ->
+                        result.invoke(
+                            UiState.Failure(e.localizedMessage)
+                        )
+                    }
+            }
+        }
+    }
+
+    private fun isUserAlreadyReport(report: ReportData, result: (Boolean) -> Unit) {
+        database.collection(FirestoreCollection.REPORTS)
+            .whereEqualTo(FirestoreDocumentField.REPORTED_BY, report.reportedBy)
+            .whereEqualTo(FirestoreDocumentField.REPORTED_ID, report.reportedId)
+            .whereEqualTo(FirestoreDocumentField.REPORT_REASON, report.reason)
+            .get()
+            .addOnSuccessListener {
+                result.invoke(!it.isEmpty)
+            }
+            .addOnFailureListener {
+                it.localizedMessage?.let { it1 -> Log.e(TAG, it1) }
             }
     }
 

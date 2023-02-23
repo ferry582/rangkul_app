@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp"
-    android:layout_marginBottom="15dp"
+    android:padding="@dimen/space_between"
+    android:layout_marginBottom="@dimen/space_between"
     android:background="@drawable/shape_card_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -112,7 +112,7 @@
         android:id="@+id/tvCaptionPost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="@dimen/space_between"
         android:fontFamily="@font/poppins_regular"
         android:includeFontPadding="false"
         android:text="Overwhelmed banget sama tugas kuliah ku.."
@@ -127,7 +127,7 @@
         android:id="@+id/cvImagePost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="@dimen/space_between"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvCaptionPost"
@@ -152,7 +152,7 @@
         android:id="@+id/constraintLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="@dimen/space_between"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cvImagePost">

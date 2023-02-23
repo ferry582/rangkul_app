@@ -17,23 +17,27 @@ import java.util.*
 class CommentAdapter (
     val onOptionsCommentClicked: (Int, CommentData) -> Unit,
     val onProfileClicked: (Int, String) -> Unit,
-): RecyclerView.Adapter<CommentAdapter.PostViewHolder>(){
+): RecyclerView.Adapter<CommentAdapter.CommentViewHolder>(){
 
     private var list: MutableList<CommentData> = arrayListOf()
     private lateinit var objectPost: PostData
+    private lateinit var currentUserId: String
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
 
-    inner class PostViewHolder (val binding: ItemCommentBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class CommentViewHolder (val binding: ItemCommentBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: CommentData) {
             // Set User name
             binding.tvUserNameComment.apply {
-                text = if (objectPost.type == "Anonymous" && objectPost.createdBy == item.commentedBy) {
+                text =
+                    if(objectPost.type == "Anonymous" && objectPost.createdBy == item.commentedBy && item.commentedBy == currentUserId) {
+                        "Anonymous (You)"
+                    } else if (objectPost.type == "Anonymous" && objectPost.createdBy == item.commentedBy) {
                     // Set name to anonymous when the anonymous post owner is commenting
-                    "Anonymous (Post Owner)"
-                } else {
-                    item.userName.limitTextLength()
-                }
+                        "Anonymous (Post Owner)"
+                    } else {
+                        item.userName.limitTextLength()
+                    }
             }
 
             binding.tvTimeComment.text = sdf.format(item.commentedAt)
@@ -98,12 +102,12 @@ class CommentAdapter (
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val itemView = ItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(itemView)
+        return CommentViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val item = list[position]
         holder.bind(item)
     }
@@ -119,6 +123,10 @@ class CommentAdapter (
 
     fun updatePostType(objectPost: PostData) {
         this.objectPost = objectPost
+    }
+
+    fun updateCurrentUser(userId: String) {
+        this.currentUserId = userId
     }
 
 }

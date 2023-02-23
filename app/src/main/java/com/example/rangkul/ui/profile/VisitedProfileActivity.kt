@@ -23,7 +23,7 @@ import java.util.*
 
 @AndroidEntryPoint
 class VisitedProfileActivity : AppCompatActivity(),
-    PostOptionsBottomSheetFragment.DeletePostStatusListener,
+    PostOptionsBottomSheetFragment.PostOptionsStatusListener,
     PostAdapter.PostStatusListener {
 
     private lateinit var binding: ActivityVisitedProfileBinding
@@ -113,15 +113,26 @@ class VisitedProfileActivity : AppCompatActivity(),
             addFollowData()
         }
 
-
         binding.btUnfollow.setOnClickListener {
             binding.btUnfollow.isClickable = false
             removeFollowData()
         }
 
-
         binding.btMessage.setOnClickListener {
             toast("Under development")
+        }
+
+        binding.btProfileOptions.setOnClickListener {
+            val profileOptionsBottomDialogFragment = VisitedProfileOptionsBottomSheetFragment()
+
+            val bundle = Bundle()
+            bundle.putString("VISITED_UID", visitedUserId)
+            profileOptionsBottomDialogFragment.arguments = bundle
+
+            profileOptionsBottomDialogFragment.show(
+                supportFragmentManager,
+                "PostOptionsBottomSheetFragment"
+            )
         }
 
         binding.linearFollowingCount.setOnClickListener {

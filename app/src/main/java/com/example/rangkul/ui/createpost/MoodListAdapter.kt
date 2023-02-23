@@ -9,11 +9,11 @@ import com.example.rangkul.databinding.ItemMoodBinding
 class MoodListAdapter (
     private val moodList: ArrayList<ImageListData>,
     val onItemClicked: (ImageListData) -> Unit)
-    : RecyclerView.Adapter<MoodListAdapter.CategoryListViewHolder>() {
+    : RecyclerView.Adapter<MoodListAdapter.MoodListViewHolder>() {
 
     private var selectedPosition = -1
 
-    inner class CategoryListViewHolder (val binding: ItemMoodBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class MoodListViewHolder (val binding: ItemMoodBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ImageListData, position: Int) {
             binding.ivImageMood.setImageResource(item.image)
             binding.tvMood.text = item.name
@@ -28,16 +28,16 @@ class MoodListAdapter (
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryListViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoodListViewHolder {
         val itemView = ItemMoodBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CategoryListViewHolder(itemView)
+        return MoodListViewHolder(itemView)
     }
 
     override fun getItemCount(): Int {
         return moodList.size
     }
 
-    override fun onBindViewHolder(holder: CategoryListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MoodListViewHolder, position: Int) {
         val category = moodList[position]
         holder.bind(category, position)
     }

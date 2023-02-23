@@ -65,9 +65,9 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="@dimen/space_between"
                     android:background="@drawable/shape_card_background"
-                    android:padding="15dp">
+                    android:padding="@dimen/space_between">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/civProfilePicture"
@@ -194,7 +194,7 @@
                         android:id="@+id/tvUserName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="@dimen/space_between"
                         android:fontFamily="@font/poppins_semibold"
                         android:includeFontPadding="false"
                         android:text="Name"
@@ -237,7 +237,7 @@
                             android:id="@+id/btFollow"
                             android:layout_width="match_parent"
                             android:layout_height="34dp"
-                            android:layout_marginTop="15dp"
+                            android:layout_marginTop="@dimen/space_between"
                             android:layout_marginEnd="10dp"
                             android:layout_weight="1"
                             android:background="@drawable/selector_button_main"
@@ -256,7 +256,7 @@
                             android:id="@+id/btUnfollow"
                             android:layout_width="match_parent"
                             android:layout_height="34dp"
-                            android:layout_marginTop="15dp"
+                            android:layout_marginTop="@dimen/space_between"
                             android:layout_marginEnd="10dp"
                             android:layout_weight="1"
                             android:background="@drawable/selector_button_main"
@@ -276,7 +276,7 @@
                             android:id="@+id/btMessage"
                             android:layout_width="match_parent"
                             android:layout_height="34dp"
-                            android:layout_marginTop="15dp"
+                            android:layout_marginTop="@dimen/space_between"
                             android:layout_weight="1"
                             android:background="@drawable/selector_button_main"
                             android:backgroundTint="#3390B1A0"

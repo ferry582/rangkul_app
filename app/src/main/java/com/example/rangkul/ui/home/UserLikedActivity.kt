@@ -26,7 +26,7 @@ import java.util.*
 @AndroidEntryPoint
 class UserLikedActivity :
     AppCompatActivity(),
-    PostOptionsBottomSheetFragment.DeletePostStatusListener,
+    PostOptionsBottomSheetFragment.PostOptionsStatusListener,
     PostAdapter.PostStatusListener {
 
     private lateinit var binding: ActivityUserLikedBinding
